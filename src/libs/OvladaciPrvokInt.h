@@ -1,6 +1,13 @@
 #pragma once
 #include "OvladaciPrvok.h"
 #include "AtributInt.h"
+
+enum class DruhEdituInt {
+    SLIDER,
+    VSLIDER,
+    DRAG
+};
+
 class OvladaciPrvokInt : public OvladaciPrvok {
     protected:
         int hodnota_;
@@ -8,15 +15,10 @@ class OvladaciPrvokInt : public OvladaciPrvok {
         int maximum_;
 
     public:
-        /*OvladaciPrvokInt(Atribut* patribut) {
-            if (AtributInt* atribut = dynamic_cast<AtributInt*>(patribut)) {
-                hodnota_ = atribut->getHodnota();
-                minimum_ = atribut->getMin();
-                maximum_ = atribut->getMaximum();
-            }
-        }*/
-
-        //OvladaciPrvokInt() {};
+        DruhEdituInt typ_;
+        OvladaciPrvokInt(DruhEdituInt typ) {typ_ = typ;};
+        virtual OvladaciPrvokInt* clone() =0;
+        virtual void priradAtribut(Atribut * atribut) = 0;
 
 
 };

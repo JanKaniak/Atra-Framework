@@ -31,12 +31,13 @@ int main(int, char**)
     Popisy* popisy = new Popisy();
     Hodnoty* hodnoty = new Hodnoty(popisy);
     Formular* formular = new Formular(hodnoty);
-    formular->pridajAtribut(0,"ahojda",TypAtributu::Int,0,21);
+    formular->pridajAtribut(DruhEdituInt::SLIDER,"ahojda",TypAtributu::Int,0,21);
     bool editacne_okno = false;
     bool kontrola = false;
     char buffer[40] = "Atribut";
     int volbaTypu = 0;
     int volbaPosuvaca = 0;
+    DruhEdituInt typPosuvacov[] = {DruhEdituInt::SLIDER, DruhEdituInt::DRAG ,DruhEdituInt::VSLIDER}; 
     const char* volbyTypu[] = {"Int", "String", "Bool"};
     const char* volby[] = {"Slider", "Drag","VS_Slider"};
 
@@ -209,7 +210,7 @@ int main(int, char**)
                         break;
                     
                     }
-                    formular->pridajAtribut(volbaPosuvaca,meno,vybranyTyp,0,30);
+                    formular->pridajAtribut(typPosuvacov[volbaPosuvaca],meno,vybranyTyp,0,30);
                     editacne_okno = false;
                 }
             }

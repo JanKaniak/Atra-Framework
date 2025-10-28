@@ -5,39 +5,54 @@
 #include <map>
 #include <memory>
 
+using IntEditUptr = std::unique_ptr<OvladaciPrvokInt>;
+
+
+class IntEditFactory {
+private:
+    std::map<DruhEdituInt, IntEditUptr> prototypy;
+
+public:
+    OvladaciPrvokInt* createIntEdit(DruhEdituInt typ) {
+        return prototypy[typ]->clone();
+    }
+
+    template <typename DruhEdituIntT>
+    void registerPrototype() {
+        IntEditUptr prototyp = std::make_unique<DruhEdituIntT>();
+        prototypy[prototyp->typ_] = std::move(prototyp);
+    }
+};
+
+
+
+
+
+
 class Formular {
     private:
         Hodnoty* hodnoty_;
         std::vector<OvladaciPrvok*> prvky_;
+        IntEditFactory factory_;
 
     public:
         Formular(Hodnoty* hodnoty) {
             hodnoty_ = hodnoty;
+            factory_.registerPrototype<IntSlider>();
+            factory_.registerPrototype<IntDrag>();
+            factory_.registerPrototype<IntVSSlider>();
         }
 
-        void pridajAtribut(int typPosuvaca,std::string meno, TypAtributu typ,int minimum, int maximum) {
+        void pridajAtribut(DruhEdituInt typPosuvaca,std::string meno, TypAtributu typ,int minimum, int maximum) {
             hodnoty_->pridajAtribut(meno, typ, minimum, maximum);
+            OvladaciPrvokInt* ovladac;
             switch (typ)
             {
             case TypAtributu::Int:
-                switch (typPosuvaca)
-                {
-                case 0:
-                    prvky_.push_back(new IntSlider(hodnoty_->getPosledny()));
+                    ovladac = factory_.createIntEdit(typPosuvaca);
+                    ovladac->priradAtribut(hodnoty_->getPosledny());
+                    prvky_.push_back(ovladac);
                     break;
-                case 1:
-                    prvky_.push_back(new IntDrag(hodnoty_->getPosledny()));
-                    break;
-
-                case 2:
-                    prvky_.push_back(new IntVSSlider(hodnoty_->getPosledny()));
-                    break;
-                default:
-                    break;
-                }
-                
-                break;
-            
             default:
                 break;
             }
@@ -66,24 +81,4 @@ class Formular {
 
 };
 
-enum class DruhEdituInt {
-    SLIDER,
-    VSLIDER
-};
 
-class IntEdit {
-private:
-    DruhEdituInt typ_;
-public:
-    IntEdit(DruhEdituInt typ) {
-        typ_ = typ;
-};
-    virtual IntEdit* clone() =0;
-
-};
-using IntEditUptr = std::unique_ptr <IntEdit>;
-
-class IntEditFactory {
-private:
-    std::map<DruhEdituInt, IntEditUptr> protypy;
-};
