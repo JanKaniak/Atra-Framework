@@ -32,14 +32,22 @@ int main(int, char**)
     Hodnoty* hodnoty = new Hodnoty(popisy);
     Formular* formular = new Formular(hodnoty);
     formular->pridajAtribut(DruhEdituInt::SLIDER,"ahojda",TypAtributu::Int,0,21);
-    bool editacne_okno = false;
+    bool hl_editacne_okno = false;
+    bool numericke_editacne_okno = false;
+    bool char_editacne_okno = false;
+    bool boolean_edticane_okno = false;
     bool kontrola = false;
     char buffer[40] = "Atribut";
     int volbaTypu = 0;
     int volbaPosuvaca = 0;
-    DruhEdituInt typPosuvacov[] = {DruhEdituInt::SLIDER, DruhEdituInt::DRAG ,DruhEdituInt::VSLIDER}; 
-    const char* volbyTypu[] = {"Int", "String", "Bool"};
-    const char* volby[] = {"Slider", "Drag","VS_Slider"};
+    DruhEdituInt typPosuvacov[] = {DruhEdituInt::SLIDER, DruhEdituInt::DRAG ,DruhEdituInt::VSLIDER};
+    TypAtributu NumtypAtributov[] = {TypAtributu::Int, TypAtributu::Double};
+    const char* numericke_volbyTypu[] = {"Int", "Double", "Float"};
+    const char* char_volbyTypu[] = {"Char", "String"};
+    const char* volby[] = {"Slider", "VS_Slider","Drag"};
+
+    bool moznost1 = false;
+    bool moznost2 = false;
 
     
 
@@ -166,7 +174,7 @@ int main(int, char**)
             ImGui::Begin("Hello, world!");                         
             ImGui::Text("This is not useful text.");
             if (ImGui::Button("Pridaj atribut")) {
-                editacne_okno = true;
+                hl_editacne_okno = true;
             }
             
             // 2.1 Výpis
@@ -180,38 +188,55 @@ int main(int, char**)
         }
 
         // 3. Okno na pridávanie atribútov
-        if (editacne_okno)
+        if (hl_editacne_okno)
         {
-            ImGui::Begin("Edtiacne okno", &editacne_okno);
-            
-
-            
-            ImGui::InputText("Názov atribútut",buffer,sizeof(buffer));
-            if (kontrola) {
-                ImGui::Text("Meno atributu už existuje!");
-            }
-            
-            ImGui::Combo("Typ atribútu",&volbaTypu,volbyTypu,sizeof(volbyTypu)/sizeof(volbyTypu[0]));
-            if (volbaTypu == 0) {
-                ImGui::Combo("Typ posuvaca",&volbaPosuvaca,volby,sizeof(volby)/sizeof(volby[0]));
-            }
-            std::string meno = buffer;
             TypAtributu vybranyTyp;
+            ImGui::Begin("Edtiacne okno", &hl_editacne_okno);
+            
+            ImGui::SameLine();
+            ImGui::RadioButton("Numeric",moznost1); 
+            if (ImGui::IsItemToggledSelection()){
+                ImGui::InputText("Názov atribútut",buffer,sizeof(buffer));
+                if (kontrola) {
+                    ImGui::Text("Meno atributu už existuje!");
+                }
+
+                ImGui::Combo("Typ atribútu",&volbaTypu,numericke_volbyTypu,sizeof(numericke_volbyTypu)/sizeof(numericke_volbyTypu[0]));
+                ImGui::Combo("Typ posuvaca",&volbaPosuvaca,volby,sizeof(volby)/sizeof(volby[0]));
+                vybranyTyp = static_cast<TypAtributu>(volbaTypu);
+            }
+            
+            ImGui::SameLine();
+            ImGui::RadioButton("Char", moznost2); 
+            if (ImGui::IsItemToggledSelection()){
+                ImGui::InputText("Názov atribútut",buffer,sizeof(buffer));
+                if (kontrola) {
+                    ImGui::Text("Meno atributu už existuje!");
+                }
+
+                ImGui::Combo("Typ atribútu",&volbaTypu,char_volbyTypu,sizeof(char_volbyTypu)/sizeof(char_volbyTypu[0]));
+                vybranyTyp = TypAtributu::CHAR;
+            }
+
+            /*ImGui::SameLine();
+            if (ImGui::Button("Bool")); {
+                ImGui::InputText("Názov atribútut",buffer,sizeof(buffer));
+                if (kontrola) {
+                    ImGui::Text("Meno atributu už existuje!");
+                }
+
+                ImGui::Combo("Typ atribútu",&volbaTypu,volbyTypu,sizeof(volbyTypu)/sizeof(volbyTypu[0]));
+                if (volbaTypu == 0) {
+                    ImGui::Combo("Typ posuvaca",&volbaPosuvaca,volby,sizeof(volby)/sizeof(volby[0]));
+                }
+            }*/
+            std::string meno = buffer;
             if (ImGui::Button("Uložiť")) {
                 kontrola = formular->rovnakyNazov(meno);
                 if (!kontrola) {
-                    switch (volbaTypu)
-                    {
-                    case 0:
-                        vybranyTyp = TypAtributu::Int;
-                        break;
-                
-                    default:
-                        break;
-                    
-                    }
-                    formular->pridajAtribut(typPosuvacov[volbaPosuvaca],meno,vybranyTyp,0,30);
-                    editacne_okno = false;
+                    DruhEdituInt typPosuvaca = static_cast<DruhEdituInt>(volbaPosuvaca);
+                    formular->pridajAtribut(typPosuvaca,meno,vybranyTyp,0,30);
+                    hl_editacne_okno = false;
                 }
             }
             ImGui::End();

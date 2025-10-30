@@ -16,11 +16,11 @@ class Atribut {
             return popis_->getTyp();
         }
 
-        void setPopis(PopisAtributu* popis) {
+        void priradPopis(PopisAtributu* popis) {
             popis_ = popis;
         }
 
         virtual ~Atribut() {};
-
+        virtual Atribut* clone() = 0;
 
 };
