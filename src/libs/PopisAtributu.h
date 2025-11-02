@@ -13,9 +13,12 @@ class PopisAtributu {
         TypAtributu getTyp() {return typ_;};
         virtual double getMin() = 0;
         virtual double getMax() = 0;
+        void setMeno(std::string meno) { meno_ = meno; };
+
 
         virtual ~PopisAtributu() {};
         virtual PopisAtributu* clone() = 0;
+        virtual void setLimit(double minimum, double maximum) = 0;
 
     
 };

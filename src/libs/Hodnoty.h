@@ -2,6 +2,8 @@
 #include "Popisy.h"
 #include "Atribut.h"
 #include "AtributInt.h"
+#include "AtributDouble.h"
+#include "AtributChar.h"
 #include <vector>
 #include <memory>
 #include <map>
@@ -20,7 +22,7 @@ public:
     template <typename typAtributuT>
     void registerPrototype() {
         AtributUptr prototyp = std::make_unique<typAtributuT>();
-        prototypy[prototyp->getTyp()] = std::move(prototyp);
+        prototypy[prototyp->typ_] = std::move(prototyp);
     }
 };
 
@@ -59,12 +61,20 @@ class Hodnoty {
         Hodnoty(Popisy* popisy){
             popisy_ = popisy;
             atributFactory_.registerPrototype<AtributInt>();
+            atributFactory_.registerPrototype<AtributDouble>();
+            atributFactory_.registerPrototype<AtributChar>();
+
             popisFactory_.registerPrototype<PopisAtributu_int>();
+            popisFactory_.registerPrototype<PopisAtributu_double>();
+            popisFactory_.registerPrototype<PopisAtributu_char>();
         };
         
-        void pridajAtribut(std::string meno, TypAtributu typ,int minimum, int maximum)
+        void pridajAtribut(std::string meno, TypAtributu typ,double minimum, double maximum)
         {
             PopisAtributu* popis = popisFactory_.createPopis(typ);
+            popis->setMeno(meno);
+            popis->setLimit(minimum, maximum);
+            
             Atribut* atribut = atributFactory_.createAtribut(typ);
             
             popisy_->pridajPopis(popis);

@@ -8,15 +8,7 @@ class AtributInt : public Atribut {
         int hodnota_;
     
         public:
-            AtributInt(){};
-            AtributInt(PopisAtributu* popis)
-            {
-                popis_ = popis;
-                hodnota_ = popis_->getMin();
-
-                std::cout << "atributint min: " << popis_->getMin() << "a max: " << popis_->getMax() << "hodnota: " << hodnota_ << "\n";
-                
-            };
+            AtributInt() : Atribut(TypAtributu::Int) {};
 
             int getHodnota() {
                 return hodnota_;
@@ -34,5 +26,12 @@ class AtributInt : public Atribut {
                 if (hodnota_ > popis_->getMin() && hodnota_ < popis_->getMax()) {
                     hodnota_ = hodnota;
                 }
+            }
+
+            AtributInt* clone() override { return new AtributInt(*this); }
+
+            void priradPopis(PopisAtributu* popis) override {
+                popis_ = popis;
+                hodnota_ = popis->getMin();
             }
 };

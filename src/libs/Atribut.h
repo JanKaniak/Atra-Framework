@@ -5,22 +5,23 @@
 class Atribut {
     protected:
         PopisAtributu* popis_;
-        //TypAtributuInt typ_;
+        
     
     public:
+        TypAtributu typ_;
+
+        Atribut(TypAtributu typ) : typ_(typ) {}
+
         std::string getMeno() {
             return popis_->getMeno();
         }
 
         TypAtributu getTyp() {
-            return popis_->getTyp();
-        }
-
-        void priradPopis(PopisAtributu* popis) {
-            popis_ = popis;
+            return typ_;
         }
 
         virtual ~Atribut() {};
         virtual Atribut* clone() = 0;
+        virtual void priradPopis(PopisAtributu* popis) = 0;
 
 };

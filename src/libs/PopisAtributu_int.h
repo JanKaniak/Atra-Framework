@@ -21,4 +21,10 @@ class PopisAtributu_int : public PopisAtributu {
         double getMax() { return max_; }
 
         PopisAtributu_int* clone() override { return new PopisAtributu_int(*this); }
+        void setLimit(double minimum, double maximum) override { 
+            if (minimum < maximum) {
+                min_ = minimum;
+                max_ = maximum;
+            }
+        }
 };

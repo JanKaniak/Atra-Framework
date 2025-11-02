@@ -6,17 +6,22 @@ class PopisAtributu_char : public PopisAtributu {
         int min_ = 0;
         int max_ = 20;
     public:
-        PopisAtributu_int(std::string meno, TypAtributu typ, int minimum, int maximum) : PopisAtributu(meno,typ) {
-            if (min_ < max_) {
-                min_ = minimum;
-                max_ = maximum;
-            }
-        }
-        int getMin() {
+        PopisAtributu_char() : PopisAtributu(TypAtributu::CHAR) {}
+        
+        double getMin() override {
             return min_;
         }
 
-        int getMax() {
+        double getMax() override {
             return max_;
+        }
+
+        PopisAtributu_char* clone() override {return new PopisAtributu_char(*this); }
+
+        void setLimit(double minimum, double maximum) override {
+            if (minimum < maximum) {
+                min_ = minimum;
+                max_ = maximum;
+            }
         }
 };

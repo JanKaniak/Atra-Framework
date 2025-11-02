@@ -1,5 +1,5 @@
 #pragma once
-#include "PopisAtributu_int.h"
+#include "PopisAtributu_char.h"
 #include "Atribut.h"
 #include <limits.h>
 #include <iostream>
@@ -8,11 +8,7 @@ class AtributChar : public Atribut {
         char hodnota_;
     
         public:
-            AtributChar(){};
-            AtributChar(PopisAtributu* popis)
-            {
-                popis_ = popis;
-            };
+            AtributChar() : Atribut(TypAtributu::CHAR) {}
 
             char getHodnota() {
                 return hodnota_;
@@ -27,8 +23,12 @@ class AtributChar : public Atribut {
             }
 
             void upravHodnotu(char hodnota) {
-                if (sizeof(hodnota) > popis_->getMin() && (sizeof(hodnota) < popis_->getMax())) {
-                    hodnota_ = hodnota;
-                }
+                hodnota_ = hodnota;
+            }
+
+            AtributChar* clone() override { return new AtributChar(*this); }
+
+            void priradPopis(PopisAtributu* popis) override {
+                popis_ = popis;
             }
 };

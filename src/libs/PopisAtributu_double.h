@@ -6,17 +6,21 @@ class PopisAtributu_double : public PopisAtributu {
         double min_ = 10;
         double max_ = 50;
     public:
-        PopisAtributu_int(std::string meno, TypAtributu typ, double minimum, double maximum) : PopisAtributu(meno,typ) {
-            if (min_ < max_) {
-                min_ = minimum;
-                max_ = maximum;
-            }
-        }
+        PopisAtributu_double() : PopisAtributu(TypAtributu::Double) {}
         double getMin() {
             return min_;
         }
 
         double getMax() {
             return max_;
+        }
+
+        PopisAtributu_double* clone() override { return new PopisAtributu_double(*this); }
+
+        void setLimit(double minimum, double maximum) override { 
+            if (minimum < maximum) {
+                min_ = minimum;
+                max_ = maximum;
+            }
         }
 };

@@ -8,14 +8,7 @@ class AtributDouble : public Atribut {
         double hodnota_;
     
         public:
-            AtributDouble(){};
-            AtributDouble(PopisAtributu* popis)
-            {
-                popis_ = popis;
-                hodnota_ = popis_->getMin();
-
-                
-            };
+            AtributDouble() : Atribut(TypAtributu::Double) {};
 
             double getHodnota() {
                 return hodnota_;
@@ -33,5 +26,12 @@ class AtributDouble : public Atribut {
                 if (hodnota_ > popis_->getMin() && hodnota_ < popis_->getMax()) {
                     hodnota_ = hodnota;
                 }
+            }
+
+            AtributDouble* clone() override { return new AtributDouble(*this); }
+
+            void priradPopis(PopisAtributu* popis) override {
+                popis_ = popis;
+                hodnota_ = popis->getMin();
             }
 };

@@ -31,23 +31,30 @@ int main(int, char**)
     Popisy* popisy = new Popisy();
     Hodnoty* hodnoty = new Hodnoty(popisy);
     Formular* formular = new Formular(hodnoty);
-    formular->pridajAtribut(DruhEdituInt::SLIDER,"ahojda",TypAtributu::Int,0,21);
+    //formular->pridajAtributWrapper(0,"yooo",TypAtributu::Int,"10","60");
+    //formular->pridajAtributWrapper(0,"yes sir",TypAtributu::Double,"5","85.9");
     bool hl_editacne_okno = false;
     bool numericke_editacne_okno = false;
     bool char_editacne_okno = false;
     bool boolean_edticane_okno = false;
     bool kontrola = false;
     char buffer[40] = "Atribut";
+    char bufferMin[40] = "0";
+    char bufferMax[40] = "50";
     int volbaTypu = 0;
     int volbaPosuvaca = 0;
-    DruhEdituInt typPosuvacov[] = {DruhEdituInt::SLIDER, DruhEdituInt::DRAG ,DruhEdituInt::VSLIDER};
+    DruhEdituInt typPosuvacov[] = {DruhEdituInt::SLIDER, DruhEdituInt::VSLIDER ,DruhEdituInt::DRAG};
+    DruhEdituDouble typPosuvacovDouble[] = {DruhEdituDouble::SLIDER, DruhEdituDouble::VSLIDER, DruhEdituDouble::DRAG};
     TypAtributu NumtypAtributov[] = {TypAtributu::Int, TypAtributu::Double};
+    TypAtributu CharTypAtributov[] = {TypAtributu::CHAR};
     const char* numericke_volbyTypu[] = {"Int", "Double", "Float"};
     const char* char_volbyTypu[] = {"Char", "String"};
     const char* volby[] = {"Slider", "VS_Slider","Drag"};
 
     bool moznost1 = false;
     bool moznost2 = false;
+
+    int selected = 0;
 
     
 
@@ -180,6 +187,8 @@ int main(int, char**)
             // 2.1 Výpis
             formular->kresli();
 
+            
+
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
             ImGui::SetCursorPos(ImVec2(560,400));
@@ -191,54 +200,57 @@ int main(int, char**)
         if (hl_editacne_okno)
         {
             TypAtributu vybranyTyp;
+            
             ImGui::Begin("Edtiacne okno", &hl_editacne_okno);
-            
-            ImGui::SameLine();
-            ImGui::RadioButton("Numeric",moznost1); 
-            if (ImGui::IsItemToggledSelection()){
-                ImGui::InputText("Názov atribútut",buffer,sizeof(buffer));
-                if (kontrola) {
-                    ImGui::Text("Meno atributu už existuje!");
-                }
-
-                ImGui::Combo("Typ atribútu",&volbaTypu,numericke_volbyTypu,sizeof(numericke_volbyTypu)/sizeof(numericke_volbyTypu[0]));
-                ImGui::Combo("Typ posuvaca",&volbaPosuvaca,volby,sizeof(volby)/sizeof(volby[0]));
-                vybranyTyp = static_cast<TypAtributu>(volbaTypu);
+            if (ImGui::RadioButton("Numeric",selected==0)) {
+                selected = 0;
             }
-            
             ImGui::SameLine();
-            ImGui::RadioButton("Char", moznost2); 
-            if (ImGui::IsItemToggledSelection()){
-                ImGui::InputText("Názov atribútut",buffer,sizeof(buffer));
-                if (kontrola) {
-                    ImGui::Text("Meno atributu už existuje!");
-                }
-
-                ImGui::Combo("Typ atribútu",&volbaTypu,char_volbyTypu,sizeof(char_volbyTypu)/sizeof(char_volbyTypu[0]));
-                vybranyTyp = TypAtributu::CHAR;
+            if (ImGui::RadioButton("Charakter",selected==1)) {
+                selected = 1;
             }
 
-            /*ImGui::SameLine();
-            if (ImGui::Button("Bool")); {
-                ImGui::InputText("Názov atribútut",buffer,sizeof(buffer));
-                if (kontrola) {
-                    ImGui::Text("Meno atributu už existuje!");
-                }
+            ImGui::SameLine();
+            if (ImGui::RadioButton("Boolean",selected==2)) {
+                selected = 2;
+            }
 
-                ImGui::Combo("Typ atribútu",&volbaTypu,volbyTypu,sizeof(volbyTypu)/sizeof(volbyTypu[0]));
-                if (volbaTypu == 0) {
-                    ImGui::Combo("Typ posuvaca",&volbaPosuvaca,volby,sizeof(volby)/sizeof(volby[0]));
-                }
-            }*/
-            std::string meno = buffer;
+            ImGui::InputText("Názov atribútut",buffer,sizeof(buffer));
+            if (kontrola) {
+                ImGui::Text("Meno atributu už existuje!");
+            }
+            switch (selected) {
+                
+                case 0:
+                    ImGui::Combo("Typ atribútu",&volbaTypu,numericke_volbyTypu,sizeof(numericke_volbyTypu)/sizeof(numericke_volbyTypu[0]));
+                    if (volbaTypu == 0) {
+                        ImGui::Combo("Typ posuvaca",&volbaPosuvaca,volby,sizeof(volby)/sizeof(volby[0]));
+                    }
+
+                    ImGui::InputText("Spodná hranica limitu",bufferMin,sizeof(bufferMin));
+                    ImGui::InputText("Vrchná hranica limitu",bufferMax,sizeof(bufferMax));
+                    
+                    vybranyTyp = NumtypAtributov[volbaTypu];
+                    break;
+
+                case 1:
+                    ImGui::Combo("Typ atribútu",&volbaTypu,char_volbyTypu,sizeof(char_volbyTypu)/sizeof(char_volbyTypu[0]));
+                    vybranyTyp = CharTypAtributov[volbaTypu];
+                    break;
+
+                default:
+                    break;
+                    
+            }
             if (ImGui::Button("Uložiť")) {
-                kontrola = formular->rovnakyNazov(meno);
+                kontrola = formular->rovnakyNazov(buffer);
                 if (!kontrola) {
-                    DruhEdituInt typPosuvaca = static_cast<DruhEdituInt>(volbaPosuvaca);
-                    formular->pridajAtribut(typPosuvaca,meno,vybranyTyp,0,30);
+                    formular->pridajAtributWrapper(volbaPosuvaca,buffer,vybranyTyp,bufferMin,bufferMax);
                     hl_editacne_okno = false;
                 }
             }
+            
+           
             ImGui::End();
             
             
