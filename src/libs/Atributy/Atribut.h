@@ -22,6 +22,8 @@ class Atribut {
             return typ_;
         }
 
+        PopisAtributu* getPopis() {return popis_;};
+
         virtual ~Atribut() {};
         virtual Atribut* clone() = 0;
         virtual void priradPopis(PopisAtributu* popis) = 0;

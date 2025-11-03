@@ -88,17 +88,17 @@ class Formular {
 
         std::map<TypAtributu,std::function<void(int,std::string,TypAtributu,std::string,std::string)>> rozhodnutie_{ 
             {TypAtributu::Int,
-                [this](int posuvac,std::string meno,TypAtributu typ,std::string min,std::string max) {
+                [&](int posuvac,std::string meno,TypAtributu typ,std::string min,std::string max) {
                     DruhEdituInt intPosuvac = static_cast<DruhEdituInt>(posuvac);
                     this->pridajAtribut(intPosuvac,meno,typ, std::stoi(min), std::stoi(max));
          }},
             {TypAtributu::Double,
-                [this](int posuvac,std::string meno,TypAtributu typ,std::string min,std::string max) {
+                [&](int posuvac,std::string meno,TypAtributu typ,std::string min,std::string max) {
                     DruhEdituDouble doublePosuvac = static_cast<DruhEdituDouble>(posuvac);
                     this->pridajAtribut(doublePosuvac,meno,typ, std::atof(min.c_str()), std::atof(max.c_str()));
          }},
             {TypAtributu::Char,
-                [this](int posuvac,std::string meno,TypAtributu typ,std::string min,std::string max) {
+                [&](int posuvac,std::string meno,TypAtributu typ,std::string min,std::string max) {
                     this->pridajAtribut(meno, typ, std::stoi(min), std::stoi(max));
                 }
 
@@ -181,6 +181,15 @@ class Formular {
         }
 
         void ulozDoSuboru() {
+            nlohmann::json jsonDocasny;
+            for (int i = 0; i < hodnoty_->getPocet(); i++)
+            {
+                jsonDocasny.push_back({{"Meno Atributu", hodnoty_->dajAtribut(i)->getMeno()}, {"Typ Atributu", static_cast<int>(hodnoty_->dajAtribut(i)->getTyp())}, {"Minimum", hodnoty_->dajAtribut(i)->getPopis()->getMin()}, {"Maximum", hodnoty_->dajAtribut(i)->getPopis()->getMax()}});
+            }
+            
+            std::ofstream subor("vystup.json");
+            jsonDocasny >> subor;
+            subor.close();
         }
 
 };
