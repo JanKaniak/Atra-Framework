@@ -1,0 +1,24 @@
+[
+{ "Meno Atributu": "Attribute1",  "Typ Atributu": 0,    "Minimum": "0", "Maximum": "100" },
+{ "Meno Atributu": "Attribute2",  "Typ Atributu": 1, "Minimum": "0.0",  "Maximum": "10.0" },
+{ "Meno Atributu": "Attribute3",  "Typ Atributu": 3,   "Minimum": "0", "Maximum": "0" },
+{ "Meno Atributu": "Attribute4",  "Typ Atributu": 0,    "Minimum": "-50",  "Maximum": "50" },
+{ "Meno Atributu": "Attribute5",  "Typ Atributu": 1, "Minimum": "1.0",  "Maximum": "5.5" },
+{ "Meno Atributu": "Attribute6",  "Typ Atributu": 3,   "Minimum": "0", "Maximum": "0" },
+{ "Meno Atributu": "Attribute7",  "Typ Atributu": 0,    "Minimum": "10",   "Maximum": "1000" },
+{ "Meno Atributu": "Attribute8",  "Typ Atributu": 1, "Minimum": "0.5",  "Maximum": "99.9" },
+{ "Meno Atributu": "Attribute9",  "Typ Atributu": 3,   "Minimum": "0", "Maximum": "0" },
+{ "Meno Atributu": "Attribute10", "Typ Atributu": 0,    "Minimum": "-100","Maximum": "0" },
+{"Meno Atributu": "Attribute11", "Typ Atributu": 1, "Minimum": "-5.5","Maximum": "5.5" },
+{"Meno Atributu": "Attribute12", "Typ Atributu": 3,   "Minimum": "0", "Maximum": "0" },
+{ "Meno Atributu": "Attribute13", "Typ Atributu": 0,    "Minimum": "1",    "Maximum": "10" },
+{ "Meno Atributu": "Attribute14", "Typ Atributu": 1, "Minimum": "2.2",  "Maximum": "22.2" },
+{ "Meno Atributu": "Attribute15", "Typ Atributu": 3,   "Minimum": "0", "Maximum": "0" },
+{ "Meno Atributu": "Attribute16", "Typ Atributu": 0,    "Minimum": "0",    "Maximum": "500" },
+{ "Meno Atributu": "Attribute17", "Typ Atributu": 1, "Minimum": "3.0",  "Maximum": "30.0" },
+{ "Meno Atributu": "Attribute18", "Typ Atributu": 3,   "Minimum": "0", "Maximum": "0" },
+{ "Meno Atributu": "Attribute19", "Typ Atributu": 0,    "Minimum": "-10",  "Maximum": "10" },
+{ "Meno Atributu": "Attribute20", "Typ Atributu": 1, "Minimum": "0.1",  "Maximum": "9.9" }
+]
+
+

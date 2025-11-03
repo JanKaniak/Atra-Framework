@@ -23,7 +23,7 @@
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
 
-#include "libs/Formular.h"
+#include "libs/OvladaciePrvky/Formular.h"
 
 // Main code
 int main(int, char**)
@@ -46,7 +46,7 @@ int main(int, char**)
     DruhEdituInt typPosuvacov[] = {DruhEdituInt::SLIDER, DruhEdituInt::VSLIDER ,DruhEdituInt::DRAG};
     DruhEdituDouble typPosuvacovDouble[] = {DruhEdituDouble::SLIDER, DruhEdituDouble::VSLIDER, DruhEdituDouble::DRAG};
     TypAtributu NumtypAtributov[] = {TypAtributu::Int, TypAtributu::Double};
-    TypAtributu CharTypAtributov[] = {TypAtributu::CHAR};
+    TypAtributu CharTypAtributov[] = {TypAtributu::Char};
     const char* numericke_volbyTypu[] = {"Int", "Double", "Float"};
     const char* char_volbyTypu[] = {"Char", "String"};
     const char* volby[] = {"Slider", "VS_Slider","Drag"};
@@ -187,7 +187,13 @@ int main(int, char**)
             // 2.1 Výpis
             formular->kresli();
 
-            
+            if(ImGui::Button("Nacitat",ImVec2(70,30))) {
+                formular->nacitajZoSuboru("atributy.json");
+            }
+
+            if(ImGui::Button("Ulozit",ImVec2(70,30))) {
+                formular->ulozDoSuboru();
+            }
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 

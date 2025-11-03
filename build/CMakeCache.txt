@@ -360,6 +360,9 @@ SDL2_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/SDL2
 //Name of the computer/site where compile is being run
 SITE:STRING=FBI-office-pc
 
+//The directory containing a CMake configuration file for nlohmann_json.
+nlohmann_json_DIR:PATH=nlohmann_json_DIR-NOTFOUND
+
 
 ########################
 # INTERNAL cache entries

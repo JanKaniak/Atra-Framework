@@ -1,5 +1,6 @@
 /home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/imgui.dir
 /home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/imgui_backends.dir
+/home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/njson.dir
 /home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/ImGuiTest.dir
 /home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/Experimental.dir
 /home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/Nightly.dir

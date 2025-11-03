@@ -43,7 +43,7 @@
 },
 {
   "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/ImGuiTest.dir/src/main.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/main.cpp",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -g -std=gnu++20 -o CMakeFiles/ImGuiTest.dir/src/main.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/main.cpp",
   "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/main.cpp",
   "output": "CMakeFiles/ImGuiTest.dir/src/main.cpp.o"
 }
