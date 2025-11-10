@@ -23,16 +23,14 @@
 #include "../libs/emscripten/emscripten_mainloop_stub.h"
 #endif
 
-#include "libs/OvladaciePrvky/Formular.h"
+#include "libs/Headers/ControlComponents/Formular.h"
 
 // Main code
 int main(int, char**)
 {
-    Popisy* popisy = new Popisy();
-    Hodnoty* hodnoty = new Hodnoty(popisy);
-    Formular* formular = new Formular(hodnoty);
-    //formular->pridajAtributWrapper(0,"yooo",TypAtributu::Int,"10","60");
-    //formular->pridajAtributWrapper(0,"yes sir",TypAtributu::Double,"5","85.9");
+    Descriptions* descs = new Descriptions();
+    Values* values = new Values(descs);
+    Formular* formular = new Formular(values);
     bool hl_editacne_okno = false;
     bool numericke_editacne_okno = false;
     bool char_editacne_okno = false;
@@ -43,10 +41,10 @@ int main(int, char**)
     char bufferMax[40] = "50";
     int volbaTypu = 0;
     int volbaPosuvaca = 0;
-    DruhEdituInt typPosuvacov[] = {DruhEdituInt::SLIDER, DruhEdituInt::VSLIDER ,DruhEdituInt::DRAG};
-    DruhEdituDouble typPosuvacovDouble[] = {DruhEdituDouble::SLIDER, DruhEdituDouble::VSLIDER, DruhEdituDouble::DRAG};
-    TypAtributu NumtypAtributov[] = {TypAtributu::Int, TypAtributu::Double};
-    TypAtributu CharTypAtributov[] = {TypAtributu::Char};
+    EditTypeInt typPosuvacov[] = {EditTypeInt::SLIDER, EditTypeInt::VSLIDER ,EditTypeInt::DRAG};
+    EditTypeDouble typPosuvacovDouble[] = {EditTypeDouble::SLIDER, EditTypeDouble::VSLIDER, EditTypeDouble::DRAG};
+    AtributeType NumtypAtributov[] = {AtributeType::Int, AtributeType::Double};
+    AtributeType CharTypAtributov[] = {AtributeType::Char};
     const char* numericke_volbyTypu[] = {"Int", "Double", "Float"};
     const char* char_volbyTypu[] = {"Char", "String"};
     const char* volby[] = {"Slider", "VS_Slider","Drag"};
@@ -178,34 +176,31 @@ int main(int, char**)
             static float f = 0.0f;
             static int counter = 0;
 
-            ImGui::Begin("Hello, world!");                         
-            ImGui::Text("This is not useful text.");
-            if (ImGui::Button("Pridaj atribut")) {
+            ImGui::Begin("Main");                         
+            if (ImGui::Button("Add an atribute")) {
                 hl_editacne_okno = true;
             }
             
             // 2.1 Výpis
-            formular->kresli();
+            formular->draw();
 
-            if(ImGui::Button("Nacitat",ImVec2(70,30))) {
-                formular->nacitajZoSuboru("atributy.json");
+            if(ImGui::Button("Load",ImVec2(70,30))) {
+                formular->readFile("atributy.json");
             }
-
-            if(ImGui::Button("Ulozit",ImVec2(70,30))) {
-                formular->ulozDoSuboru();
+            
+            if(ImGui::Button("Save",ImVec2(70,30))) {
+                formular->saveToFile();
             }
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
 
             ImGui::SetCursorPos(ImVec2(560,400));
-            ImGui::Text("Aktuálny počet atribútov: %d", formular->getPocetAtributov());   
+            ImGui::Text("Current number of atributes: %d", formular->getNumberOfAtributes());   
             ImGui::End();
         }
 
         // 3. Okno na pridávanie atribútov
         if (hl_editacne_okno)
         {
-            TypAtributu vybranyTyp;
+            AtributeType vybranyTyp;
             
             ImGui::Begin("Edtiacne okno", &hl_editacne_okno);
             if (ImGui::RadioButton("Numeric",selected==0)) {
@@ -228,19 +223,19 @@ int main(int, char**)
             switch (selected) {
                 
                 case 0:
-                    ImGui::Combo("Typ atribútu",&volbaTypu,numericke_volbyTypu,sizeof(numericke_volbyTypu)/sizeof(numericke_volbyTypu[0]));
+                    ImGui::Combo("Atribute type",&volbaTypu,numericke_volbyTypu,sizeof(numericke_volbyTypu)/sizeof(numericke_volbyTypu[0]));
                     if (volbaTypu == 0) {
-                        ImGui::Combo("Typ posuvaca",&volbaPosuvaca,volby,sizeof(volby)/sizeof(volby[0]));
+                        ImGui::Combo("Edit type",&volbaPosuvaca,volby,sizeof(volby)/sizeof(volby[0]));
                     }
 
-                    ImGui::InputText("Spodná hranica limitu",bufferMin,sizeof(bufferMin));
-                    ImGui::InputText("Vrchná hranica limitu",bufferMax,sizeof(bufferMax));
-                    
+                    ImGui::InputText("Minimum",bufferMin,sizeof(bufferMin));
+                    ImGui::InputText("Maximum",bufferMax,sizeof(bufferMax));
+
                     vybranyTyp = NumtypAtributov[volbaTypu];
                     break;
 
                 case 1:
-                    ImGui::Combo("Typ atribútu",&volbaTypu,char_volbyTypu,sizeof(char_volbyTypu)/sizeof(char_volbyTypu[0]));
+                    ImGui::Combo("Atribute type",&volbaTypu,char_volbyTypu,sizeof(char_volbyTypu)/sizeof(char_volbyTypu[0]));
                     vybranyTyp = CharTypAtributov[volbaTypu];
                     break;
 
@@ -248,10 +243,10 @@ int main(int, char**)
                     break;
                     
             }
-            if (ImGui::Button("Uložiť")) {
-                kontrola = formular->rovnakyNazov(buffer);
+            if (ImGui::Button("Save")) {
+                kontrola = formular->sameName(buffer);
                 if (!kontrola) {
-                    formular->pridajAtributWrapper(volbaPosuvaca,buffer,vybranyTyp,bufferMin,bufferMax);
+                    formular->addAtributeWrapper(volbaPosuvaca,buffer,vybranyTyp,std::atof(bufferMin),std::atof(bufferMax));
                     hl_editacne_okno = false;
                 }
             }

@@ -43,7 +43,37 @@
 },
 {
   "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -g -std=gnu++20 -o CMakeFiles/ImGuiTest.dir/src/main.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/main.cpp",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AtributeDescription.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/AtributeDescription.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/AtributeDescription.cpp",
+  "output": "CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AtributeDescription.cpp.o"
+},
+{
+  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/Descriptions.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/Descriptions.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/Descriptions.cpp",
+  "output": "CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/Descriptions.cpp.o"
+},
+{
+  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Atributes/Values.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Atributes/Values.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Atributes/Values.cpp",
+  "output": "CMakeFiles/myLib.dir/src/libs/Sources/Atributes/Values.cpp.o"
+},
+{
+  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/ControlComponents/NumericInput.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/ControlComponents/NumericInput.cpp",
+  "output": "CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o"
+},
+{
+  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/ControlComponents/Formular.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/ControlComponents/Formular.cpp",
+  "output": "CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o"
+},
+{
+  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -g -std=gnu++20 -o CMakeFiles/ImGuiTest.dir/src/main.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/main.cpp",
   "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/main.cpp",
   "output": "CMakeFiles/ImGuiTest.dir/src/main.cpp.o"
 }

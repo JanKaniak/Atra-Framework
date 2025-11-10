@@ -21,31 +21,42 @@ add_library(imgui
     src/imgui/imgui_stdlib.cpp
 )
 
+target_include_directories(imgui PUBLIC src/imgui)
+
 
 add_library(imgui_backends
     src/imgui/imgui_impl_sdl2.cpp
     src/imgui/imgui_impl_opengl3.cpp
 )
 
+target_include_directories(imgui_backends PUBLIC src/imgui)
+
 add_library(njson
     src/nlohmannJson/json.hpp
 )
 
-
-
-add_executable(ImGuiTest src/main.cpp)
-
-# Prepojenie knižníc
-target_link_libraries(ImGuiTest PRIVATE imgui imgui_backends SDL2 OpenGL njson)
-
-# Zahrnutie hlavičkových súborov
-target_include_directories(imgui PUBLIC src/imgui)
-target_include_directories(imgui_backends PUBLIC src/imgui)
 target_include_directories(njson PUBLIC src/nlohmannJson)
 
-# Testy (ak sú zahrnuté)
-include(CTest)
-enable_testing()
+add_library(myLib
+    src/libs/Sources/Descriptions/AtributeDescription.cpp
+    src/libs/Sources/Descriptions/Descriptions.cpp
+    src/libs/Sources/Atributes/Values.cpp
+    src/libs/Sources/ControlComponents/NumericInput.cpp
+    src/libs/Sources/ControlComponents/Formular.cpp
+)
+
+target_include_directories(myLib PUBLIC src/libs/Headers/Descriptions)
+target_include_directories(myLib PUBLIC src/libs/Headers/Atributes)
+target_include_directories(myLib PUBLIC src/libs/Headers/ControlComponents)
+
+add_executable(ImGuiTest 
+    src/main.cpp)
+
+# Prepojenie knižníc
+target_link_libraries(ImGuiTest PRIVATE imgui imgui_backends SDL2 OpenGL myLib)
+target_link_libraries(myLib PRIVATE imgui njson)
+
+
 
 # Nastavenie verzie balíka pre CPack
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
