@@ -10,8 +10,6 @@
 #include <variant>
 #include <fstream>
 
-using ControlComponentType = std::variant<ControlComponentInt,ControlComponentDouble,ControlComponentChar>;
-
 class Factory {
     public:
     virtual ControlComponent* createEdit(int type) = 0;
@@ -19,24 +17,28 @@ class Factory {
 
 
 
-using IntEditUptr = std::unique_ptr<ControlComponentInt>;
+using IntEditUptr = std::unique_ptr<ControlComponent>;
 
 class IntEditFactory : public Factory
 {
 private:
+    static IntEditFactory* instance;
+private:
     std::map<EditTypeInt, IntEditUptr> prototypes_;
 
+private:
+    IntEditFactory();
+
+    template <typename EditTypeIntT>
+    void registerPrototype();
 public:
+    static IntEditFactory* getInstance();
+
     ControlComponent *createEdit(int type)
     {
         return prototypes_[static_cast<EditTypeInt>(type)]->clone();
     }
-    template <typename EditTypeIntT>
-    void registerPrototype()
-    {
-        IntEditUptr prototype = std::make_unique<EditTypeIntT>();
-        prototypes_[prototype->type_] = std::move(prototype);
-    }
+
 };
 
 //--------------------------------------------------
@@ -89,45 +91,14 @@ class Formular
 private:
     Values *values_;
     std::vector<ControlComponent *> components_;
-    std::unique_ptr<IntEditFactory> factoryInt_;
-    std::unique_ptr<DoubleEditFactory> factoryDouble_;
-    std::unique_ptr<CharEditFactory> factoryChar_;
 
-    std::map<AtributeType, std::unique_ptr<Factory>> decision_;
+    std::map<AtributeType, Factory*> decision_;
 
 public:
     Formular(Values *values);
 
-    void addAtributeWrapper(int editType, std::string name, AtributeType type, double min, double max)
-    {
-        values_->addAtribute(name, type, min, max);
-        auto controller = decision_[type]->createEdit(editType);
-        controller->setAtribute(values_->getLast());
-        components_.push_back(controller);
-    }
-
-    /*void addAtribute(EditTypeInt editType)
-    {
-
-        auto controller = factoryInt_.createEdit(editType);
-        controller->setAtribute(values_->getLast());
-        components_.push_back(controller);
-    }
-
-    void addAtribute(EditTypeDouble editType)
-    {
-        ControlComponentDouble *controller = factoryDouble_.createEdit(editType);
-        controller->setAtribute(values_->getLast());
-        components_.push_back(controller);
-    }
-
-    void addAtribute()
-    {
-        ControlComponentChar *controller = factoryChar_.createEdit();
-        controller->setAtribute(values_->getLast());
-        components_.push_back(controller);
-    }
-*/
+    void addAtribute(int editType, std::string name, AtributeType type, double min, double max);
+    void addAtribute(int editType, std::string name, AtributeType type, double min, double max,std::string value);
     bool sameName(std::string name);
 
     void draw();
@@ -137,4 +108,9 @@ public:
     void readFile(const char *path);
 
     void saveToFile();
+
+// ==========
+
+
+
 };

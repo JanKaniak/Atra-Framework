@@ -10,13 +10,10 @@ class Atribute {
         
     
     public:
-        AtributeType type_;
-
-        Atribute(AtributeType type) : type_(type) {}
-
+        //AtributeType type_;
         inline std::string getName() { return desc_->getName(); }
 
-        inline AtributeType getType() { return type_; }
+        inline AtributeType getType() { return desc_->getType(); }
 
         AtributeDescription* getDescription() {return desc_;};
 
@@ -24,6 +21,7 @@ class Atribute {
         virtual Atribute* clone() = 0;
         virtual void setDescription(AtributeDescription* desc) = 0;
         virtual std::string getValue() = 0;
+        virtual void setValue(std::string value) = 0;
 
 };
 
@@ -32,13 +30,13 @@ class AtributeInt : public Atribute {
         int value_;
     
         public:
-            AtributeInt() : Atribute(AtributeType::Int) {};
+            AtributeInt() {desc_ = new AtributeDescription_int();};
 
             inline int getMin() { return desc_->getMin(); }
 
             inline int getMaximum() { return desc_->getMax(); }
 
-            void setValue(int value) { value_ = (value_ > getMin() && value_ < getMaximum()) ? value : value_; }
+            void setValue(std::string value) override { value_ = (std::stoi(value) > getMin() && std::stoi(value) < getMaximum()) ? std::stoi(value) : value_; }
 
             AtributeInt* clone() override { return new AtributeInt(*this); }
 
@@ -48,6 +46,7 @@ class AtributeInt : public Atribute {
             }
 
             std::string getValue() override { return std::to_string(value_);}
+
 };
 
 class AtributeDouble : public Atribute {
@@ -55,7 +54,7 @@ class AtributeDouble : public Atribute {
         double value_;
     
         public:
-            AtributeDouble() : Atribute(AtributeType::Double) {};
+            AtributeDouble() {desc_ = new AtributeDescription_double();};
 
             const double getMin() {
                 return desc_->getMin(); 
@@ -65,7 +64,7 @@ class AtributeDouble : public Atribute {
                 return desc_->getMax();
             }
 
-            void setValue(double value) { value_ = (value_ > getMin() && value_ < getMaximum()) ? value : value_; }
+            void setValue(std::string value) override { value_ = (std::atof(value.c_str()) > getMin() && std::atof(value.c_str()) < getMaximum()) ? std::atof(value.c_str()) : value_; }
 
             AtributeDouble* clone() override { return new AtributeDouble(*this); }
 
@@ -82,7 +81,7 @@ class AtributeChar : public Atribute {
         char value_[1];
     
         public:
-            AtributeChar() : Atribute(AtributeType::Char) {}
+            AtributeChar() {desc_ = new AtributeDescription_char();};
 
             int getMin() {
                 return desc_->getMin(); 
@@ -92,7 +91,7 @@ class AtributeChar : public Atribute {
                 return desc_->getMax();
             }
 
-            void setValue(char *value) { value_[0] = (sizeof(value) >= getMin()) ? value[0] : value_[0]; }
+            void setValue(std::string value) override { value_[0] = (sizeof(value) >= getMin()) ? value[0] : value_[0]; }
 
             AtributeChar* clone() override { return new AtributeChar(*this); }
 

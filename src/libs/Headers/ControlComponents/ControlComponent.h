@@ -21,12 +21,14 @@ class ControlComponent
 protected:
     std::string atributeName_;
     AtributeType atributeType_;
+    Atribute* atribute_;
 public:
     virtual void draw() = 0;
-    std::string getName() { return atributeName_; };
-    AtributeType getType() { return atributeType_; };
+    std::string getName() { return atribute_->getName(); };
+    AtributeType getType() { return atribute_->getType(); };
     virtual ~ControlComponent() = default;
     virtual void setAtribute(Atribute * atribute) = 0;
+    virtual ControlComponent* clone() = 0;
 };
 
 class ControlComponentChar : public ControlComponent {
@@ -56,16 +58,15 @@ class ControlComponentDouble : public ControlComponent {
 
 
 
-
+template<EditTypeInt TYPE>
 class ControlComponentInt : public ControlComponent {
     protected:
         int value_;
         int minimum_;
         int maximum_;
     public:
-        EditTypeInt type_;
-        ControlComponentInt(EditTypeInt type) {type_ = type;};
-        virtual ControlComponentInt* clone() =0;
+        static constexpr EditTypeInt type_ = TYPE;
+        //virtual ControlComponentInt* clone() =0;
 };
 
 

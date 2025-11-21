@@ -1,13 +1,12 @@
 #pragma once
 #include "ControlComponent.h"
 #include <iostream>
-class IntSlider : public ControlComponentInt {
+class IntSlider : public ControlComponentInt<EditTypeInt::SLIDER> {
     private:
         AtributeInt* atributeint_;
 
     public:
-        IntSlider() : ControlComponentInt(EditTypeInt::SLIDER) {}
-
+        IntSlider(){};
         void draw() override;
 
         ControlComponentInt* clone () override { return new IntSlider(*this);};
@@ -15,12 +14,12 @@ class IntSlider : public ControlComponentInt {
         void setAtribute(Atribute* atribute) override;
 };
 
-class IntVSSlider : public ControlComponentInt {
+class IntVSSlider : public ControlComponentInt<EditTypeInt::VSLIDER> {
     private:
         AtributeInt* atributeint_;
 
     public:
-        IntVSSlider() : ControlComponentInt(EditTypeInt::VSLIDER) {}
+        IntVSSlider(){};
 
         void draw() override;
 
@@ -29,12 +28,12 @@ class IntVSSlider : public ControlComponentInt {
         void setAtribute(Atribute* atribute) override;
 };
 
-class IntDrag : public ControlComponentInt {
+class IntDrag : public ControlComponentInt<EditTypeInt::DRAG> {
     private:
         AtributeInt* atributeint_;
 
     public:
-        IntDrag() : ControlComponentInt(EditTypeInt::DRAG) {}
+        IntDrag(){};
 
         void draw() override;
 

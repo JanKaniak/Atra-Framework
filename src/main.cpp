@@ -246,7 +246,7 @@ int main(int, char**)
             if (ImGui::Button("Save")) {
                 kontrola = formular->sameName(buffer);
                 if (!kontrola) {
-                    formular->addAtributeWrapper(volbaPosuvaca,buffer,vybranyTyp,std::atof(bufferMin),std::atof(bufferMax));
+                    formular->addAtribute(volbaPosuvaca,buffer,vybranyTyp,std::atof(bufferMin),std::atof(bufferMax));
                     hl_editacne_okno = false;
                 }
             }

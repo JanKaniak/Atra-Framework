@@ -17,7 +17,7 @@ public:
     template <typename atributeTypeT>
     void registerPrototype() {
         AtributeUptr prototype = std::make_unique<atributeTypeT>();
-        prototypes_[prototype->type_] = std::move(prototype);
+        prototypes_[prototype->getType()] = std::move(prototype);
     }
 };
 
@@ -53,7 +53,9 @@ class Values {
         Values(){};
         Values(Descriptions* descs);
         
-        void addAtribute(std::string name, AtributeType type,double minimum, double maximum);
+        void addAtributeDescription(std::string name, AtributeType type,double minimum, double maximum);
+
+        void setAtributeValue(std::string name, AtributeType type,std::string value);
 
         int giveInt(std::string name);
 
@@ -62,4 +64,9 @@ class Values {
         inline int getSize() { return atributes_.size(); }
 
         inline Atribute* giveAtribute(int rank) { return atributes_.at(rank); }
+
+        void setValueOfLast(AtributeType type,std::string value) {
+            if (!value.empty() || type == AtributeType::Char)
+                atributes_.at(atributes_.size())->setValue(value);
+        }
 };

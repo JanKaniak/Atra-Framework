@@ -4,7 +4,7 @@
 // Class IntSlider
 void IntSlider::draw() { 
     ImGui::SliderInt(atributeName_.c_str(),&value_,minimum_,maximum_); 
-    atributeint_->setValue(value_);
+    atributeint_->setValue(std::to_string(value_));
 }
 void IntSlider::setAtribute(Atribute *atribute)
 {

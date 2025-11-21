@@ -11,7 +11,7 @@ Values::Values(Descriptions* descs) {
             descFactory_.registerPrototype<AtributeDescription_char>();
 }
 
-void Values::addAtribute(std::string name, AtributeType type,double minimum, double maximum) {
+void Values::addAtributeDescription(std::string name, AtributeType type,double minimum, double maximum) {
             AtributeDescription* desc = descFactory_.createDesc(type);
             desc->setName(name);
             desc->setLimit(minimum, maximum);
@@ -24,6 +24,13 @@ void Values::addAtribute(std::string name, AtributeType type,double minimum, dou
 
 };
 
+void Values::setAtributeValue(std::string name, AtributeType type,std::string value) {
+    for (auto atribute : atributes_) {
+        if (atribute->getType() == type && atribute->getName().compare(name.c_str()) == 0) {
+            atribute->setValue(value);
+        }
+    }
+
 int Values::giveInt(std::string name) {
             for (auto atribute : atributes_) {
                 if (atribute->getName().compare(name) == 0 && atribute->getType() == AtributeType::Int) {
@@ -33,4 +40,6 @@ int Values::giveInt(std::string name) {
                 }
             }
             return -1;
+}
+
 }
