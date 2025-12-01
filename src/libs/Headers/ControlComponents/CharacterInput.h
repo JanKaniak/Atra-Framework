@@ -5,6 +5,8 @@
 #include <tuple>
 #include <variant>
 
+/*
+
 class CharInput : public ControlComponentChar {
     private:
         AtributeChar* atributechar_;
@@ -14,7 +16,7 @@ class CharInput : public ControlComponentChar {
 
         void draw() override {
             ImGui::InputText(atributeName_.c_str(),value_,sizeof(value_));
-            atributechar_->setValue(value_);
+            //atributechar_->setValue(value_);
         }
 
         ControlComponentChar* clone () override { return new CharInput(*this);};
@@ -23,7 +25,7 @@ class CharInput : public ControlComponentChar {
             if (AtributeChar* aatribute = dynamic_cast<AtributeChar*>(atribute)) {
                 atributechar_ = aatribute;
             }
-            value_[0] = atributechar_->getValue()[0];
+            value_[0] = std::get<char>(atributechar_->getValue());
             minimum_ = atributechar_->getMin();
             maximum_ = atributechar_->getMaximum();
             atributeName_ = atributechar_->getName();
@@ -31,3 +33,8 @@ class CharInput : public ControlComponentChar {
         }
 
 };
+
+
+
+
+*/

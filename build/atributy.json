@@ -1,24 +1,14 @@
 [
-{ "Atribute name": "Attribute1",  "Atribute type": 0,    "Minimum": "0", "Maximum": "100","Value" : "10" },
-{ "Atribute name": "Attribute2",  "Atribute type": 1, "Minimum": "0.0",  "Maximum": "10.0", "Value" : "15.5"},
-{ "Atribute name": "Attribute3",  "Atribute type": 3,   "Minimum": "0", "Maximum": "0", "Value" : "R" },
-{ "Atribute name": "Attribute4",  "Atribute type": 0,    "Minimum": "-50",  "Maximum": "50","value" : "1" },
-{ "Atribute name": "Attribute5",  "Atribute type": 1, "Minimum": "1.0",  "Maximum": "5.5", "Value" : "7.8" },
-{ "Atribute name": "Attribute6",  "Atribute type": 3,   "Minimum": "0", "Maximum": "0", "Value" : "Q" },
-{ "Atribute name": "Attribute7",  "Atribute type": 0,    "Minimum": "10",   "Maximum": "1000", "Value" : "500" },
-{ "Atribute name": "Attribute8",  "Atribute type": 1, "Minimum": "0.5",  "Maximum": "99.9" },
-{ "Atribute name": "Attribute9",  "Atribute type": 3,   "Minimum": "0", "Maximum": "0" },
-{ "Atribute name": "Attribute10", "Atribute type": 0,    "Minimum": "-100","Maximum": "0" },
-{"Atribute name": "Attribute11", "Atribute type": 1, "Minimum": "-5.5","Maximum": "5.5" },
-{"Atribute name": "Attribute12", "Atribute type": 3,   "Minimum": "0", "Maximum": "0" },
-{ "Atribute name": "Attribute13", "Atribute type": 0,    "Minimum": "1",    "Maximum": "10" },
-{ "Atribute name": "Attribute14", "Atribute type": 1, "Minimum": "2.2",  "Maximum": "22.2" },
-{ "Atribute name": "Attribute15", "Atribute type": 3,   "Minimum": "0", "Maximum": "0" },
-{ "Atribute name": "Attribute16", "Atribute type": 0,    "Minimum": "0",    "Maximum": "500" },
-{ "Atribute name": "Attribute17", "Atribute type": 1, "Minimum": "3.0",  "Maximum": "30.0" },
-{ "Atribute name": "Attribute18", "Atribute type": 3,   "Minimum": "0", "Maximum": "0" },
-{ "Atribute name": "Attribute19", "Atribute type": 0,    "Minimum": "-10",  "Maximum": "10" },
-{ "Atribute name": "Attribute20", "Atribute type": 1, "Minimum": "0.1",  "Maximum": "9.9" }
+{
+    "Attribute type" : "INT",
+    "Attributes" : [
+        {"Attribute name" : "Attribute1", "Minimum": 0, "Maximum": 100,"Value" : 10},
+        {"Attribute name" : "Attribute4", "Minimum": -50,  "Maximum": 50, "Value" : 1},
+        {"Attribute name" : "Attribute19", "Minimum": -10,  "Maximum": 10, "Value" : -4},
+        {"Attribute name" : "Attribute7", "Minimum": 10,   "Maximum": 1000, "Value" : 500}
+    ]
+    
+}
 ]
 
 

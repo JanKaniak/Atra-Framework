@@ -26,36 +26,37 @@
 #include "libs/Headers/ControlComponents/Formular.h"
 
 // Main code
-int main(int, char**)
+int main(int, char **)
 {
-    Descriptions* descs = new Descriptions();
-    Values* values = new Values(descs);
-    Formular* formular = new Formular(values);
+    AttributeDescriptions *attributeDesc = new AttributeDescriptions();
+    Attributes *attributes = new Attributes(attributeDesc);
+    Formular *formular = new Formular(attributes);
+    bool mainWindows = true;
     bool hl_editacne_okno = false;
     bool numericke_editacne_okno = false;
     bool char_editacne_okno = false;
     bool boolean_edticane_okno = false;
+    int numberOfLoadedAtributes = INT_MAX;
     bool kontrola = false;
     char buffer[40] = "Atribut";
     char bufferMin[40] = "0";
     char bufferMax[40] = "50";
     int volbaTypu = 0;
     int volbaPosuvaca = 0;
-    EditTypeInt typPosuvacov[] = {EditTypeInt::SLIDER, EditTypeInt::VSLIDER ,EditTypeInt::DRAG};
+    std::string typPosuvacov[] = {"SLIDER", "VSLIDER", "DRAG"};
     EditTypeDouble typPosuvacovDouble[] = {EditTypeDouble::SLIDER, EditTypeDouble::VSLIDER, EditTypeDouble::DRAG};
-    AtributeType NumtypAtributov[] = {AtributeType::Int, AtributeType::Double};
-    AtributeType CharTypAtributov[] = {AtributeType::Char};
-    const char* numericke_volbyTypu[] = {"Int", "Double", "Float"};
-    const char* char_volbyTypu[] = {"Char", "String"};
-    const char* volby[] = {"Slider", "VS_Slider","Drag"};
+    AttributeType NumtypAttributov[] = {AttributeType::INT, AttributeType::DOUBLE};
+    AttributeType CharTypAtributov[] = {AttributeType::CHAR};
+    const char *numericke_volbyTypu[] = {"Int", "Double", "Float"};
+    const char *char_volbyTypu[] = {"Char", "String"};
+    const char *volby[] = {"Slider", "VS_Slider", "Drag"};
 
     bool moznost1 = false;
     bool moznost2 = false;
 
     int selected = 0;
 
-    
-
+    bool selectedMenu = false;
 
     // Setup SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
@@ -67,21 +68,21 @@ int main(int, char**)
     // Decide GL+GLSL versions
 #if defined(IMGUI_IMPL_OPENGL_ES2)
     // GL ES 2.0 + GLSL 100
-    const char* glsl_version = "#version 100";
+    const char *glsl_version = "#version 100";
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
 #elif defined(__APPLE__)
     // GL 3.2 Core + GLSL 150
-    const char* glsl_version = "#version 150";
+    const char *glsl_version = "#version 150";
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 #else
     // GL 3.0 + GLSL 130
-    const char* glsl_version = "#version 130";
+    const char *glsl_version = "#version 130";
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, 0);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
@@ -98,7 +99,7 @@ int main(int, char**)
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
     SDL_WindowFlags window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_ALLOW_HIGHDPI);
-    SDL_Window* window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
+    SDL_Window *window = SDL_CreateWindow("Dear ImGui SDL2+OpenGL3 example", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1280, 720, window_flags);
     if (window == nullptr)
     {
         printf("Error: SDL_CreateWindow(): %s\n", SDL_GetError());
@@ -112,20 +113,21 @@ int main(int, char**)
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;         // Enable Docking
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;       // Enable Multi-Viewport / Platform Windows
-    //io.ConfigViewportsNoAutoMerge = true;
-    //io.ConfigViewportsNoTaskBarIcon = true;
+    ImGuiIO &io = ImGui::GetIO();
+    (void)io;
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;  // Enable Gamepad Controls
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;     // Enable Docking
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;   // Enable Multi-Viewport / Platform Windows
+    // io.ConfigViewportsNoAutoMerge = true;
+    // io.ConfigViewportsNoTaskBarIcon = true;
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
-    //ImGui::StyleColorsLight();
+    // ImGui::StyleColorsLight();
 
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
-    ImGuiStyle& style = ImGui::GetStyle();
+    ImGuiStyle &style = ImGui::GetStyle();
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
     {
         style.WindowRounding = 0.0f;
@@ -176,85 +178,139 @@ int main(int, char**)
             static float f = 0.0f;
             static int counter = 0;
 
-            ImGui::Begin("Main");                         
-            if (ImGui::Button("Add an atribute")) {
+            int minHeight = (formular->getNumberOfComponents() * 30) + 100;
+            //ImGui::SetNextWindowSizeConstraints(ImVec2(500, minHeight), ImVec2(FLT_MAX, FLT_MAX));
+            ImGuiViewport *mainViewPort = ImGui::GetMainViewport();
+            ImVec2 pos = mainViewPort->Pos;
+            ImVec2 size = mainViewPort->Size;
+            ImGui::SetNextWindowPos(pos);
+            ImGui::SetNextWindowSize(ImVec2(size.x / 3, size.y));
+            ImGui::Begin("Main", &mainWindows, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
+            ImGui::BeginMenuBar();
+            if (ImGui::MenuItem("Load","L",&selectedMenu)) {
+                selectedMenu = true;
+            }
+            ImGui::EndMenuBar();
+            if (ImGui::Button("Add an atribute"))
+            {
                 hl_editacne_okno = true;
             }
-            
-            // 2.1 Výpis
-            formular->draw();
 
-            if(ImGui::Button("Load",ImVec2(70,30))) {
-                formular->readFile("atributy.json");
+            // 2.1 Výpis
+            ImGui::SetNextWindowPos(ImVec2(pos.x+(size.x/3)+5, pos.y));
+            ImGui::SetNextWindowSize(ImVec2(size.x / 3, size.y));
+            //ImGui::SameLine();
+            ImGui::Begin("Atributes", &mainWindows, ImGuiWindowFlags_NoCollapse);
+            formular->draw();
+            ImGui::End();
+
+            if (ImGui::Button("Load Attribute description", ImVec2(150, 30)))
+            {
+                numberOfLoadedAtributes = formular->readFileDescriptions("atributy.json");
             }
-            
-            if(ImGui::Button("Save",ImVec2(70,30))) {
+
+            if (ImGui::Button("Load Control types", ImVec2(150, 30)))
+            {
+                bool gg = formular->readFileControlTypes("controlTypes.json");
+            }
+
+            if (numberOfLoadedAtributes == 0)
+            {
+                if (formular->showWarning())
+                {
+                    numberOfLoadedAtributes = INT_MAX;
+                }
+                ImGui::End();
+            } else if (numberOfLoadedAtributes > 0 && numberOfLoadedAtributes != INT_MAX){
+                ImGui::Begin("Info");
+                ImGui::Text("Succesfully loaded %d attributes.",numberOfLoadedAtributes);
+                if (ImGui::Button("OK", ImVec2(70, 50)))
+                {
+                    numberOfLoadedAtributes = INT_MAX;
+                }
+                ImGui::End();
+            }
+
+            if (ImGui::Button("Save", ImVec2(70, 30)))
+            {
                 formular->saveToFile();
             }
 
-            ImGui::SetCursorPos(ImVec2(560,400));
-            ImGui::Text("Current number of atributes: %d", formular->getNumberOfAtributes());   
+            ImVec2 windowSize = ImGui::GetWindowSize();
+            ImGui::SetCursorPos(ImVec2(20, windowSize.y - 20));
+            if (formular->getNumberOfAttributes() < 500000)
+            {
+                ImGui::Text("Current number of atributes: %d", formular->getNumberOfAttributes());
+            }
+            else
+            {
+                ImGui::Text("Current number of atributes: 500000+");
+            }
             ImGui::End();
         }
 
         // 3. Okno na pridávanie atribútov
         if (hl_editacne_okno)
         {
-            AtributeType vybranyTyp;
-            
+            AttributeType vybranyTyp;
+
             ImGui::Begin("Edtiacne okno", &hl_editacne_okno);
-            if (ImGui::RadioButton("Numeric",selected==0)) {
+            if (ImGui::RadioButton("Numeric", selected == 0))
+            {
                 selected = 0;
             }
             ImGui::SameLine();
-            if (ImGui::RadioButton("Charakter",selected==1)) {
+            if (ImGui::RadioButton("Charakter", selected == 1))
+            {
                 selected = 1;
             }
 
             ImGui::SameLine();
-            if (ImGui::RadioButton("Boolean",selected==2)) {
+            if (ImGui::RadioButton("Boolean", selected == 2))
+            {
                 selected = 2;
             }
 
-            ImGui::InputText("Názov atribútut",buffer,sizeof(buffer));
-            if (kontrola) {
+            ImGui::InputText("Názov atribútut", buffer, sizeof(buffer));
+            if (kontrola)
+            {
                 ImGui::Text("Meno atributu už existuje!");
             }
-            switch (selected) {
-                
-                case 0:
-                    ImGui::Combo("Atribute type",&volbaTypu,numericke_volbyTypu,sizeof(numericke_volbyTypu)/sizeof(numericke_volbyTypu[0]));
-                    if (volbaTypu == 0) {
-                        ImGui::Combo("Edit type",&volbaPosuvaca,volby,sizeof(volby)/sizeof(volby[0]));
-                    }
+            switch (selected)
+            {
 
-                    ImGui::InputText("Minimum",bufferMin,sizeof(bufferMin));
-                    ImGui::InputText("Maximum",bufferMax,sizeof(bufferMax));
+            case 0:
+                ImGui::Combo("Atribute type", &volbaTypu, numericke_volbyTypu, sizeof(numericke_volbyTypu) / sizeof(numericke_volbyTypu[0]));
+                if (volbaTypu == 0)
+                {
+                    ImGui::Combo("Edit type", &volbaPosuvaca, volby, sizeof(volby) / sizeof(volby[0]));
+                }
 
-                    vybranyTyp = NumtypAtributov[volbaTypu];
-                    break;
+                ImGui::InputText("Minimum", bufferMin, sizeof(bufferMin));
+                ImGui::InputText("Maximum", bufferMax, sizeof(bufferMax));
 
-                case 1:
-                    ImGui::Combo("Atribute type",&volbaTypu,char_volbyTypu,sizeof(char_volbyTypu)/sizeof(char_volbyTypu[0]));
-                    vybranyTyp = CharTypAtributov[volbaTypu];
-                    break;
+                vybranyTyp = NumtypAttributov[volbaTypu];
+                break;
 
-                default:
-                    break;
-                    
+            case 1:
+                ImGui::Combo("Atribute type", &volbaTypu, char_volbyTypu, sizeof(char_volbyTypu) / sizeof(char_volbyTypu[0]));
+                vybranyTyp = CharTypAtributov[volbaTypu];
+                break;
+
+            default:
+                break;
             }
-            if (ImGui::Button("Save")) {
+            if (ImGui::Button("Save"))
+            {
                 kontrola = formular->sameName(buffer);
-                if (!kontrola) {
-                    formular->addAtribute(volbaPosuvaca,buffer,vybranyTyp,std::atof(bufferMin),std::atof(bufferMax));
+                if (!kontrola)
+                {
+                    formular->addAttribute(std::string(buffer), typPosuvacov[volbaPosuvaca], vybranyTyp, std::atoi(bufferMin), std::atoi(bufferMax));
                     hl_editacne_okno = false;
                 }
             }
-            
-           
+
             ImGui::End();
-            
-            
         }
 
         // Rendering
@@ -269,7 +325,7 @@ int main(int, char**)
         //  For this specific demo app we could also call SDL_GL_MakeCurrent(window, gl_context) directly)
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
-            SDL_Window* backup_current_window = SDL_GL_GetCurrentWindow();
+            SDL_Window *backup_current_window = SDL_GL_GetCurrentWindow();
             SDL_GLContext backup_current_context = SDL_GL_GetCurrentContext();
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
@@ -293,5 +349,3 @@ int main(int, char**)
 
     return 0;
 }
-
-

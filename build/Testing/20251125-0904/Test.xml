@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="Linux-c++"
+	BuildStamp="20251125-0904-Experimental"
+	Name="FBI-office-pc"
+	Generator="ctest-3.28.3"
+	CompilerName="/usr/bin/c++"
+	CompilerVersion="13.3.0"
+	OSName="Linux"
+	Hostname="FBI-office-pc"
+	OSRelease="6.11.0-19-generic"
+	OSVersion="#19~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Mon Feb 17 11:51:52 UTC 2"
+	OSPlatform="x86_64"
+	Is64Bits="1"
+	VendorString="AuthenticAMD"
+	VendorID="Advanced Micro Devices"
+	FamilyID="23"
+	ModelID="104"
+	ProcessorCacheSize="512"
+	NumberOfLogicalCPU="8"
+	NumberOfPhysicalCPU="4"
+	TotalVirtualMemory="4095"
+	TotalPhysicalMemory="5784"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="1346.91"
+	>
+	<Testing>
+		<StartDateTime>Nov 25 17:58 CET</StartDateTime>
+		<StartTestTime>1764089934</StartTestTime>
+		<TestList/>
+		<EndDateTime>Nov 25 17:58 CET</EndDateTime>
+		<EndTestTime>1764089934</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>

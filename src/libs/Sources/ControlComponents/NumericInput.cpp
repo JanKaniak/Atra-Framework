@@ -1,57 +1,62 @@
 #include "NumericInput.h"
 #include "imgui.h"
 
+
+
 // Class IntSlider
 void IntSlider::draw() { 
-    ImGui::SliderInt(atributeName_.c_str(),&value_,minimum_,maximum_); 
-    atributeint_->setValue(std::to_string(value_));
+    if (ImGui::SliderInt(attributeint_->getName().c_str(),&value_,attributeint_->getMin(),attributeint_->getMaximum())) {
+        attributeint_->setValue(value_);
+    }
+    
 }
-void IntSlider::setAtribute(Atribute *atribute)
+void IntSlider::setAttribute(Attribute *attribute)
 {
-    if (AtributeInt *aatribute = dynamic_cast<AtributeInt *>(atribute))
+    if (dynamic_cast<AttributeInt *>(attribute))
     {
-        atributeint_ = aatribute;
-        value_ = std::stoi(atributeint_->getValue());
-        minimum_ = atributeint_->getMin();
-        maximum_ = atributeint_->getMaximum();
-        atributeName_ = atributeint_->getName();
-        atributeType_ = atributeint_->getType();
+        attributeint_ = dynamic_cast<AttributeInt *>(attribute);
+        value_ = std::get<int>(attributeint_->getValue());
+        minimum_ = attributeint_->getMin();
+        maximum_ = attributeint_->getMaximum();
     }
 }
 
 //---------------------------------------------------------------------------------------
 
 // Class IntVSSlider
-void IntVSSlider::draw() { ImGui::VSliderInt(atributeName_.c_str(),ImVec2(20,50), &value_, minimum_, maximum_);}
-void IntVSSlider::setAtribute(Atribute *atribute)
+void IntVSSlider::draw() { ImGui::VSliderInt(attributeint_->getName().c_str(),ImVec2(20,50), &value_, attributeint_->getMin(), attributeint_->getMaximum());}
+void IntVSSlider::setAttribute(Attribute *attribute)
 {
-    if (AtributeInt *aatribute = dynamic_cast<AtributeInt *>(atribute))
+    if (dynamic_cast<AttributeInt *>(attribute))
     {
-        atributeint_ = aatribute;
-        value_ = std::atof(atributeint_->getValue().c_str());
-        minimum_ = atributeint_->getMin();
-        maximum_ = atributeint_->getMaximum();
-        atributeName_ = atributeint_->getName();
-        atributeType_ = atributeint_->getType();
+        attributeint_ = dynamic_cast<AttributeInt *>(attribute);
+        value_ = std::get<int>(attributeint_->getValue());
+        minimum_ = attributeint_->getMin();
+        maximum_ = attributeint_->getMaximum();
+        
     }
 }
 
 //---------------------------------------------------------------------------------------
 
 // Class IntDrag
-void IntDrag::draw() { ImGui::DragInt(atributeName_.c_str(),&value_,minimum_,maximum_); }
-void IntDrag::setAtribute(Atribute *atribute)
+void IntDrag::draw() { ImGui::DragInt(attributeint_->getName().c_str(),&value_,1.0f,attributeint_->getMin(),attributeint_->getMaximum()); }
+void IntDrag::setAttribute(Attribute *attribute)
 {
-    if (AtributeInt *aatribute = dynamic_cast<AtributeInt *>(atribute))
+    if (dynamic_cast<AttributeInt *>(attribute))
     {
-        atributeint_ = aatribute;
+        
+    
+    attributeint_ = dynamic_cast<AttributeInt *>(attribute);
+    value_ = std::get<int>(attributeint_->getValue());
+    minimum_ = attributeint_->getMin();
+    maximum_ = attributeint_->getMaximum();
     }
-    value_ = std::atof(atributeint_->getValue().c_str());
-    minimum_ = atributeint_->getMin();
-    maximum_ = atributeint_->getMaximum();
-    atributeName_ = atributeint_->getName();
-    atributeType_ = atributeint_->getType();
 }
+
+/*
+
+
 
 //---------------------------------------------------------------------------------------
 
@@ -63,7 +68,7 @@ void DoubleSlider::setAtribute(Atribute *atribute)
     {
         atributedouble_ = aatribute;
     }
-    value_ = std::atof(atributedouble_->getValue().c_str());
+    value_ = std::get<double>(atributedouble_->getValue());
     minimum_ = atributedouble_->getMin();
     maximum_ = atributedouble_->getMaximum();
     atributeName_ = atributedouble_->getName();
@@ -80,7 +85,7 @@ void DoubleVSSlider::setAtribute(Atribute *atribute)
     {
         atributedouble_ = aatribute;
     }
-    value_ = std::atof(atributedouble_->getValue().c_str());
+    value_ = std::get<double>(atributedouble_->getValue());
     minimum_ = atributedouble_->getMin();
     maximum_ = atributedouble_->getMaximum();
     atributeName_ = atributedouble_->getName();
@@ -97,7 +102,7 @@ void DoubleDrag::setAtribute(Atribute *atribute)
     {
         atributedouble_ = aatribute;
     }
-    value_ = std::atof(atributedouble_->getValue().c_str());
+    value_ = std::get<double>(atributedouble_->getValue());
     minimum_ = atributedouble_->getMin();
     maximum_ = atributedouble_->getMaximum();
     atributeName_ = atributedouble_->getName();
@@ -105,3 +110,7 @@ void DoubleDrag::setAtribute(Atribute *atribute)
 }
 
 //--------------------------------------------------------------------------------------
+
+
+
+*/

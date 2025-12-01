@@ -1,48 +1,52 @@
 #pragma once
 #include "ControlComponent.h"
 #include <iostream>
-class IntSlider : public ControlComponentInt<EditTypeInt::SLIDER> {
-    private:
-        AtributeInt* atributeint_;
+#include <variant>
 
+class IntSlider : public ControlComponentInt<EditTypeInt::SLIDER> {
+    
+    private:
+        AttributeInt* attributeint_;
     public:
         IntSlider(){};
         void draw() override;
-
-        ControlComponentInt* clone () override { return new IntSlider(*this);};
-
-        void setAtribute(Atribute* atribute) override;
+        std::string getName() override { return attributeint_->getName();};
+        AttributeType getType() override {return attributeint_->getType();};
+        std::unique_ptr<ControlComponent> clone () override { return std::make_unique<IntSlider>(*this);};
+        void setAttribute(Attribute* attribute) override;
 };
 
 class IntVSSlider : public ControlComponentInt<EditTypeInt::VSLIDER> {
     private:
-        AtributeInt* atributeint_;
+        AttributeInt* attributeint_;
 
     public:
         IntVSSlider(){};
 
         void draw() override;
+        std::string getName() override { return attributeint_->getName();};
+        AttributeType getType() override {return attributeint_->getType();};
+        std::unique_ptr<ControlComponent> clone () override { return std::make_unique<IntVSSlider>(*this);}
 
-        ControlComponentInt* clone () override { return new IntVSSlider(*this);}
-
-        void setAtribute(Atribute* atribute) override;
+        void setAttribute(Attribute* attribute) override;
 };
 
 class IntDrag : public ControlComponentInt<EditTypeInt::DRAG> {
     private:
-        AtributeInt* atributeint_;
+        AttributeInt* attributeint_;
 
     public:
         IntDrag(){};
 
         void draw() override;
-
-        ControlComponentInt* clone () override { return new IntDrag(*this);};
-        void setAtribute(Atribute* atribute) override;
+        std::string getName() override { return attributeint_->getName();};
+        AttributeType getType() override {return attributeint_->getType();};
+        std::unique_ptr<ControlComponent> clone () override { return std::make_unique<IntDrag>(*this);};
+        void setAttribute(Attribute* attribute) override;
 };
 
 
-
+/*
 
 //------------------------------------------------------------------------------------------
 
@@ -94,3 +98,6 @@ class DoubleDrag : public ControlComponentDouble {
 
 };
 
+
+
+*/

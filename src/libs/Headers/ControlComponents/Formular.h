@@ -1,7 +1,8 @@
 #pragma once
-#include "Values.h"
+#include "Attributes.h"
 #include "NumericInput.h"
 #include "CharacterInput.h"
+#include "json.hpp"
 
 #include <iostream>
 #include <map>
@@ -10,9 +11,12 @@
 #include <variant>
 #include <fstream>
 
+using AttributeTypeVariant = std::variant<int,double,char>;
+
+
 class Factory {
     public:
-    virtual ControlComponent* createEdit(int type) = 0;
+    virtual std::unique_ptr<ControlComponent> createEdit(std::string type) = 0;
 };
 
 
@@ -25,6 +29,7 @@ private:
     static IntEditFactory* instance;
 private:
     std::map<EditTypeInt, IntEditUptr> prototypes_;
+    std::map<std::string,EditTypeInt> converter {{"SLIDER",EditTypeInt::SLIDER},{"VSLIDER",EditTypeInt::VSLIDER},{"DRAG",EditTypeInt::DRAG}};
 
 private:
     IntEditFactory();
@@ -34,9 +39,13 @@ private:
 public:
     static IntEditFactory* getInstance();
 
-    ControlComponent *createEdit(int type)
+    std::unique_ptr<ControlComponent> createEdit(std::string editType)
     {
-        return prototypes_[static_cast<EditTypeInt>(type)]->clone();
+        EditTypeInt edit = EditTypeInt::SLIDER;
+        if (converter.contains(editType)) {
+            edit = converter[editType];
+        }
+        return prototypes_[edit]->clone();
     }
 
 };
@@ -48,11 +57,15 @@ class DoubleEditFactory : public Factory
 {
 private:
     std::map<EditTypeDouble, DoubleEditUptr> prototypes_;
-
+    std::map<std::string,EditTypeDouble> converter {{"SLIDER",EditTypeDouble::SLIDER},{"VSLIDER",EditTypeDouble::VSLIDER},{"DRAG",EditTypeDouble::DRAG}};
 public:
-    ControlComponent *createEdit(int type)
+    std::unique_ptr<ControlComponent> createEdit(std::string editType)
     {
-        return prototypes_[static_cast<EditTypeDouble>(type)]->clone();
+        EditTypeDouble edit = EditTypeDouble::SLIDER;
+        if (converter.contains(editType)) {
+            edit = converter[editType];
+        }
+        return prototypes_[edit]->clone();
     }
 
     template <typename EditTypeDoubleT>
@@ -72,7 +85,7 @@ private:
     CharEditUptr prototype;
 
 public:
-    ControlComponent *createEdit(int type)
+    std::unique_ptr<ControlComponent> createEdit(std::string type)
     {
         return prototype->clone();
     }
@@ -89,25 +102,50 @@ public:
 class Formular
 {
 private:
-    Values *values_;
-    std::vector<ControlComponent *> components_;
-
-    std::map<AtributeType, Factory*> decision_;
+    bool openedWindow;
+    Attributes *attributes_;
+    std::vector<std::unique_ptr<ControlComponent>> components_;
+    std::map<AttributeType, Factory*> decision_;
+    std::map<std::string,AttributeType> converter_ =  {{"INT", AttributeType::INT},{"DOUBLE", AttributeType::DOUBLE},{"CHAR",AttributeType::CHAR}};
+    std::map<std::string,std::function<bool(nlohmann::json&)>> decision2_ =  { 
+        {"INT", [&](nlohmann::json& tempJson) {
+            for (auto& it : tempJson) {
+                if (!this->addAttribute(it["Attribute name"].get<std::string>(),AttributeType::INT,it["Minimum"].get<int>(),it["Maximum"].get<int>(),it["Value"].get<int>())) {
+                    return false;
+                }
+            }
+            return true;
+        }
+    }
+    };
 
 public:
-    Formular(Values *values);
+    Formular(Attributes *attributes);
 
-    void addAtribute(int editType, std::string name, AtributeType type, double min, double max);
-    void addAtribute(int editType, std::string name, AtributeType type, double min, double max,std::string value);
-    bool sameName(std::string name);
+    void addAttribute(std::string name, 
+                     std::string editType, 
+                     AttributeType type, 
+                     AttributeTypeVariant min, 
+                     AttributeTypeVariant max);
+    
+    bool addAttribute(std::string name,  
+                     AttributeType type, 
+                     AttributeTypeVariant min, 
+                     AttributeTypeVariant max,
+                     AttributeTypeVariant value);
 
+    bool addControlType(std::string atributeName, std::string edtitType);
+    
     void draw();
-
-    inline int getNumberOfAtributes() { return values_->getSize(); }
-
-    void readFile(const char *path);
-
+    inline int getNumberOfAttributes() { return attributes_->getSize(); }
+    inline int getNumberOfComponents() { return components_.size();}
+    int readFileDescriptions(const char *path);
+    bool readFileControlTypes(const char *path);
     void saveToFile();
+    bool sameName(std::string name);
+    bool showWarning();
+    bool isEmpty() { return components_.empty(); };
+    
 
 // ==========
 

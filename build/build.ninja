@@ -140,71 +140,46 @@ build libimgui_backends.a: CXX_STATIC_LIBRARY_LINKER__imgui_backends_Debug CMake
   TARGET_PDB = imgui_backends.a.dbg
 
 # =============================================================================
-# Object build statements for STATIC_LIBRARY target njson
-
-
-#############################################
-# Order-only phony target for njson
-
-build cmake_object_order_depends_target_njson: phony || CMakeFiles/njson.dir
-
-
-# =============================================================================
-# Link build statements for STATIC_LIBRARY target njson
-
-
-#############################################
-# Link the static library libnjson.a
-
-build libnjson.a: CXX_STATIC_LIBRARY_LINKER__njson_Debug
-  LANGUAGE_COMPILE_FLAGS = -g
-  OBJECT_DIR = CMakeFiles/njson.dir
-  POST_BUILD = :
-  PRE_LINK = :
-  TARGET_FILE = libnjson.a
-  TARGET_PDB = njson.a.dbg
-
-# =============================================================================
 # Object build statements for STATIC_LIBRARY target myLib
 
 
 #############################################
 # Order-only phony target for myLib
 
-build cmake_object_order_depends_target_myLib: phony || cmake_object_order_depends_target_imgui cmake_object_order_depends_target_njson
+build cmake_object_order_depends_target_myLib: phony || cmake_object_order_depends_target_imgui
 
-build CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AtributeDescription.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/AtributeDescription.cpp || cmake_object_order_depends_target_myLib
-  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AtributeDescription.cpp.o.d
+build CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/AttributeDescription.cpp || cmake_object_order_depends_target_myLib
+  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions
 
-build CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/Descriptions.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/Descriptions.cpp || cmake_object_order_depends_target_myLib
-  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/Descriptions.cpp.o.d
+build CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/AttributeDescriptions.cpp || cmake_object_order_depends_target_myLib
+  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions
 
-build CMakeFiles/myLib.dir/src/libs/Sources/Atributes/Values.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Atributes/Values.cpp || cmake_object_order_depends_target_myLib
-  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Atributes/Values.cpp.o.d
+build CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Attributes/Attributes.cpp || cmake_object_order_depends_target_myLib
+  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui
   OBJECT_DIR = CMakeFiles/myLib.dir
-  OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/Atributes
+  OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/Attributes
 
 build CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/ControlComponents/NumericInput.cpp || cmake_object_order_depends_target_myLib
   DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents
 
 build CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/ControlComponents/Formular.cpp || cmake_object_order_depends_target_myLib
   DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents
 
@@ -216,7 +191,7 @@ build CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o: CX
 #############################################
 # Link the static library libmyLib.a
 
-build libmyLib.a: CXX_STATIC_LIBRARY_LINKER__myLib_Debug CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AtributeDescription.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/Descriptions.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Atributes/Values.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o || libimgui.a libnjson.a
+build libmyLib.a: CXX_STATIC_LIBRARY_LINKER__myLib_Debug CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o || libimgui.a
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/myLib.dir
   POST_BUILD = :
@@ -231,12 +206,12 @@ build libmyLib.a: CXX_STATIC_LIBRARY_LINKER__myLib_Debug CMakeFiles/myLib.dir/sr
 #############################################
 # Order-only phony target for ImGuiTest
 
-build cmake_object_order_depends_target_ImGuiTest: phony || cmake_object_order_depends_target_imgui cmake_object_order_depends_target_imgui_backends cmake_object_order_depends_target_myLib cmake_object_order_depends_target_njson
+build cmake_object_order_depends_target_ImGuiTest: phony || cmake_object_order_depends_target_imgui cmake_object_order_depends_target_imgui_backends cmake_object_order_depends_target_myLib
 
 build CMakeFiles/ImGuiTest.dir/src/main.cpp.o: CXX_COMPILER__ImGuiTest_unscanned_Debug /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/main.cpp || cmake_object_order_depends_target_ImGuiTest
   DEP_FILE = CMakeFiles/ImGuiTest.dir/src/main.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson
   OBJECT_DIR = CMakeFiles/ImGuiTest.dir
   OBJECT_FILE_DIR = CMakeFiles/ImGuiTest.dir/src
 
@@ -248,9 +223,9 @@ build CMakeFiles/ImGuiTest.dir/src/main.cpp.o: CXX_COMPILER__ImGuiTest_unscanned
 #############################################
 # Link the executable ImGuiTest
 
-build ImGuiTest: CXX_EXECUTABLE_LINKER__ImGuiTest_Debug CMakeFiles/ImGuiTest.dir/src/main.cpp.o | libimgui.a libimgui_backends.a libmyLib.a libimgui.a libnjson.a || libimgui.a libimgui_backends.a libmyLib.a libnjson.a
+build ImGuiTest: CXX_EXECUTABLE_LINKER__ImGuiTest_Debug CMakeFiles/ImGuiTest.dir/src/main.cpp.o | libimgui.a libimgui_backends.a libmyLib.a libimgui.a || libimgui.a libimgui_backends.a libmyLib.a
   FLAGS = -g
-  LINK_LIBRARIES = libimgui.a  libimgui_backends.a  -lSDL2  -lOpenGL  libmyLib.a  libimgui.a  libnjson.a
+  LINK_LIBRARIES = libimgui.a  libimgui_backends.a  -lSDL2  -lOpenGL  libmyLib.a  libimgui.a
   OBJECT_DIR = CMakeFiles/ImGuiTest.dir
   POST_BUILD = :
   PRE_LINK = :
@@ -313,8 +288,6 @@ build imgui_backends: phony libimgui_backends.a
 
 build myLib: phony libmyLib.a
 
-build njson: phony libnjson.a
-
 # =============================================================================
 # Folder targets.
 
@@ -323,7 +296,7 @@ build njson: phony libnjson.a
 #############################################
 # Folder: /home/jecko192/Desktop/Bakalarka/ImGuiTest/build
 
-build all: phony libimgui.a libimgui_backends.a libnjson.a libmyLib.a ImGuiTest
+build all: phony libimgui.a libimgui_backends.a libmyLib.a ImGuiTest
 
 # =============================================================================
 # Built-in targets

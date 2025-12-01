@@ -1,5 +1,5 @@
 #pragma once
-#include "../Atributes/Atribute.h"
+#include "../Attributes/Attribute.h"
 #include <variant>
 
 enum class EditTypeDouble {
@@ -18,17 +18,13 @@ enum class EditTypeInt {
 
 class ControlComponent
 {
-protected:
-    std::string atributeName_;
-    AtributeType atributeType_;
-    Atribute* atribute_;
 public:
     virtual void draw() = 0;
-    std::string getName() { return atribute_->getName(); };
-    AtributeType getType() { return atribute_->getType(); };
+    virtual std::string getName() = 0;
+    virtual AttributeType getType() = 0;
     virtual ~ControlComponent() = default;
-    virtual void setAtribute(Atribute * atribute) = 0;
-    virtual ControlComponent* clone() = 0;
+    virtual void setAttribute(Attribute * attribute) = 0;
+    virtual std::unique_ptr<ControlComponent> clone() = 0;
 };
 
 class ControlComponentChar : public ControlComponent {
@@ -39,7 +35,7 @@ class ControlComponentChar : public ControlComponent {
 
     public:
         ControlComponentChar() {};
-        virtual ControlComponentChar* clone() =0;
+        virtual std::unique_ptr<ControlComponent> clone() =0;
 };
 
 
@@ -53,7 +49,7 @@ class ControlComponentDouble : public ControlComponent {
     public:
         EditTypeDouble type_;
         ControlComponentDouble(EditTypeDouble type) {type_ = type;};
-        virtual ControlComponentDouble* clone() =0;
+        virtual std::unique_ptr<ControlComponent> clone() =0;
 };
 
 

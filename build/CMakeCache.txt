@@ -361,7 +361,7 @@ SDL2_DIR:PATH=/usr/lib/x86_64-linux-gnu/cmake/SDL2
 SITE:STRING=FBI-office-pc
 
 //Dependencies for the target
-myLib_LIB_DEPENDS:STATIC=general;imgui;general;njson;
+myLib_LIB_DEPENDS:STATIC=general;imgui;
 
 //The directory containing a CMake configuration file for nlohmann_json.
 nlohmann_json_DIR:PATH=nlohmann_json_DIR-NOTFOUND

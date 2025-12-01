@@ -18,8 +18,7 @@
 						0,
 						1,
 						2,
-						3,
-						4
+						3
 					]
 				}
 			],
@@ -37,8 +36,7 @@
 						0,
 						1,
 						2,
-						3,
-						4
+						3
 					]
 				}
 			],
@@ -47,7 +45,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "ImGuiTest::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-ImGuiTest-Debug-8caa215d8171ff4339e9.json",
+					"jsonFile" : "target-ImGuiTest-Debug-ce2e4a3f1926f528ed6a.json",
 					"name" : "ImGuiTest",
 					"projectIndex" : 0
 				},
@@ -68,15 +66,8 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "myLib::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-myLib-Debug-1cb8050fdaa332e7c0fa.json",
+					"jsonFile" : "target-myLib-Debug-28d8011190f60a21c649.json",
 					"name" : "myLib",
-					"projectIndex" : 0
-				},
-				{
-					"directoryIndex" : 0,
-					"id" : "njson::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-njson-Debug-e2260016d758f3a4796c.json",
-					"name" : "njson",
 					"projectIndex" : 0
 				}
 			]

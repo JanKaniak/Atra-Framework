@@ -31,30 +31,26 @@ add_library(imgui_backends
 
 target_include_directories(imgui_backends PUBLIC src/imgui)
 
-add_library(njson
+add_library(myLib
+    src/libs/Sources/Descriptions/AttributeDescription.cpp
+    src/libs/Sources/Descriptions/AttributeDescriptions.cpp
+    src/libs/Sources/Attributes/Attributes.cpp
+    src/libs/Sources/ControlComponents/NumericInput.cpp
+    src/libs/Sources/ControlComponents/Formular.cpp
     src/nlohmannJson/json.hpp
 )
 
-target_include_directories(njson PUBLIC src/nlohmannJson)
-
-add_library(myLib
-    src/libs/Sources/Descriptions/AtributeDescription.cpp
-    src/libs/Sources/Descriptions/Descriptions.cpp
-    src/libs/Sources/Atributes/Values.cpp
-    src/libs/Sources/ControlComponents/NumericInput.cpp
-    src/libs/Sources/ControlComponents/Formular.cpp
-)
-
 target_include_directories(myLib PUBLIC src/libs/Headers/Descriptions)
-target_include_directories(myLib PUBLIC src/libs/Headers/Atributes)
+target_include_directories(myLib PUBLIC src/libs/Headers/Attributes)
 target_include_directories(myLib PUBLIC src/libs/Headers/ControlComponents)
+target_include_directories(myLib PUBLIC src/nlohmannJson)
 
 add_executable(ImGuiTest 
     src/main.cpp)
 
 # Prepojenie knižníc
 target_link_libraries(ImGuiTest PRIVATE imgui imgui_backends SDL2 OpenGL myLib)
-target_link_libraries(myLib PRIVATE imgui njson)
+target_link_libraries(myLib PRIVATE imgui)
 
 
 
@@ -62,6 +58,6 @@ target_link_libraries(myLib PRIVATE imgui njson)
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-set_target_properties(njson PROPERTIES LINKER_LANGUAGE CXX)
+set_target_properties(myLib PROPERTIES LINKER_LANGUAGE CXX)
 
 include(CPack)

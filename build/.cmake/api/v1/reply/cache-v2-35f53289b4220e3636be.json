@@ -1907,7 +1907,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "general;imgui;general;njson;"
+			"value" : "general;imgui;"
 		},
 		{
 			"name" : "nlohmann_json_DIR",

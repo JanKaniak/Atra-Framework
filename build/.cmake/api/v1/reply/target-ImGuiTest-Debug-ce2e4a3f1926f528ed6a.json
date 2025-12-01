@@ -26,19 +26,13 @@
 			{
 				"command" : 0,
 				"file" : 0,
+				"line" : 48,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
 				"line" : 52,
-				"parent" : 0
-			},
-			{
-				"command" : 1,
-				"file" : 0,
-				"line" : 56,
-				"parent" : 0
-			},
-			{
-				"command" : 1,
-				"file" : 0,
-				"line" : 57,
 				"parent" : 0
 			},
 			{
@@ -61,7 +55,7 @@
 			"includes" : 
 			[
 				{
-					"backtrace" : 4,
+					"backtrace" : 3,
 					"path" : "/usr/include/SDL2"
 				},
 				{
@@ -74,11 +68,15 @@
 				},
 				{
 					"backtrace" : 2,
-					"path" : "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Atributes"
+					"path" : "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes"
 				},
 				{
 					"backtrace" : 2,
 					"path" : "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents"
+				},
+				{
+					"backtrace" : 2,
+					"path" : "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson"
 				}
 			],
 			"language" : "CXX",
@@ -100,19 +98,15 @@
 	[
 		{
 			"backtrace" : 2,
-			"id" : "imgui::@6890427a1f51a3e7e1df"
-		},
-		{
-			"backtrace" : 2,
 			"id" : "imgui_backends::@6890427a1f51a3e7e1df"
 		},
 		{
 			"backtrace" : 2,
-			"id" : "njson::@6890427a1f51a3e7e1df"
+			"id" : "myLib::@6890427a1f51a3e7e1df"
 		},
 		{
 			"backtrace" : 2,
-			"id" : "myLib::@6890427a1f51a3e7e1df"
+			"id" : "imgui::@6890427a1f51a3e7e1df"
 		}
 	],
 	"id" : "ImGuiTest::@6890427a1f51a3e7e1df",
@@ -156,11 +150,6 @@
 			{
 				"backtrace" : 2,
 				"fragment" : "libimgui.a",
-				"role" : "libraries"
-			},
-			{
-				"backtrace" : 3,
-				"fragment" : "libnjson.a",
 				"role" : "libraries"
 			}
 		],
