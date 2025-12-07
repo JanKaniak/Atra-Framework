@@ -1,6 +1,15 @@
 [
-    {"Atribute1" : "SLIDER"},
-    {"Attribute4" : "SLIDER"},
-    {"Attribute19" : "DRAG"},
-    {"Attribute7" : "VSSLIDER"}
+    {
+        "Person": [
+            {
+                "Attribute1": "SLIDER",
+                "Attribute4": "SLIDER",
+                "Attribute19": "DRAG",
+                "Attribute7": "VSLIDER"
+            }
+        ]
+    },
+    {
+        "GG" : []
+    }
 ]

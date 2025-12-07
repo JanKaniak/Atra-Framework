@@ -18,15 +18,19 @@ class AttributeDescription
 protected:
     std::string name_;
     AttributeType type_;
+    std::string agent_;
 
 public:
     AttributeDescription(AttributeType type) : type_(type) {};
     inline std::string getName() { return name_; };
     inline AttributeType getType() { return type_; };
+    inline void setName(std::string name) { name_ = name; };
+    inline std::string getAgent() { return agent_;}
+    void setAgent(std::string agent) { agent_ = agent;}
+
+public:
     virtual double getMin() = 0;
     virtual double getMax() = 0;
-    inline void setName(std::string name) { name_ = name; };
-
     virtual ~AttributeDescription() {};
     virtual std::unique_ptr<AttributeDescription> clone() = 0;
     virtual void setLimit(AttributeTypeVariant minimum, AttributeTypeVariant maximum) = 0;

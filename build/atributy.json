@@ -1,14 +1,30 @@
 [
-{
-    "Attribute type" : "INT",
-    "Attributes" : [
-        {"Attribute name" : "Attribute1", "Minimum": 0, "Maximum": 100,"Value" : 10},
-        {"Attribute name" : "Attribute4", "Minimum": -50,  "Maximum": 50, "Value" : 1},
-        {"Attribute name" : "Attribute19", "Minimum": -10,  "Maximum": 10, "Value" : -4},
-        {"Attribute name" : "Attribute7", "Minimum": 10,   "Maximum": 1000, "Value" : 500}
-    ]
-    
-}
+    {
+        "Person": [
+            {
+                "INT": [
+                    {
+                        "Attribute name": "Attribute1",
+                        "Minimum": 0,
+                        "Maximum": 100
+                    },
+                    {
+                        "Attribute name": "Attribute4",
+                        "Minimum": -50,
+                        "Maximum": 50
+                    },
+                    {
+                        "Attribute name": "Attribute19",
+                        "Minimum": -10,
+                        "Maximum": 10
+                    },
+                    {
+                        "Attribute name": "Attribute7",
+                        "Minimum": 10,
+                        "Maximum": 1000
+                    }
+                ]
+            }
+        ]
+    }
 ]
-
-

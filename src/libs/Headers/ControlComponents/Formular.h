@@ -10,6 +10,7 @@
 #include <functional>
 #include <variant>
 #include <fstream>
+#include <format>
 
 using AttributeTypeVariant = std::variant<int,double,char>;
 
@@ -102,17 +103,42 @@ public:
 class Formular
 {
 private:
-    bool openedWindow;
-    Attributes *attributes_;
+    bool mainWindows = true;
+    bool openedWindow = false;
+    bool selectedMenu = false;
+    bool editWindow = false;
+    int numberOfLoadedAtributes = INT_MAX;
+    int numberOfLoadedControls = INT_MAX;
+    int selected = 0;
+    char buffer[40] = "Atribut";
+    char bufferMin[40] = "0";
+    char bufferMax[40] = "50";
+    bool nameExists = false;
+    int typeChoise = 0;
+    int controlChoice = 0;
+    std::string infoMessage = "";
+    const char *numericTypeChoice[3] = {"Int", "Double", "Float"};
+    const char *textTypeChoice[2] = {"Char", "String"};
+    const char *controls[3] = {"Slider", "VS_Slider", "Drag"};
+    AttributeType numAttributeType[2] = {AttributeType::INT, AttributeType::DOUBLE};
+    AttributeType textAttributeType[1] = {AttributeType::CHAR};
+
+private:
+    std::unique_ptr<Attributes> attributes_;
     std::vector<std::unique_ptr<ControlComponent>> components_;
     std::map<AttributeType, Factory*> decision_;
     std::map<std::string,AttributeType> converter_ =  {{"INT", AttributeType::INT},{"DOUBLE", AttributeType::DOUBLE},{"CHAR",AttributeType::CHAR}};
-    std::map<std::string,std::function<bool(nlohmann::json&)>> decision2_ =  { 
-        {"INT", [&](nlohmann::json& tempJson) {
+    std::map<std::string,std::function<bool(nlohmann::json&,std::string agentName, std::string &outputMessage)>> decision2_ =  { 
+        {"INT", [&](nlohmann::json& tempJson, std::string agentName,std::string &outputMessage) {
             for (auto& it : tempJson) {
-                if (!this->addAttribute(it["Attribute name"].get<std::string>(),AttributeType::INT,it["Minimum"].get<int>(),it["Maximum"].get<int>(),it["Value"].get<int>())) {
+                if (!it["Minimum"].is_number_integer() || !it["Maximum"].is_number_integer()) {
+                    outputMessage = "Bounds must be integer value!";
                     return false;
                 }
+                if (attributes_->contains(it["Attribute name"].get<std::string>(),agentName)) {
+                    return false;
+                }
+                this->addAttribute(it["Attribute name"].get<std::string>(),AttributeType::INT,agentName,it["Minimum"].get<int>(),it["Maximum"].get<int>());
             }
             return true;
         }
@@ -120,7 +146,7 @@ private:
     };
 
 public:
-    Formular(Attributes *attributes);
+    Formular();
 
     void addAttribute(std::string name, 
                      std::string editType, 
@@ -128,22 +154,24 @@ public:
                      AttributeTypeVariant min, 
                      AttributeTypeVariant max);
     
-    bool addAttribute(std::string name,  
-                     AttributeType type, 
+    void addAttribute(std::string attributeName,  
+                     AttributeType type,
+                     std::string agentName, 
                      AttributeTypeVariant min, 
-                     AttributeTypeVariant max,
-                     AttributeTypeVariant value);
+                     AttributeTypeVariant max);
 
-    bool addControlType(std::string atributeName, std::string edtitType);
+    bool addControlType(std::string atributeName, std::string agentName,std::string edtitType, std::string &outputMessage);
     
+    void showControls();
+    void showEditWindow();
     void draw();
     inline int getNumberOfAttributes() { return attributes_->getSize(); }
     inline int getNumberOfComponents() { return components_.size();}
-    int readFileDescriptions(const char *path);
-    bool readFileControlTypes(const char *path);
+    int readFileDescriptions(const char *path,std::string &outputMessage);
+    int readFileControlTypes(const char *path,std::string &outputMessage);
     void saveToFile();
     bool sameName(std::string name);
-    bool showWarning();
+    bool showWarning(std::string message);
     bool isEmpty() { return components_.empty(); };
     
 

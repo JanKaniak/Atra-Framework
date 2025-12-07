@@ -6,9 +6,10 @@ AttributeDescriptions::AttributeDescriptions() {
     //descFactory_.registerPrototype<AtributeDescription_char>();
 }
 
-void AttributeDescriptions::addDescription(std::string name, AttributeType type,AttributeTypeVariant minimum, AttributeTypeVariant maximum)  { 
+void AttributeDescriptions::addDescription(std::string agentName,std::string attributeName, AttributeType type,AttributeTypeVariant minimum, AttributeTypeVariant maximum)  { 
             attributeDescs_.push_back(descFactory_.createDesc(type));
-            getLast()->setName(name);
+            getLast()->setName(attributeName);
+            getLast()->setAgent(agentName);
             getLast()->setLimit(minimum,maximum);
             
          }

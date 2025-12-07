@@ -27,7 +27,7 @@ class AttributeDescriptions {
         DescFactory descFactory_;
     public:
         AttributeDescriptions();
-        void addDescription(std::string name, AttributeType type,AttributeTypeVariant minimum, AttributeTypeVariant maximum);
+        void addDescription(std::string agentName,std::string attributeName, AttributeType type,AttributeTypeVariant minimum, AttributeTypeVariant maximum);
         AttributeDescription* getDescription(std::string name, AttributeType type);
 
         inline AttributeDescription* getLast() { 

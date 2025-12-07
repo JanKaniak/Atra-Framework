@@ -13,14 +13,14 @@ class Attribute
 {
 protected:
     AttributeDescription *desc_;
+    
 
 public:
     // AtributeType type_;
     inline std::string getName() { return desc_->getName(); }
-
     inline AttributeType getType() { return desc_->getType(); }
-
-    AttributeDescription *getDescription() { return desc_; };
+    AttributeDescription *getDescription() { return desc_; }
+    std::string getAgent() { return desc_->getAgent();}
 
     virtual ~Attribute() {};
     virtual std::unique_ptr<Attribute> clone() = 0;

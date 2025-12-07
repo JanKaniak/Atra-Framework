@@ -1,14 +1,14 @@
 #include "Attributes.h"
 
-Attributes::Attributes(AttributeDescriptions* attributeDescs) {
-            attributeDescs_ = attributeDescs;
+Attributes::Attributes() {
+            attributeDescs_ = std::make_unique<AttributeDescriptions>();
             attributeFactory_.registerPrototype<AttributeInt>();
             /*atributeFactory_.registerPrototype<AtributeDouble>();
             atributeFactory_.registerPrototype<AtributeChar>();*/
 }
 
-void Attributes::addAttribute(std::string name, AttributeType type,AttributeTypeVariant minimum, AttributeTypeVariant maximum) {
-            attributeDescs_->addDescription(name,type,minimum,maximum);
+void Attributes::addAttribute(std::string agentName,std::string attributeName, AttributeType type, AttributeTypeVariant minimum, AttributeTypeVariant maximum) {
+            attributeDescs_->addDescription(agentName,attributeName,type,minimum,maximum);
             attributes_.push_back(attributeFactory_.createAttribute(type));
             attributes_.at(attributes_.size() - 1)->setDescription(attributeDescs_->getLast());
             

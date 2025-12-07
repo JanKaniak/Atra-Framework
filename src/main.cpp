@@ -28,35 +28,9 @@
 // Main code
 int main(int, char **)
 {
-    AttributeDescriptions *attributeDesc = new AttributeDescriptions();
-    Attributes *attributes = new Attributes(attributeDesc);
-    Formular *formular = new Formular(attributes);
-    bool mainWindows = true;
-    bool hl_editacne_okno = false;
-    bool numericke_editacne_okno = false;
-    bool char_editacne_okno = false;
-    bool boolean_edticane_okno = false;
-    int numberOfLoadedAtributes = INT_MAX;
-    bool kontrola = false;
-    char buffer[40] = "Atribut";
-    char bufferMin[40] = "0";
-    char bufferMax[40] = "50";
-    int volbaTypu = 0;
-    int volbaPosuvaca = 0;
-    std::string typPosuvacov[] = {"SLIDER", "VSLIDER", "DRAG"};
-    EditTypeDouble typPosuvacovDouble[] = {EditTypeDouble::SLIDER, EditTypeDouble::VSLIDER, EditTypeDouble::DRAG};
-    AttributeType NumtypAttributov[] = {AttributeType::INT, AttributeType::DOUBLE};
-    AttributeType CharTypAtributov[] = {AttributeType::CHAR};
-    const char *numericke_volbyTypu[] = {"Int", "Double", "Float"};
-    const char *char_volbyTypu[] = {"Char", "String"};
-    const char *volby[] = {"Slider", "VS_Slider", "Drag"};
+    std::unique_ptr<Formular> formular = std::make_unique<Formular>();
 
-    bool moznost1 = false;
-    bool moznost2 = false;
 
-    int selected = 0;
-
-    bool selectedMenu = false;
 
     // Setup SDL
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER | SDL_INIT_GAMECONTROLLER) != 0)
@@ -173,145 +147,8 @@ int main(int, char **)
         ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
-        // 2. Základné okno
-        {
-            static float f = 0.0f;
-            static int counter = 0;
-
-            int minHeight = (formular->getNumberOfComponents() * 30) + 100;
-            //ImGui::SetNextWindowSizeConstraints(ImVec2(500, minHeight), ImVec2(FLT_MAX, FLT_MAX));
-            ImGuiViewport *mainViewPort = ImGui::GetMainViewport();
-            ImVec2 pos = mainViewPort->Pos;
-            ImVec2 size = mainViewPort->Size;
-            ImGui::SetNextWindowPos(pos);
-            ImGui::SetNextWindowSize(ImVec2(size.x / 3, size.y));
-            ImGui::Begin("Main", &mainWindows, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
-            ImGui::BeginMenuBar();
-            if (ImGui::MenuItem("Load","L",&selectedMenu)) {
-                selectedMenu = true;
-            }
-            ImGui::EndMenuBar();
-            if (ImGui::Button("Add an atribute"))
-            {
-                hl_editacne_okno = true;
-            }
-
-            // 2.1 Výpis
-            ImGui::SetNextWindowPos(ImVec2(pos.x+(size.x/3)+5, pos.y));
-            ImGui::SetNextWindowSize(ImVec2(size.x / 3, size.y));
-            //ImGui::SameLine();
-            ImGui::Begin("Atributes", &mainWindows, ImGuiWindowFlags_NoCollapse);
-            formular->draw();
-            ImGui::End();
-
-            if (ImGui::Button("Load Attribute description", ImVec2(150, 30)))
-            {
-                numberOfLoadedAtributes = formular->readFileDescriptions("atributy.json");
-            }
-
-            if (ImGui::Button("Load Control types", ImVec2(150, 30)))
-            {
-                bool gg = formular->readFileControlTypes("controlTypes.json");
-            }
-
-            if (numberOfLoadedAtributes == 0)
-            {
-                if (formular->showWarning())
-                {
-                    numberOfLoadedAtributes = INT_MAX;
-                }
-                ImGui::End();
-            } else if (numberOfLoadedAtributes > 0 && numberOfLoadedAtributes != INT_MAX){
-                ImGui::Begin("Info");
-                ImGui::Text("Succesfully loaded %d attributes.",numberOfLoadedAtributes);
-                if (ImGui::Button("OK", ImVec2(70, 50)))
-                {
-                    numberOfLoadedAtributes = INT_MAX;
-                }
-                ImGui::End();
-            }
-
-            if (ImGui::Button("Save", ImVec2(70, 30)))
-            {
-                formular->saveToFile();
-            }
-
-            ImVec2 windowSize = ImGui::GetWindowSize();
-            ImGui::SetCursorPos(ImVec2(20, windowSize.y - 20));
-            if (formular->getNumberOfAttributes() < 500000)
-            {
-                ImGui::Text("Current number of atributes: %d", formular->getNumberOfAttributes());
-            }
-            else
-            {
-                ImGui::Text("Current number of atributes: 500000+");
-            }
-            ImGui::End();
-        }
-
-        // 3. Okno na pridávanie atribútov
-        if (hl_editacne_okno)
-        {
-            AttributeType vybranyTyp;
-
-            ImGui::Begin("Edtiacne okno", &hl_editacne_okno);
-            if (ImGui::RadioButton("Numeric", selected == 0))
-            {
-                selected = 0;
-            }
-            ImGui::SameLine();
-            if (ImGui::RadioButton("Charakter", selected == 1))
-            {
-                selected = 1;
-            }
-
-            ImGui::SameLine();
-            if (ImGui::RadioButton("Boolean", selected == 2))
-            {
-                selected = 2;
-            }
-
-            ImGui::InputText("Názov atribútut", buffer, sizeof(buffer));
-            if (kontrola)
-            {
-                ImGui::Text("Meno atributu už existuje!");
-            }
-            switch (selected)
-            {
-
-            case 0:
-                ImGui::Combo("Atribute type", &volbaTypu, numericke_volbyTypu, sizeof(numericke_volbyTypu) / sizeof(numericke_volbyTypu[0]));
-                if (volbaTypu == 0)
-                {
-                    ImGui::Combo("Edit type", &volbaPosuvaca, volby, sizeof(volby) / sizeof(volby[0]));
-                }
-
-                ImGui::InputText("Minimum", bufferMin, sizeof(bufferMin));
-                ImGui::InputText("Maximum", bufferMax, sizeof(bufferMax));
-
-                vybranyTyp = NumtypAttributov[volbaTypu];
-                break;
-
-            case 1:
-                ImGui::Combo("Atribute type", &volbaTypu, char_volbyTypu, sizeof(char_volbyTypu) / sizeof(char_volbyTypu[0]));
-                vybranyTyp = CharTypAtributov[volbaTypu];
-                break;
-
-            default:
-                break;
-            }
-            if (ImGui::Button("Save"))
-            {
-                kontrola = formular->sameName(buffer);
-                if (!kontrola)
-                {
-                    formular->addAttribute(std::string(buffer), typPosuvacov[volbaPosuvaca], vybranyTyp, std::atoi(bufferMin), std::atoi(bufferMax));
-                    hl_editacne_okno = false;
-                }
-            }
-
-            ImGui::End();
-        }
+        formular->showControls();
+        
 
         // Rendering
         ImGui::Render();
