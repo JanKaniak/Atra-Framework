@@ -5,7 +5,7 @@
 
 // Class IntSlider
 void IntSlider::draw() { 
-    if (ImGui::SliderInt(attributeint_->getName().c_str(),&value_,attributeint_->getMin(),attributeint_->getMaximum())) {
+    if (ImGui::SliderInt(std::format("##{}",attributeint_->getName()).c_str(),&value_,attributeint_->getMin(),attributeint_->getMaximum())) {
         attributeint_->setValue(value_);
     }
     
@@ -24,7 +24,7 @@ void IntSlider::setAttribute(Attribute *attribute)
 //---------------------------------------------------------------------------------------
 
 // Class IntVSSlider
-void IntVSSlider::draw() { ImGui::VSliderInt(attributeint_->getName().c_str(),ImVec2(20,50), &value_, attributeint_->getMin(), attributeint_->getMaximum());}
+void IntVSSlider::draw() { ImGui::VSliderInt(std::format("##{}",attributeint_->getName()).c_str(),ImVec2(20,50), &value_, attributeint_->getMin(), attributeint_->getMaximum());}
 void IntVSSlider::setAttribute(Attribute *attribute)
 {
     if (dynamic_cast<AttributeInt *>(attribute))
@@ -40,7 +40,7 @@ void IntVSSlider::setAttribute(Attribute *attribute)
 //---------------------------------------------------------------------------------------
 
 // Class IntDrag
-void IntDrag::draw() { ImGui::DragInt(attributeint_->getName().c_str(),&value_,1.0f,attributeint_->getMin(),attributeint_->getMaximum()); }
+void IntDrag::draw() { ImGui::DragInt(std::format("##{}",attributeint_->getName()).c_str(),&value_,1.0f,attributeint_->getMin(),attributeint_->getMaximum()); }
 void IntDrag::setAttribute(Attribute *attribute)
 {
     if (dynamic_cast<AttributeInt *>(attribute))

@@ -148,6 +148,9 @@ int main(int, char **)
         ImGui::NewFrame();
 
         formular->showControls();
+        if (formular->getNumberOfComponents() > 0) {
+        formular->showAttributes();
+        }
         
 
         // Rendering

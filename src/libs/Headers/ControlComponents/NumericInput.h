@@ -2,6 +2,7 @@
 #include "ControlComponent.h"
 #include <iostream>
 #include <variant>
+#include <format>
 
 class IntSlider : public ControlComponentInt<EditTypeInt::SLIDER> {
     
@@ -12,6 +13,7 @@ class IntSlider : public ControlComponentInt<EditTypeInt::SLIDER> {
         void draw() override;
         std::string getName() override { return attributeint_->getName();};
         AttributeType getType() override {return attributeint_->getType();};
+        std::string getAgent() override {return attributeint_->getAgent();};
         std::unique_ptr<ControlComponent> clone () override { return std::make_unique<IntSlider>(*this);};
         void setAttribute(Attribute* attribute) override;
 };
@@ -26,6 +28,7 @@ class IntVSSlider : public ControlComponentInt<EditTypeInt::VSLIDER> {
         void draw() override;
         std::string getName() override { return attributeint_->getName();};
         AttributeType getType() override {return attributeint_->getType();};
+        std::string getAgent() override {return attributeint_->getAgent();};
         std::unique_ptr<ControlComponent> clone () override { return std::make_unique<IntVSSlider>(*this);}
 
         void setAttribute(Attribute* attribute) override;
@@ -41,6 +44,7 @@ class IntDrag : public ControlComponentInt<EditTypeInt::DRAG> {
         void draw() override;
         std::string getName() override { return attributeint_->getName();};
         AttributeType getType() override {return attributeint_->getType();};
+        std::string getAgent() override {return attributeint_->getAgent();};
         std::unique_ptr<ControlComponent> clone () override { return std::make_unique<IntDrag>(*this);};
         void setAttribute(Attribute* attribute) override;
 };

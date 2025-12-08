@@ -7,9 +7,16 @@
                 "Attribute19": "DRAG",
                 "Attribute7": "VSLIDER"
             }
+        ],
+        "GG" : [
+            {
+                "Meno" : "SLIDER",
+                "Priezvisko" : "DRAG",
+                "Mesto" : "VSLIDER",
+                "Obec" : "DRAG"
+
+            }
         ]
-    },
-    {
-        "GG" : []
+
     }
 ]

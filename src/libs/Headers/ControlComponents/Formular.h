@@ -126,8 +126,10 @@ private:
 private:
     std::unique_ptr<Attributes> attributes_;
     std::vector<std::unique_ptr<ControlComponent>> components_;
-    std::map<AttributeType, Factory*> decision_;
-    std::map<std::string,AttributeType> converter_ =  {{"INT", AttributeType::INT},{"DOUBLE", AttributeType::DOUBLE},{"CHAR",AttributeType::CHAR}};
+    std::map<AttributeType, Factory*> factoryChoice_;
+    std::map<AttributeType,std::string> enumToString =  {{AttributeType::INT,"INT"},{AttributeType::DOUBLE,"DOUBLE"},{AttributeType::CHAR,"CHAR"}};
+    
+private:
     std::map<std::string,std::function<bool(nlohmann::json&,std::string agentName, std::string &outputMessage)>> decision2_ =  { 
         {"INT", [&](nlohmann::json& tempJson, std::string agentName,std::string &outputMessage) {
             for (auto& it : tempJson) {
@@ -143,6 +145,22 @@ private:
             return true;
         }
     }
+    };
+
+    std::map<AttributeType, std::function<bool(nlohmann::json&, Attribute*, std::string&)>>  saveAdditionalInfoToFile_ {
+        {AttributeType::INT, [&](nlohmann::json &json, Attribute* attribute, std::string &outputMessage) {
+            if(!dynamic_cast<AttributeInt*>(attribute)) {
+                outputMessage = "Object of attribute does not equal it's type!";
+                return false;
+            }
+            AttributeInt* attributeint = dynamic_cast<AttributeInt*>(attribute);
+            json.push_back(nlohmann::json::object_t::value_type("Minimum",attributeint->getMin()));
+            json.push_back(nlohmann::json::object_t::value_type("Maximum",attributeint->getMaximum()));
+            json.push_back(nlohmann::json::object_t::value_type("Value",std::get<int>(attributeint->getValue())));
+            return true;
+        }
+
+        }
     };
 
 public:
@@ -161,15 +179,16 @@ public:
                      AttributeTypeVariant max);
 
     bool addControlType(std::string atributeName, std::string agentName,std::string edtitType, std::string &outputMessage);
-    
+    bool addControlType(Attribute *attribute, std::string &outputMessage);
     void showControls();
+    void showAttributes();
     void showEditWindow();
     void draw();
     inline int getNumberOfAttributes() { return attributes_->getSize(); }
     inline int getNumberOfComponents() { return components_.size();}
     int readFileDescriptions(const char *path,std::string &outputMessage);
     int readFileControlTypes(const char *path,std::string &outputMessage);
-    void saveToFile();
+    bool saveToFile(std::string &outputMessage);
     bool sameName(std::string name);
     bool showWarning(std::string message);
     bool isEmpty() { return components_.empty(); };

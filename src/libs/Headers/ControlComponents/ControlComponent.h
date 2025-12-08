@@ -22,6 +22,7 @@ public:
     virtual void draw() = 0;
     virtual std::string getName() = 0;
     virtual AttributeType getType() = 0;
+    virtual std::string getAgent() = 0;
     virtual ~ControlComponent() = default;
     virtual void setAttribute(Attribute * attribute) = 0;
     virtual std::unique_ptr<ControlComponent> clone() = 0;

@@ -1,30 +1,51 @@
-[
-    {
-        "Person": [
+{
+    "Person": {
+        "INT": [
             {
-                "INT": [
-                    {
-                        "Attribute name": "Attribute1",
-                        "Minimum": 0,
-                        "Maximum": 100
-                    },
-                    {
-                        "Attribute name": "Attribute4",
-                        "Minimum": -50,
-                        "Maximum": 50
-                    },
-                    {
-                        "Attribute name": "Attribute19",
-                        "Minimum": -10,
-                        "Maximum": 10
-                    },
-                    {
-                        "Attribute name": "Attribute7",
-                        "Minimum": 10,
-                        "Maximum": 1000
-                    }
-                ]
+                "Attribute name": "Attribute1",
+                "Minimum": 0,
+                "Maximum": 100
+            },
+            {
+                "Attribute name": "Attribute4",
+                "Minimum": -50,
+                "Maximum": 50
+            },
+            {
+                "Attribute name": "Attribute19",
+                "Minimum": -10,
+                "Maximum": 10
+            },
+            {
+                "Attribute name": "Attribute7",
+                "Minimum": 10,
+                "Maximum": 1000
+            }
+        ]
+        
+    },
+    "GG": {
+        "INT": [
+            {
+                "Attribute name": "Meno",
+                "Minimum": 10,
+                "Maximum": 15
+            },
+            {
+                "Attribute name": "Priezvisko",
+                "Minimum": 50,
+                "Maximum": 57
+            },
+            {
+                "Attribute name": "Mesto",
+                "Minimum": 80,
+                "Maximum": 125
+            },
+            {
+                "Attribute name": "Obec",
+                "Minimum": 74,
+                "Maximum": 79
             }
         ]
     }
-]
+}
