@@ -39,4 +39,6 @@ class AttributeDescriptions {
 
         inline int getNumberOfDescriptions() { return attributeDescs_.size();}
 
+        bool deleteDescription(AttributeDescription *description);
+
 };

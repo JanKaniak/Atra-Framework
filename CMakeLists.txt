@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(ImGuiTest VERSION 0.1.0 LANGUAGES C CXX)
+project(GraphicEditor VERSION 0.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -45,13 +45,12 @@ target_include_directories(myLib PUBLIC src/libs/Headers/Attributes)
 target_include_directories(myLib PUBLIC src/libs/Headers/ControlComponents)
 target_include_directories(myLib PUBLIC src/nlohmannJson)
 
-add_executable(ImGuiTest 
+add_executable(GraphicEditor 
     src/main.cpp)
 
 # Prepojenie knižníc
-target_link_libraries(ImGuiTest PRIVATE imgui imgui_backends SDL2 OpenGL myLib)
+target_link_libraries(GraphicEditor PRIVATE imgui imgui_backends SDL2 OpenGL myLib)
 target_link_libraries(myLib PRIVATE imgui)
-
 
 
 # Nastavenie verzie balíka pre CPack

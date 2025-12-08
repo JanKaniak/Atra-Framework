@@ -72,4 +72,6 @@ public:
         }
         return false;
     }
+
+    bool deleteAttribute(Attribute* attribute);
 };

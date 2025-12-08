@@ -4,10 +4,10 @@ object AtributeDescription
 object AtributeDescription_int
 object AtributeDescription_double
 object AtributeDescription_char
-object Descriptions
+object AttributeDescriptions
 
 object Atribute
-object Values
+object Attributes
 
 object ControlComponent
 object ControlComponentInt
@@ -19,16 +19,16 @@ AtributeDescription -down-> AtributeType
 AtributeDescription_int -left-|> AtributeDescription
 AtributeDescription_double -right-|> AtributeDescription
 AtributeDescription_char -down-|> AtributeDescription
-Descriptions -down-> AtributeDescription
+AttributeDescriptions -down-> AtributeDescription
 Atribute -down-> AtributeDescription
-Values -down---> Atribute
-Values ----> Descriptions
+Attributes -down---> Atribute
+Attributes ----> AttributeDescriptions
 ControlComponent -> Atribute
 ControlComponentInt -|> ControlComponent
 IntSlider -down-|> ControlComponentInt
 IntVSlider -up-|> ControlComponentInt
 IntDrag -up-|> ControlComponentInt
-Formular ----> Values
+Formular ----> Attributes
 Formular ----> ControlComponent
 
 @enduml

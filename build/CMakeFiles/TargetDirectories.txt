@@ -1,8 +1,8 @@
-/home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/imgui.dir
-/home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/imgui_backends.dir
-/home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/myLib.dir
-/home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/ImGuiTest.dir
-/home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/package.dir
-/home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/package_source.dir
-/home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/edit_cache.dir
-/home/jecko192/Desktop/Bakalarka/ImGuiTest/build/CMakeFiles/rebuild_cache.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CMakeFiles/imgui.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CMakeFiles/imgui_backends.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CMakeFiles/myLib.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CMakeFiles/GraphicEditor.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CMakeFiles/package.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CMakeFiles/package_source.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CMakeFiles/edit_cache.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CMakeFiles/rebuild_cache.dir

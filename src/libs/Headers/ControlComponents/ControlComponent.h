@@ -26,6 +26,7 @@ public:
     virtual ~ControlComponent() = default;
     virtual void setAttribute(Attribute * attribute) = 0;
     virtual std::unique_ptr<ControlComponent> clone() = 0;
+    virtual Attribute *getAttribute() = 0;
 };
 
 class ControlComponentChar : public ControlComponent {
@@ -61,6 +62,7 @@ class ControlComponentInt : public ControlComponent {
         int value_;
         int minimum_;
         int maximum_;
+        AttributeInt* attributeint_;
     public:
         static constexpr EditTypeInt type_ = TYPE;
         //virtual ControlComponentInt* clone() =0;

@@ -32,3 +32,17 @@ int Attributes::giveInt(std::string name) {
             return INT_MAX;
 }
 
+bool Attributes::deleteAttribute(Attribute *attribute) {
+    for (int i = 0; i < attributes_.size(); i++) {
+        if (attributes_.at(i).get() != attribute) {
+            continue;
+        }
+        if (attributeDescs_->deleteDescription(attribute->getDescription())) {
+            attributes_.erase(attributes_.begin()+i);
+            return true;
+        }
+
+    }
+    return false;
+}
+

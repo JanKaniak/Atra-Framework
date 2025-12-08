@@ -117,6 +117,7 @@ private:
     int typeChoise = 0;
     int controlChoice = 0;
     std::string infoMessage = "";
+    bool decision = false;
     const char *numericTypeChoice[3] = {"Int", "Double", "Float"};
     const char *textTypeChoice[2] = {"Char", "String"};
     const char *controls[3] = {"Slider", "VS_Slider", "Drag"};
@@ -182,6 +183,7 @@ public:
     bool addControlType(Attribute *attribute, std::string &outputMessage);
     void showControls();
     void showAttributes();
+    void deleteAttribute(Attribute* attribute, std::string &outputMessage);
     void showEditWindow();
     void draw();
     inline int getNumberOfAttributes() { return attributes_->getSize(); }

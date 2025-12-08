@@ -1,4 +1,4 @@
-# Install script for directory: /home/jecko192/Desktop/Bakalarka/ImGuiTest
+# Install script for directory: /home/jecko192/Desktop/Bakalarka/GraphicEditor
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

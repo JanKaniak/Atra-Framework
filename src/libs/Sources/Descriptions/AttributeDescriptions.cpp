@@ -23,3 +23,13 @@ AttributeDescription* AttributeDescriptions::getDescription(std::string name, At
             }
             return nullptr;
 }
+
+bool AttributeDescriptions::deleteDescription(AttributeDescription *description) {
+    for (int i = 0; i < attributeDescs_.size(); i++) {
+        if (attributeDescs_.at(i).get() == description) {
+            attributeDescs_.erase(attributeDescs_.begin()+i);
+            return true;
+        }
+    }
+    return false;
+}

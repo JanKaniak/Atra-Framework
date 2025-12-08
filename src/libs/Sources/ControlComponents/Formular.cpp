@@ -56,17 +56,7 @@ void Formular::showControls()
     ImGuiViewport *mainViewPort = ImGui::GetMainViewport();
     ImVec2 size = mainViewPort->Size;
     ImGui::SetNextWindowSize(ImVec2(size.x / 3, size.y));
-    ImGui::Begin("Main", &mainWindows, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar);
-    ImGui::BeginMenuBar();
-    if (ImGui::MenuItem("Load", "L", &selectedMenu))
-    {
-        selectedMenu = true;
-    }
-    ImGui::EndMenuBar();
-    if (ImGui::Button("Add an atribute"))
-    {
-        editWindow = true;
-    }
+    ImGui::Begin("Main", &mainWindows, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoBringToFrontOnFocus);
 
     if (ImGui::Button("Load Attribute description", ImVec2(150, 30)))
     {
@@ -88,13 +78,15 @@ void Formular::showControls()
         }
         ImGui::End();
     }
-    else if (numberOfLoadedAtributes > 0 && numberOfLoadedAtributes != INT_MAX)
+    else if (!infoMessage.empty())
     {
-        ImGui::Begin("Info");
+        ImGui::Begin("Info", (bool *)__null, ImGuiWindowFlags_AlwaysAutoResize);
         ImGui::Text("%s", infoMessage.c_str());
         if (ImGui::Button("OK", ImVec2(70, 50)))
         {
             numberOfLoadedAtributes = INT_MAX;
+            numberOfLoadedControls = INT_MAX;
+            infoMessage = "";
         }
         ImGui::End();
     }
@@ -124,7 +116,7 @@ void Formular::showControls()
 
 void Formular::showEditWindow()
 {
-    if (ImGui::Begin("Edtiacne okno", &editWindow))
+    if (ImGui::Begin("Edtiacne okno", &editWindow, ImGuiWindowFlags_NoBringToFrontOnFocus))
     {
         AttributeType chosenType;
         if (ImGui::RadioButton("Numeric", selected == 0))
@@ -188,6 +180,7 @@ void Formular::showEditWindow()
 
 void Formular::showAttributes()
 {
+    ImGui::SetNextWindowSize(ImVec2(500,700));
     ImGui::Begin("Atributes", &mainWindows, ImGuiWindowFlags_NoCollapse);
     std::string agent = "";
     bool endOfAgent = false;
@@ -196,10 +189,12 @@ void Formular::showAttributes()
         if (agent.empty())
         {
             agent = component->getAgent();
-            ImGui::BeginTable(agent.c_str(), 3, ImGuiTableFlags_BordersOuter);
+            ImGui::Text("%s", agent.c_str());
+            ImGui::BeginTable(agent.c_str(), 4, ImGuiTableFlags_BordersOuter);
             ImGui::TableSetupColumn("Attribute name");
             ImGui::TableSetupColumn("Input");
             ImGui::TableSetupColumn("Attribute type");
+            ImGui::TableSetupColumn("Button");
             ImGui::TableHeadersRow();
         }
         else if (component->getAgent().compare(agent) != 0)
@@ -207,10 +202,12 @@ void Formular::showAttributes()
             agent = component->getAgent();
             ImGui::EndTable();
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 30);
-            ImGui::BeginTable(agent.c_str(), 3, ImGuiTableFlags_BordersOuter);
+            ImGui::Text("%s", agent.c_str());
+            ImGui::BeginTable(agent.c_str(), 4, ImGuiTableFlags_BordersOuter);
             ImGui::TableSetupColumn("Attribute name");
             ImGui::TableSetupColumn("Input");
             ImGui::TableSetupColumn("Attribute type");
+            ImGui::TableSetupColumn("Button");
             ImGui::TableHeadersRow();
         }
 
@@ -220,9 +217,48 @@ void Formular::showAttributes()
         component->draw();
         ImGui::TableNextColumn();
         ImGui::Text("%s", enumToString[component->getType()].c_str());
+        ImGui::TableNextColumn();
+        if (ImGui::Button(std::format("Delete##{}{}",component->getName(),component->getAgent()).c_str(), ImVec2(50, 30)))
+        {
+            deleteAttribute(component->getAttribute(), infoMessage);
+        }
     }
     ImGui::EndTable();
     ImGui::End();
+}
+
+void Formular::deleteAttribute(Attribute *attribute, std::string &outputMessage)
+{
+    ImGui::Begin("Info");
+    ImGui::Text("Are you sure you want to delete this attribute?");
+    if (ImGui::Button("Yes", ImVec2(10, 30)))
+    {
+        decision = true;
+    }
+    if (ImGui::Button("No", ImVec2(10, 30)))
+    {
+        decision = false;
+    }
+
+    if (decision)
+    {
+        if (!attributes_->deleteAttribute(attribute))
+        {
+            outputMessage = "Attribute does not exist!";
+        }
+        else
+        {
+            for (int i = 0; i < components_.size(); i++)
+            {
+                if (attribute->getName().compare(components_.at(i)->getName()) == 0 && attribute->getAgent().compare(components_.at(i)->getAgent()) == 0)
+                {
+                    components_.erase(components_.begin() + i);
+                    break;
+                }
+            }
+            outputMessage = "Attribute was deleted!";
+        }
+    }
 }
 
 void Formular::draw()
@@ -246,15 +282,15 @@ int Formular::readFileDescriptions(const char *path, std::string &outputMessage)
     nlohmann::json jsonFile = nlohmann::json::parse(file);
     file.close();
 
-    for (auto [agentKey, agentValue] : jsonFile.items()) //agent name = agentKey
-    { 
+    for (auto [agentKey, agentValue] : jsonFile.items()) // agent name = agentKey
+    {
         for (auto [attributeGroupKey, attributeGroupValue] : agentValue.items()) // attribute type = attributeGroupValue
-        { 
+        {
             for (auto [attributeTypeKey, attributeDescriptions] : agentValue.items()) // attributeDescriptions = list of attributes, attributeTypeKey = attribute type
-            { 
+            {
                 if (!decision2_[attributeTypeKey](attributeDescriptions, agentKey, outputMessage))
                 {
-                    outputMessage = "These attributes are already loaded!";
+                    outputMessage = "Some attributes are already loaded!";
                     return -1;
                 }
             }
@@ -295,7 +331,8 @@ int Formular::readFileControlTypes(const char *path, std::string &outputMessage)
             }
             else
             {
-                outputMessage = std::format("Agent %s is not in a file!", attributes_->giveAttribute(i)->getAgent());
+                components_.clear();
+                outputMessage = std::format("Agent {} is not in a file!", attributes_->giveAttribute(i)->getAgent());
                 return -1;
             }
         }
@@ -306,7 +343,7 @@ int Formular::readFileControlTypes(const char *path, std::string &outputMessage)
     }
     else if (tmpNumberOfLoadedControls == components_.size())
     {
-        outputMessage = std::format("Successfully loaded %d controls", tmpNumberOfLoadedControls);
+        outputMessage = std::format("Successfully loaded {} controls", tmpNumberOfLoadedControls);
     }
     return tmpNumberOfLoadedControls;
 }
@@ -316,34 +353,35 @@ bool Formular::saveToFile(std::string &outputMessage)
     nlohmann::json jsonTemp;
     for (int i = 0; i < attributes_->getSize(); i++)
     {
-        Attribute* attribute = attributes_->giveAttribute(i);
+        Attribute *attribute = attributes_->giveAttribute(i);
         if (!jsonTemp.contains(attribute->getAgent()))
         {
-            
-            jsonTemp += nlohmann::json::object_t::value_type(attribute->getAgent(),nlohmann::json::object());
+
+            jsonTemp += nlohmann::json::object_t::value_type(attribute->getAgent(), nlohmann::json::object());
         }
-        
 
         auto agent = jsonTemp.find(attribute->getAgent());
-        if(agent == jsonTemp.end()) {
+        if (agent == jsonTemp.end())
+        {
             return false;
         }
 
-        if (!agent.value().contains(enumToString[attribute->getType()])) {
-            agent.value().push_back(nlohmann::json::object_t::value_type(enumToString[attribute->getType()],nlohmann::json::array()));
+        if (!agent.value().contains(enumToString[attribute->getType()]))
+        {
+            agent.value().push_back(nlohmann::json::object_t::value_type(enumToString[attribute->getType()], nlohmann::json::array()));
         }
 
         auto attributeType = agent.value().find(enumToString[attribute->getType()]);
-        if (attributeType == agent.value().end()) {
+        if (attributeType == agent.value().end())
+        {
             return false;
         }
 
         attributeType.value().push_back(nlohmann::json::object());
-        attributeType.value()[attributeType.value().size()-1].push_back(nlohmann::json::object_t::value_type("Attribute name",attribute->getName()));
-        saveAdditionalInfoToFile_[attribute->getType()](attributeType.value()[attributeType.value().size()-1],attribute,outputMessage);
+        attributeType.value()[attributeType.value().size() - 1].push_back(nlohmann::json::object_t::value_type("Attribute name", attribute->getName()));
+        saveAdditionalInfoToFile_[attribute->getType()](attributeType.value()[attributeType.value().size() - 1], attribute, outputMessage);
     }
 
-    
     std::ofstream file("output.json");
     file << jsonTemp;
     file.close();

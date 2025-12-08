@@ -1,80 +1,80 @@
 [
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui.dir/src/imgui/imgui.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui.dir/src/imgui/imgui.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui.cpp",
   "output": "CMakeFiles/imgui.dir/src/imgui/imgui.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui.dir/src/imgui/imgui_draw.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_draw.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_draw.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui.dir/src/imgui/imgui_draw.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_draw.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_draw.cpp",
   "output": "CMakeFiles/imgui.dir/src/imgui/imgui_draw.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui.dir/src/imgui/imgui_tables.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_tables.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_tables.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui.dir/src/imgui/imgui_tables.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_tables.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_tables.cpp",
   "output": "CMakeFiles/imgui.dir/src/imgui/imgui_tables.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui.dir/src/imgui/imgui_widgets.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_widgets.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_widgets.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui.dir/src/imgui/imgui_widgets.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_widgets.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_widgets.cpp",
   "output": "CMakeFiles/imgui.dir/src/imgui/imgui_widgets.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui.dir/src/imgui/imgui_stdlib.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_stdlib.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_stdlib.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui.dir/src/imgui/imgui_stdlib.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_stdlib.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_stdlib.cpp",
   "output": "CMakeFiles/imgui.dir/src/imgui/imgui_stdlib.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui_backends.dir/src/imgui/imgui_impl_sdl2.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_impl_sdl2.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_impl_sdl2.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui_backends.dir/src/imgui/imgui_impl_sdl2.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_impl_sdl2.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_impl_sdl2.cpp",
   "output": "CMakeFiles/imgui_backends.dir/src/imgui/imgui_impl_sdl2.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui_backends.dir/src/imgui/imgui_impl_opengl3.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_impl_opengl3.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui/imgui_impl_opengl3.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/imgui_backends.dir/src/imgui/imgui_impl_opengl3.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_impl_opengl3.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui/imgui_impl_opengl3.cpp",
   "output": "CMakeFiles/imgui_backends.dir/src/imgui/imgui_impl_opengl3.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/AttributeDescription.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/AttributeDescription.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescription.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescription.cpp",
   "output": "CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/AttributeDescriptions.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Descriptions/AttributeDescriptions.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescriptions.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescriptions.cpp",
   "output": "CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Attributes/Attributes.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/Attributes/Attributes.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/Attributes.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/Attributes.cpp",
   "output": "CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/ControlComponents/NumericInput.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/ControlComponents/NumericInput.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/NumericInput.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/NumericInput.cpp",
   "output": "CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/ControlComponents/Formular.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Sources/ControlComponents/Formular.cpp",
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/Formular.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/Formular.cpp",
   "output": "CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o"
 },
 {
-  "directory": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/imgui -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/nlohmannJson -g -std=gnu++20 -o CMakeFiles/ImGuiTest.dir/src/main.cpp.o -c /home/jecko192/Desktop/Bakalarka/ImGuiTest/src/main.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/ImGuiTest/src/main.cpp",
-  "output": "CMakeFiles/ImGuiTest.dir/src/main.cpp.o"
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -g -std=gnu++20 -o CMakeFiles/GraphicEditor.dir/src/main.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/main.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/main.cpp",
+  "output": "CMakeFiles/GraphicEditor.dir/src/main.cpp.o"
 }
 ]
