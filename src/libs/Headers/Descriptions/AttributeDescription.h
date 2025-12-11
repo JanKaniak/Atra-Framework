@@ -1,4 +1,6 @@
 #pragma once
+#include "json.hpp"
+
 #include <string>
 #include <variant>
 #include <memory>
@@ -34,6 +36,7 @@ public:
     virtual ~AttributeDescription() {};
     virtual std::unique_ptr<AttributeDescription> clone() = 0;
     virtual void setLimit(AttributeTypeVariant minimum, AttributeTypeVariant maximum) = 0;
+    virtual bool jsonParse(nlohmann::json &json, std::string &outputMessage) = 0;
 };
 
 class AttributeDescription_int : public AttributeDescription
@@ -48,6 +51,7 @@ public:
     inline double getMax() override { return max_; }
     std::unique_ptr<AttributeDescription> clone() override;
     void setLimit(AttributeTypeVariant minimum, AttributeTypeVariant maximum) override;
+    bool jsonParse(nlohmann::json &json, std::string &outputMessage) override;
 };
 
 /*class AtributeDescription_double : public AtributeDescription

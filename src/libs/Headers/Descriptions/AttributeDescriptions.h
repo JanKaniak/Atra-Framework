@@ -1,5 +1,7 @@
 #pragma once
 #include "AttributeDescription.h"
+#include "json.hpp"
+
 #include <vector>
 #include <memory>
 #include <map>
@@ -28,7 +30,10 @@ class AttributeDescriptions {
     public:
         AttributeDescriptions();
         void addDescription(std::string agentName,std::string attributeName, AttributeType type,AttributeTypeVariant minimum, AttributeTypeVariant maximum);
-        AttributeDescription* getDescription(std::string name, AttributeType type);
+        bool addDescriptions(AttributeType type,nlohmann::json &json, std::string agentName, std::string &outputMessage);
+        AttributeDescription* getDescription(std::string name, std::string agentName);
+        inline AttributeDescription* getDescription(int i) { return attributeDescs_.at(i).get();}
+        inline int getSize() { return attributeDescs_.size();}
 
         inline AttributeDescription* getLast() { 
             if (attributeDescs_.empty()) {

@@ -37,7 +37,8 @@ public:
     Attributes();
 
     void addAttribute(std::string agentName,std::string attributeName, AttributeType type, AttributeTypeVariant minimum, AttributeTypeVariant maximum);
-
+    bool addDescriptions(AttributeType type, nlohmann::json &json, std::string agentName, std::string &outputMessage) { return attributeDescs_->addDescriptions(type,json,agentName,outputMessage);}
+    void createAttributes();
     void setAttributeValue(std::string name, AttributeType type, AttributeTypeVariant value);
 
     int giveInt(std::string name);
@@ -57,11 +58,6 @@ public:
             }
         }
         return nullptr;
-    }
-
-    void setValueOfLast(AttributeType type, AttributeTypeVariant value)
-    {
-        attributes_.at(attributes_.size() - 1)->setValue(value);
     }
 
     bool contains(std::string attributeName,std::string agent) {

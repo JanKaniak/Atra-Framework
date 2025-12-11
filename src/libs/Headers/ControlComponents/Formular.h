@@ -129,9 +129,10 @@ private:
     std::vector<std::unique_ptr<ControlComponent>> components_;
     std::map<AttributeType, Factory*> factoryChoice_;
     std::map<AttributeType,std::string> enumToString =  {{AttributeType::INT,"INT"},{AttributeType::DOUBLE,"DOUBLE"},{AttributeType::CHAR,"CHAR"}};
+    std::map<std::string,AttributeType> stringToEnum =  {{"INT",AttributeType::INT},{"DOUBLE",AttributeType::DOUBLE},{"CHAR",AttributeType::CHAR}};
     
 private:
-    std::map<std::string,std::function<bool(nlohmann::json&,std::string agentName, std::string &outputMessage)>> decision2_ =  { 
+    /*std::map<std::string,std::function<bool(nlohmann::json&,std::string agentName, std::string &outputMessage)>> decision2_ =  { 
         {"INT", [&](nlohmann::json& tempJson, std::string agentName,std::string &outputMessage) {
             for (auto& it : tempJson) {
                 if (!it["Minimum"].is_number_integer() || !it["Maximum"].is_number_integer()) {
@@ -146,7 +147,7 @@ private:
             return true;
         }
     }
-    };
+    };*/
 
     std::map<AttributeType, std::function<bool(nlohmann::json&, Attribute*, std::string&)>>  saveAdditionalInfoToFile_ {
         {AttributeType::INT, [&](nlohmann::json &json, Attribute* attribute, std::string &outputMessage) {
@@ -155,9 +156,7 @@ private:
                 return false;
             }
             AttributeInt* attributeint = dynamic_cast<AttributeInt*>(attribute);
-            json.push_back(nlohmann::json::object_t::value_type("Minimum",attributeint->getMin()));
-            json.push_back(nlohmann::json::object_t::value_type("Maximum",attributeint->getMaximum()));
-            json.push_back(nlohmann::json::object_t::value_type("Value",std::get<int>(attributeint->getValue())));
+            
             return true;
         }
 

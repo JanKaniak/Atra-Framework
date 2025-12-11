@@ -15,13 +15,14 @@ void Attributes::addAttribute(std::string agentName,std::string attributeName, A
 
 };
 
-void Attributes::setAttributeValue(std::string name, AttributeType type,AttributeTypeVariant value) {
-    for (auto& attribute : attributes_) {
-        if (attribute->getType() == type && attribute->getName().compare(name.c_str()) == 0) {
-            attribute->setValue(value);
-        }
+void Attributes::createAttributes() {
+    for (int i = 0; i < attributeDescs_->getSize(); i++) {
+        AttributeDescription* desc = attributeDescs_->getDescription(i);
+        attributes_.push_back(attributeFactory_.createAttribute(desc->getType()));
+        attributes_.at(attributes_.size() - 1)->setDescription(desc);
     }
 }
+
 
 int Attributes::giveInt(std::string name) {
             for (auto& attribute : attributes_) {

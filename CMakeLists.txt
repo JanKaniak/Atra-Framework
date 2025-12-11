@@ -34,6 +34,7 @@ target_include_directories(imgui_backends PUBLIC src/imgui)
 add_library(myLib
     src/libs/Sources/Descriptions/AttributeDescription.cpp
     src/libs/Sources/Descriptions/AttributeDescriptions.cpp
+    src/libs/Sources/Attributes/Attribute.cpp
     src/libs/Sources/Attributes/Attributes.cpp
     src/libs/Sources/ControlComponents/NumericInput.cpp
     src/libs/Sources/ControlComponents/Formular.cpp

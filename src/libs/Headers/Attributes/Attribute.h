@@ -26,7 +26,8 @@ public:
     virtual std::unique_ptr<Attribute> clone() = 0;
     virtual void setDescription(AttributeDescription *desc) = 0;
     virtual AttributeTypeVariant getValue() = 0;
-    virtual void setValue(AttributeTypeVariant value) = 0;
+    //virtual void setValue(AttributeTypeVariant value) = 0;
+    virtual bool saveToJson(nlohmann::json &json, std::string &outputMessage) = 0;
 };
 
 class AttributeInt : public Attribute
@@ -41,20 +42,8 @@ public:
 
     inline int getMaximum() { return desc_->getMax(); }
 
-    void setValue(AttributeTypeVariant value) override
-    {
-        try
-        {
-            if (std::holds_alternative<int>(value)) {
-                value_ = std::get<int>(value);
-            }
-            else {
-                throw std::runtime_error("Not numeric type!");;
-            }
-        } catch (const std::exception& exc) {
-            std::cerr << "Error: " << exc.what() << std::endl;
-        }
-    }
+    void setValue(int value);
+    
 
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeInt>(*this); }
 
@@ -65,6 +54,7 @@ public:
     }
 
     AttributeTypeVariant getValue() override { return value_; }
+    bool saveToJson(nlohmann::json &json, std::string &outputMessage) override;
 };
 
 /*

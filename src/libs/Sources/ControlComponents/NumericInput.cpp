@@ -1,56 +1,33 @@
 #include "NumericInput.h"
 #include "imgui.h"
 
-
-
 // Class IntSlider
-void IntSlider::draw() { 
-    if (ImGui::SliderInt(std::format("##{}",attributeint_->getName()).c_str(),&value_,attributeint_->getMin(),attributeint_->getMaximum())) {
+void IntSlider::draw()
+{
+    if (ImGui::SliderInt(std::format("##{}", attributeint_->getName()).c_str(), &value_, attributeint_->getMin(), attributeint_->getMaximum()))
+    {
         attributeint_->setValue(value_);
     }
-    
 }
-void IntSlider::setAttribute(Attribute *attribute)
-{
-    if (dynamic_cast<AttributeInt *>(attribute))
-    {
-        attributeint_ = dynamic_cast<AttributeInt *>(attribute);
-        value_ = std::get<int>(attributeint_->getValue());
-        minimum_ = attributeint_->getMin();
-        maximum_ = attributeint_->getMaximum();
-    }
-}
-
 //---------------------------------------------------------------------------------------
 
 // Class IntVSSlider
-void IntVSSlider::draw() { ImGui::VSliderInt(std::format("##{}",attributeint_->getName()).c_str(),ImVec2(20,50), &value_, attributeint_->getMin(), attributeint_->getMaximum());}
-void IntVSSlider::setAttribute(Attribute *attribute)
+void IntVSSlider::draw()
 {
-    if (dynamic_cast<AttributeInt *>(attribute))
+    if (ImGui::VSliderInt(std::format("##{}", attributeint_->getName()).c_str(), ImVec2(20, 50), &value_, attributeint_->getMin(), attributeint_->getMaximum()))
     {
-        attributeint_ = dynamic_cast<AttributeInt *>(attribute);
-        value_ = std::get<int>(attributeint_->getValue());
-        minimum_ = attributeint_->getMin();
-        maximum_ = attributeint_->getMaximum();
-        
+        attributeint_->setValue(value_);
     }
 }
 
 //---------------------------------------------------------------------------------------
 
 // Class IntDrag
-void IntDrag::draw() { ImGui::DragInt(std::format("##{}",attributeint_->getName()).c_str(),&value_,1.0f,attributeint_->getMin(),attributeint_->getMaximum()); }
-void IntDrag::setAttribute(Attribute *attribute)
+void IntDrag::draw()
 {
-    if (dynamic_cast<AttributeInt *>(attribute))
+    if (ImGui::DragInt(std::format("##{}", attributeint_->getName()).c_str(), &value_, 1.0f, attributeint_->getMin(), attributeint_->getMaximum()))
     {
-        
-    
-    attributeint_ = dynamic_cast<AttributeInt *>(attribute);
-    value_ = std::get<int>(attributeint_->getValue());
-    minimum_ = attributeint_->getMin();
-    maximum_ = attributeint_->getMaximum();
+        attributeint_->setValue(value_);
     }
 }
 
