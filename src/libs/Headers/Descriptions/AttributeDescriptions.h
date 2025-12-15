@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <map>
+#include <iostream>
 
 using DescUptr = std::unique_ptr<AttributeDescription>;
 
@@ -30,7 +31,7 @@ class AttributeDescriptions {
     public:
         AttributeDescriptions();
         void addDescription(std::string agentName,std::string attributeName, AttributeType type,AttributeTypeVariant minimum, AttributeTypeVariant maximum);
-        bool addDescriptions(AttributeType type,nlohmann::json &json, std::string agentName, std::string &outputMessage);
+        bool addDescriptions(AttributeType type,nlohmann::ordered_json &json, std::string agentName, std::string &outputMessage);
         AttributeDescription* getDescription(std::string name, std::string agentName);
         inline AttributeDescription* getDescription(int i) { return attributeDescs_.at(i).get();}
         inline int getSize() { return attributeDescs_.size();}

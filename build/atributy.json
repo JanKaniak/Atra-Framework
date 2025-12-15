@@ -21,6 +21,28 @@
                 "Minimum": 10,
                 "Maximum": 1000
             }
+        ],
+        "DOUBLE" : [
+            {
+                "Attribute name" : "Šiška",
+                "Minimum" : 500.0,
+                "Maximum" : 574.4
+            },
+            {
+                "Attribute name" : "Čislo1",
+                "Minimum" : 10.0,
+                "Maximum" : 10.4
+            },
+            {
+                "Attribute name" : "Čislo2",
+                "Minimum" : 1.5,
+                "Maximum" : 99.0
+            },
+            {
+                "Attribute name" : "Čislo3",
+                "Minimum" : 50.0,
+                "Maximum" : 55.5
+            }
         ]
         
     },
@@ -45,6 +67,28 @@
                 "Attribute name": "Obec",
                 "Minimum": 74,
                 "Maximum": 79
+            }
+        ],
+        "DOUBLE" : [
+            {
+                "Attribute name" : "Šiška2",
+                "Minimum" : 80.0,
+                "Maximum" : 85.0
+            },
+            {
+                "Attribute name" : "Čislo1",
+                "Minimum" : 10.2,
+                "Maximum" : 10.4
+            },
+            {
+                "Attribute name" : "Čislo2",
+                "Minimum" : 1.5,
+                "Maximum" : 999.0
+            },
+            {
+                "Attribute name" : "Čislo3",
+                "Minimum" : 53.0,
+                "Maximum" : 55.5
             }
         ]
     }

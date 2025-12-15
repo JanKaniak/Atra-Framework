@@ -29,31 +29,6 @@ public:
     virtual Attribute *getAttribute() = 0;
 };
 
-class ControlComponentChar : public ControlComponent
-{
-protected:
-    char value_[2];
-    int minimum_;
-    int maximum_;
-
-public:
-    ControlComponentChar() {};
-    virtual std::unique_ptr<ControlComponent> clone() = 0;
-};
-
-class ControlComponentDouble : public ControlComponent
-{
-protected:
-    double value_;
-    double minimum_;
-    double maximum_;
-
-public:
-    EditTypeDouble type_;
-    ControlComponentDouble(EditTypeDouble type) { type_ = type; };
-    virtual std::unique_ptr<ControlComponent> clone() = 0;
-};
-
 template <EditTypeInt TYPE>
 class ControlComponentInt : public ControlComponent
 {
@@ -67,12 +42,66 @@ public:
     static constexpr EditTypeInt type_ = TYPE;
     void setAttribute(Attribute *attribute) override
     {
-        if (dynamic_cast<AttributeInt *>(attribute))
+        if (dynamic_cast<AttributeInt*>(attribute))
         {
             attributeint_ = dynamic_cast<AttributeInt *>(attribute);
-            value_ = std::get<int>(attributeint_->getValue());
+            value_ = attributeint_->getValue();
             minimum_ = attributeint_->getMin();
             maximum_ = attributeint_->getMaximum();
         }
     }
 };
+
+template <EditTypeDouble TYPE>
+class ControlComponentDouble : public ControlComponent
+{
+protected:
+    double value_;
+    double minimum_;
+    double maximum_;
+    AttributeDouble *attributedouble_;
+
+public:
+    static constexpr EditTypeDouble type_ = TYPE;
+    void setAttribute(Attribute *attribute) override
+    {
+        if (dynamic_cast<AttributeDouble*>(attribute))
+        {
+            attributedouble_ = dynamic_cast<AttributeDouble*>(attribute);
+            value_ = attributedouble_->getValue();
+            minimum_ = attributedouble_->getMin();
+            maximum_ = attributedouble_->getMaximum();
+        }
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+class ControlComponentChar : public ControlComponent
+{
+protected:
+    char value_[2];
+    int minimum_;
+    int maximum_;
+
+public:
+    ControlComponentChar() {};
+    virtual std::unique_ptr<ControlComponent> clone() = 0;
+};
+

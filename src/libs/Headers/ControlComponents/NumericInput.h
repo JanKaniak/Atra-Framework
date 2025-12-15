@@ -4,103 +4,83 @@
 #include <variant>
 #include <format>
 
-class IntSlider : public ControlComponentInt<EditTypeInt::SLIDER> {
-    
-    private:
-        AttributeInt* attributeint_;
-    public:
-        IntSlider(){};
-        void draw() override;
-        std::string getName() override { return attributeint_->getName();};
-        AttributeType getType() override {return attributeint_->getType();};
-        std::string getAgent() override {return attributeint_->getAgent();};
-        std::unique_ptr<ControlComponent> clone () override { return std::make_unique<IntSlider>(*this);};
-        Attribute *getAttribute() override {return attributeint_;};
+class IntSlider : public ControlComponentInt<EditTypeInt::SLIDER>
+{
+
+private:
+public:
+    IntSlider() {};
+    void draw() override;
+    std::string getName() override { return attributeint_->getName(); };
+    AttributeType getType() override { return attributeint_->getType(); };
+    std::string getAgent() override { return attributeint_->getAgent(); };
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<IntSlider>(*this); };
+    Attribute *getAttribute() override { return attributeint_; };
 };
 
-class IntVSSlider : public ControlComponentInt<EditTypeInt::VSLIDER> {
-    private:
-        AttributeInt* attributeint_;
+class IntVSSlider : public ControlComponentInt<EditTypeInt::VSLIDER>
+{
+private:
+public:
+    IntVSSlider() {};
 
-    public:
-        IntVSSlider(){};
-
-        void draw() override;
-        std::string getName() override { return attributeint_->getName();};
-        AttributeType getType() override {return attributeint_->getType();};
-        std::string getAgent() override {return attributeint_->getAgent();};
-        std::unique_ptr<ControlComponent> clone () override { return std::make_unique<IntVSSlider>(*this);}
-        Attribute *getAttribute() override {return attributeint_;};
+    void draw() override;
+    std::string getName() override { return attributeint_->getName(); };
+    AttributeType getType() override { return attributeint_->getType(); };
+    std::string getAgent() override { return attributeint_->getAgent(); };
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<IntVSSlider>(*this); }
+    Attribute *getAttribute() override { return attributeint_; };
 };
 
-class IntDrag : public ControlComponentInt<EditTypeInt::DRAG> {
-    private:
-        
+class IntDrag : public ControlComponentInt<EditTypeInt::DRAG>
+{
+public:
+    IntDrag() {};
 
-    public:
-        IntDrag(){};
-
-        void draw() override;
-        std::string getName() override { return attributeint_->getName();};
-        AttributeType getType() override {return attributeint_->getType();};
-        std::string getAgent() override {return attributeint_->getAgent();};
-        std::unique_ptr<ControlComponent> clone () override { return std::make_unique<IntDrag>(*this);};
-        Attribute *getAttribute() override {return attributeint_;};
+    void draw() override;
+    std::string getName() override { return attributeint_->getName(); };
+    AttributeType getType() override { return attributeint_->getType(); };
+    std::string getAgent() override { return attributeint_->getAgent(); };
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<IntDrag>(*this); };
+    Attribute *getAttribute() override { return attributeint_; };
 };
-
-
-/*
 
 //------------------------------------------------------------------------------------------
 
-class DoubleSlider : public ControlComponentDouble {
-    private:
-        AtributeDouble* atributedouble_;
-
-    public:
-        DoubleSlider() : ControlComponentDouble(EditTypeDouble::SLIDER) {}
-
-        void draw() override;
-
-        ControlComponentDouble* clone () override { return new DoubleSlider(*this);};
-
-        void setAtribute(Atribute* atribute) override;
-
-        
-
+class DoubleSlider : public ControlComponentDouble<EditTypeDouble::SLIDER>
+{
+public:
+    DoubleSlider() {};
+    void draw() override;
+    std::string getName() override { return attributedouble_->getName(); };
+    AttributeType getType() override { return attributedouble_->getType(); };
+    std::string getAgent() override { return attributedouble_->getAgent(); };
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleSlider>(*this); };
+    Attribute *getAttribute() override { return attributedouble_; };
 };
 
-class DoubleVSSlider : public ControlComponentDouble {
-    private:
-        AtributeDouble* atributedouble_;
-
-    public:
-        DoubleVSSlider() : ControlComponentDouble(EditTypeDouble::VSLIDER) {}
-
-        void draw() override;
-
-        ControlComponentDouble* clone () override { return new DoubleVSSlider(*this);};
-
-        void setAtribute(Atribute* atribute) override;
+class DoubleVSSlider : public ControlComponentDouble<EditTypeDouble::SLIDER>
+{
+public:
+    DoubleVSSlider() {};
+    void draw() override;
+    std::string getName() override { return attributedouble_->getName(); };
+    AttributeType getType() override { return attributedouble_->getType(); };
+    std::string getAgent() override { return attributedouble_->getAgent(); };
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleVSSlider>(*this); };
+    Attribute *getAttribute() override { return attributedouble_; };
 };
 
-class DoubleDrag : public ControlComponentDouble {
-    private:
-        AtributeDouble* atributedouble_;
+class DoubleDrag : public ControlComponentDouble<EditTypeDouble::SLIDER>
+{
+private:
 
-    public:
-        DoubleDrag() : ControlComponentDouble(EditTypeDouble::DRAG) {}
-
-        void draw() override;
-
-        ControlComponentDouble* clone () override { return new DoubleDrag(*this); };
-
-        void setAtribute(Atribute* atribute) override;
-
-        
-
+public:
+    DoubleDrag() {};
+    void draw() override;
+    std::string getName() override { return attributedouble_->getName(); };
+    AttributeType getType() override { return attributedouble_->getType(); };
+    std::string getAgent() override { return attributedouble_->getAgent(); };
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleDrag>(*this); };
+    Attribute *getAttribute() override { return attributedouble_; };
 };
-
-
-
-*/

@@ -38,7 +38,7 @@ add_library(myLib
     src/libs/Sources/Attributes/Attributes.cpp
     src/libs/Sources/ControlComponents/NumericInput.cpp
     src/libs/Sources/ControlComponents/Formular.cpp
-    src/nlohmannJson/json.hpp
+    src/libs/Sources/ControlComponents/Factory.cpp
 )
 
 target_include_directories(myLib PUBLIC src/libs/Headers/Descriptions)

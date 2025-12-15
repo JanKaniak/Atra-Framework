@@ -3,23 +3,23 @@
 AttributeDescriptions::AttributeDescriptions()
 {
     descFactory_.registerPrototype<AttributeDescription_int>();
-    // descFactory_.registerPrototype<AtributeDescription_double>();
+    descFactory_.registerPrototype<AttributeDescription_double>();
     // descFactory_.registerPrototype<AtributeDescription_char>();
 }
 
-void AttributeDescriptions::addDescription(std::string agentName, std::string attributeName, AttributeType type, AttributeTypeVariant minimum, AttributeTypeVariant maximum)
+/*void AttributeDescriptions::addDescription(std::string agentName, std::string attributeName, AttributeType type, AttributeTypeVariant minimum, AttributeTypeVariant maximum)/
 {
     attributeDescs_.push_back(descFactory_.createDesc(type));
     getLast()->setName(attributeName);
     getLast()->setAgent(agentName);
     getLast()->setLimit(minimum, maximum);
-}
+}*/
 
-bool AttributeDescriptions::addDescriptions(AttributeType type, nlohmann::json &json, std::string agentName, std::string &outputMessage)
+bool AttributeDescriptions::addDescriptions(AttributeType type, nlohmann::ordered_json &json, std::string agentName, std::string &outputMessage)
 {
-    for (auto &it : json)
+    for (auto descIt = json.begin(); descIt != json.end(); descIt++)
     {
-        AttributeDescription* desc = getDescription(it["Attribute name"].get<std::string>(), agentName);
+        AttributeDescription* desc = getDescription(descIt.value()["Attribute name"].get<std::string>(), agentName);
         if (desc != nullptr)
         {
             attributeDescs_.clear();
@@ -29,7 +29,7 @@ bool AttributeDescriptions::addDescriptions(AttributeType type, nlohmann::json &
         attributeDescs_.push_back(descFactory_.createDesc(type));
         desc = getLast();
         desc->setAgent(agentName);
-        if (!desc->jsonParse(it, outputMessage)) {
+        if (!desc->jsonParse(descIt.value(), outputMessage)) {
             attributeDescs_.clear();
             return false;
         }
@@ -51,11 +51,11 @@ AttributeDescription *AttributeDescriptions::getDescription(std::string name, st
 
 bool AttributeDescriptions::deleteDescription(AttributeDescription *description)
 {
-    for (int i = 0; i < attributeDescs_.size(); i++)
+    for (auto it = attributeDescs_.begin(); it != attributeDescs_.end(); it++)
     {
-        if (attributeDescs_.at(i).get() == description)
+        if (it->get() == description)
         {
-            attributeDescs_.erase(attributeDescs_.begin() + i);
+            attributeDescs_.erase(it);
             return true;
         }
     }

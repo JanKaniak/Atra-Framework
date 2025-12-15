@@ -1,1 +1,92 @@
-{"GG":{"INT":[{"Attribute name":"Meno","Maximum":15,"Minimum":10,"Value":15},{"Attribute name":"Priezvisko","Maximum":57,"Minimum":50,"Value":50},{"Attribute name":"Mesto","Maximum":125,"Minimum":80,"Value":80},{"Attribute name":"Obec","Maximum":79,"Minimum":74,"Value":74}]},"Person":{"INT":[{"Attribute name":"Attribute1","Maximum":100,"Minimum":0,"Value":100},{"Attribute name":"Attribute4","Maximum":50,"Minimum":-50,"Value":50},{"Attribute name":"Attribute19","Maximum":10,"Minimum":-10,"Value":-10},{"Attribute name":"Attribute7","Maximum":1000,"Minimum":10,"Value":10}]}}
+{
+    "GG": {
+        "DOUBLE": [
+            {
+                "Attribute name": "Šiška2",
+                "Maximum": 85.0,
+                "Minimum": 80.0,
+                "Value": 80.0
+            },
+            {
+                "Attribute name": "Čislo1",
+                "Maximum": 10.4,
+                "Minimum": 10.2,
+                "Value": 10.2
+            },
+            {
+                "Attribute name": "Čislo2",
+                "Maximum": 999.0,
+                "Minimum": 1.5,
+                "Value": 1.5
+            },
+            {
+                "Attribute name": "Čislo3",
+                "Maximum": 55.5,
+                "Minimum": 53.0,
+                "Value": 53.0
+            }
+        ],
+        "INT": [
+            {
+                "Attribute name": "Meno",
+                "Maximum": 15,
+                "Minimum": 10,
+                "Value": 10
+            },
+            {
+                "Attribute name": "Priezvisko",
+                "Maximum": 57,
+                "Minimum": 50,
+                "Value": 50
+            },
+            {
+                "Attribute name": "Mesto",
+                "Maximum": 125,
+                "Minimum": 80,
+                "Value": 80
+            }
+        ]
+    },
+    "Person": {
+        "DOUBLE": [
+            {
+                "Attribute name": "Šiška",
+                "Maximum": 574.4,
+                "Minimum": 500.0,
+                "Value": 500.0
+            },
+            {
+                "Attribute name": "Čislo1",
+                "Maximum": 10.4,
+                "Minimum": 10.0,
+                "Value": 10.0
+            },
+            {
+                "Attribute name": "Čislo2",
+                "Maximum": 99.0,
+                "Minimum": 1.5,
+                "Value": 1.5
+            },
+            {
+                "Attribute name": "Čislo3",
+                "Maximum": 55.5,
+                "Minimum": 50.0,
+                "Value": 50.0
+            }
+        ],
+        "INT": [
+            {
+                "Attribute name": "Attribute4",
+                "Maximum": 50,
+                "Minimum": -50,
+                "Value": -50
+            },
+            {
+                "Attribute name": "Attribute19",
+                "Maximum": 10,
+                "Minimum": -10,
+                "Value": -10
+            }
+        ]
+    }
+}

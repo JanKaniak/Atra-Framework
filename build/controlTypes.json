@@ -1,22 +1,18 @@
-[
-    {
-        "Person": [
-            {
-                "Attribute1": "SLIDER",
-                "Attribute4": "SLIDER",
-                "Attribute19": "DRAG",
-                "Attribute7": "VSLIDER"
-            }
-        ],
-        "GG" : [
-            {
-                "Meno" : "SLIDER",
-                "Priezvisko" : "DRAG",
-                "Mesto" : "VSLIDER",
-                "Obec" : "DRAG"
-
-            }
-        ]
-
-    }
-]
+{
+    "Person": 
+        {
+            "Attribute1": "SLIDER",
+            "Attribute4": "SLIDER",
+            "Attribute19": "DRAG",
+            "Attribute7": "VSLIDER"
+        }
+    ,
+    "GG": 
+        {
+            "Meno": "SLIDER",
+            "Priezvisko": "DRAG",
+            "Mesto": "VSLIDER",
+            "Obec": "DRAG"
+        }
+    
+}

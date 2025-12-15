@@ -4,19 +4,19 @@
 Formular::Formular()
 {
     attributes_ = std::make_unique<Attributes>();
-    factoryChoice_.emplace(AttributeType::INT, IntEditFactory::getInstance());
 }
 
-void Formular::addAttribute(std::string name, std::string editType, AttributeType type, AttributeTypeVariant min, AttributeTypeVariant max)
+/*void Formular::addAttribute(std::string name, std::string editType, AttributeType type, AttributeTypeVariant min, AttributeTypeVariant max)
 {
     attributes_->addAttribute("", name, type, min, max);
     components_.push_back(factoryChoice_[type]->createEdit(editType));
     components_.at(components_.size() - 1)->setAttribute(attributes_->getLast());
-}
-void Formular::addAttribute(std::string attributeName, AttributeType type, std::string agentName, AttributeTypeVariant min, AttributeTypeVariant max)
+}*/
+
+/*void Formular::addAttribute(std::string attributeName, AttributeType type, std::string agentName, AttributeTypeVariant min, AttributeTypeVariant max)
 {
     attributes_->addAttribute(agentName, attributeName, type, min, max);
-}
+}*/
 
 bool Formular::addControlType(std::string attributeName, std::string agentName, std::string editType, std::string &outputMessage)
 {
@@ -28,7 +28,13 @@ bool Formular::addControlType(std::string attributeName, std::string agentName, 
 
     if (!sameName(attributeName))
     {
-        components_.push_back(factoryChoice_[attributes_->giveAttributeByName(attributeName)->getType()]->createEdit(editType));
+        Factory *factory = config.getFactory(attributes_->giveAttributeByName(attributeName)->getType());
+        if (factory == nullptr)
+        {
+            outputMessage = "Attribute type does not exist!";
+            return false;
+        }
+        components_.push_back(factory->createEdit(editType));
         components_.at(components_.size() - 1)->setAttribute(attributes_->giveAttributeByName(attributeName));
     }
     else
@@ -41,8 +47,15 @@ bool Formular::addControlType(std::string attributeName, std::string agentName, 
 
 bool Formular::addControlType(Attribute *attribute, std::string &outputMessage)
 {
-    components_.push_back(factoryChoice_[attribute->getType()]->createEdit(""));
+    Factory *factory = config.getFactory(attribute->getType());
+    if (factory == nullptr)
+    {
+        outputMessage = "Attribute type does not exist!";
+        return false;
+    }
+    components_.push_back(config.getFactory(attribute->getType())->createEdit(""));
     components_.at(components_.size() - 1)->setAttribute(attribute);
+
     return true;
 }
 
@@ -107,14 +120,14 @@ void Formular::showControls()
         ImGui::Text("Current number of atributes: 500000+");
     }
 
-    if (editWindow)
+    /*if (editWindow)
     {
         showEditWindow();
-    }
+    }*/
     ImGui::End();
 }
 
-void Formular::showEditWindow()
+/*void Formular::showEditWindow()
 {
     if (ImGui::Begin("Edtiacne okno", &editWindow, ImGuiWindowFlags_NoBringToFrontOnFocus))
     {
@@ -176,24 +189,28 @@ void Formular::showEditWindow()
 
         ImGui::End();
     }
-}
+}*/
 
 void Formular::showAttributes()
 {
+    // ImGui::SetNextWindowSize(ImVec2(300,500));
     ImGui::Begin("Atributes", &mainWindows, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize);
     std::string agent = "";
     bool tableCreated = false;
     for (auto &component : components_)
     {
+        if (component == nullptr) {
+            continue;
+        }
         if (agent.empty())
         {
             agent = component->getAgent();
             ImGui::Text("%s", agent.c_str());
-            ImGui::BeginTable(agent.c_str(), 3, ImGuiTableFlags_BordersOuter);
+            ImGui::BeginTable(agent.c_str(), 4, ImGuiTableFlags_BordersOuter);
             ImGui::TableSetupColumn("Attribute name");
             ImGui::TableSetupColumn("Input");
             ImGui::TableSetupColumn("Attribute type");
-            //mGui::TableSetupColumn("Button");
+            ImGui::TableSetupColumn("Button");
             ImGui::TableHeadersRow();
         }
         else if (component->getAgent().compare(agent) != 0)
@@ -202,11 +219,11 @@ void Formular::showAttributes()
             ImGui::EndTable();
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 30);
             ImGui::Text("%s", agent.c_str());
-            ImGui::BeginTable(agent.c_str(), 3, ImGuiTableFlags_BordersOuter);
+            ImGui::BeginTable(agent.c_str(), 4, ImGuiTableFlags_BordersOuter);
             ImGui::TableSetupColumn("Attribute name");
             ImGui::TableSetupColumn("Input");
             ImGui::TableSetupColumn("Attribute type");
-            //ImGui::TableSetupColumn("Button");
+            ImGui::TableSetupColumn("Button");
             ImGui::TableHeadersRow();
         }
 
@@ -216,11 +233,11 @@ void Formular::showAttributes()
         component->draw();
         ImGui::TableNextColumn();
         ImGui::Text("%s", enumToString[component->getType()].c_str());
-        //ImGui::TableNextColumn();
-        /*if (ImGui::Button(std::format("Delete##{}{}", component->getName(), component->getAgent()).c_str(), ImVec2(50, 30)))
+        ImGui::TableNextColumn();
+        if (ImGui::Button(std::format("Delete##{}{}", component->getName(), component->getAgent()).c_str(), ImVec2(50, 30)))
         {
             deleteAttribute(component->getAttribute(), infoMessage);
-        }*/
+        }
     }
     ImGui::EndTable();
     ImGui::End();
@@ -228,35 +245,22 @@ void Formular::showAttributes()
 
 void Formular::deleteAttribute(Attribute *attribute, std::string &outputMessage)
 {
-    ImGui::Begin("Info");
-    ImGui::Text("Are you sure you want to delete this attribute?");
-    if (ImGui::Button("Yes", ImVec2(10, 30)))
+    for (auto it = components_.begin(); it < components_.end(); it++)
     {
-        decision = true;
+        if (attribute->getName().compare(it->get()->getName()) == 0 && attribute->getAgent().compare(it->get()->getAgent()) == 0)
+        {
+            components_.erase(it);
+            break;
+        }
     }
-    if (ImGui::Button("No", ImVec2(10, 30)))
+    if (!attributes_->deleteAttribute(attribute))
     {
-        decision = false;
+        outputMessage = "Attribute does not exist!";
     }
+    else
+    {
 
-    if (decision)
-    {
-        if (!attributes_->deleteAttribute(attribute))
-        {
-            outputMessage = "Attribute does not exist!";
-        }
-        else
-        {
-            for (int i = 0; i < components_.size(); i++)
-            {
-                if (attribute->getName().compare(components_.at(i)->getName()) == 0 && attribute->getAgent().compare(components_.at(i)->getAgent()) == 0)
-                {
-                    components_.erase(components_.begin() + i);
-                    break;
-                }
-            }
-            outputMessage = "Attribute was deleted!";
-        }
+        outputMessage = "Attribute was deleted!";
     }
 }
 
@@ -270,8 +274,6 @@ void Formular::draw()
     }
 }
 
-
-
 int Formular::readFileDescriptions(const char *path, std::string &outputMessage)
 {
     std::ifstream file(path);
@@ -280,19 +282,16 @@ int Formular::readFileDescriptions(const char *path, std::string &outputMessage)
         outputMessage = "File does not exist!";
         return -1;
     }
-    nlohmann::json jsonFile = nlohmann::json::parse(file);
+    nlohmann::ordered_json jsonFile = nlohmann::json::parse(file);
     file.close();
-
-    for (auto [agentKey, agentValue] : jsonFile.items()) // agent name = agentKey
+    for (auto agent = jsonFile.rbegin(); agent != jsonFile.rend(); agent++) // agent name = agent.key
     {
-        for (auto [attributeGroupKey, attributeGroupValue] : agentValue.items()) // attribute type = attributeGroupValue
+        auto agentDescriptions = agent.value();
+        for (auto descriptions = agentDescriptions.rbegin(); descriptions != agentDescriptions.rend(); descriptions++) // attributeDescriptions = list of attributes, attributeTypeKey = attribute type
         {
-            for (auto [attributeTypeKey, attributeDescriptions] : agentValue.items()) // attributeDescriptions = list of attributes, attributeTypeKey = attribute type
+            if (!attributes_->addDescriptions(stringToEnum[descriptions.key()], descriptions.value(), agent.key(), outputMessage))
             {
-                if (!attributes_->addDescriptions(stringToEnum[attributeTypeKey],attributeDescriptions, agentKey,outputMessage))
-                {
-                    return -1;
-                }
+                return -1;
             }
         }
     }
@@ -314,25 +313,27 @@ int Formular::readFileControlTypes(const char *path, std::string &outputMessage)
     int tmpNumberOfLoadedControls = 0;
     for (int i = 0; i < attributes_->getSize(); i++)
     {
-        for (auto &object : jsonFile)
+         if (!jsonFile.contains(attributes_->giveAttribute(i)->getAgent()))
         {
-            if (object.contains(attributes_->giveAttribute(i)->getAgent()))
-            {
-                auto agent = object.find(attributes_->giveAttribute(i)->getAgent());
-                for (auto &controlTypes : agent.value())
-                {
-                    if (!controlTypes.contains(attributes_->giveAttribute(i)->getName()))
-                    {
-                        addControlType(attributes_->giveAttribute(i), outputMessage);
-                    }
-                    addControlType(attributes_->giveAttribute(i)->getName(), agent.key(), controlTypes.find(attributes_->giveAttribute(i)->getName()).value(), outputMessage);
-                    tmpNumberOfLoadedControls++;
-                }
-            }
-            else
+            addControlType(attributes_->giveAttribute(i), outputMessage);
+            continue;
+        }
+        auto agent = jsonFile.find(attributes_->giveAttribute(i)->getAgent());
+        if (agent.value().contains(attributes_->giveAttribute(i)->getName()))
+        {
+            auto editType = agent.value().find(attributes_->giveAttribute(i)->getName());
+            if (!editType.value().is_string())
             {
                 components_.clear();
-                outputMessage = std::format("Agent {} is not in a file!", attributes_->giveAttribute(i)->getAgent());
+                outputMessage = std::format("Edit type's name must be a string!", attributes_->giveAttribute(i)->getAgent());
+                return -1;
+            }
+            addControlType(attributes_->giveAttribute(i)->getName(), agent.key(), editType.value(), outputMessage);
+            tmpNumberOfLoadedControls++;
+        }
+        else
+        {
+            if (!addControlType(attributes_->giveAttribute(i), outputMessage)) {
                 return -1;
             }
         }
@@ -344,10 +345,6 @@ int Formular::readFileControlTypes(const char *path, std::string &outputMessage)
     else if (tmpNumberOfLoadedControls == components_.size())
     {
         outputMessage = std::format("Successfully loaded {} controls", tmpNumberOfLoadedControls);
-    }
-
-    for (auto &oj : components_) {
-        std::cout << oj->getAgent() << std::endl;
     }
     return tmpNumberOfLoadedControls;
 }
@@ -384,50 +381,12 @@ bool Formular::saveToFile(std::string &outputMessage)
         attributeType.value().push_back(nlohmann::json::object());
         attributeType.value()[attributeType.value().size() - 1].push_back(nlohmann::json::object_t::value_type("Attribute name", attribute->getName()));
         attribute->saveToJson(attributeType.value()[attributeType.value().size() - 1], outputMessage);
-        //saveAdditionalInfoToFile_[attribute->getType()](attributeType.value()[attributeType.value().size() - 1], attribute, outputMessage);
     }
 
     std::ofstream file("output.json");
     file << jsonTemp;
     file.close();
     return true;
-}
-
-IntEditFactory *IntEditFactory::instance = nullptr;
-
-IntEditFactory::IntEditFactory()
-{
-    this->registerPrototype<IntSlider>();
-    this->registerPrototype<IntVSSlider>();
-    this->registerPrototype<IntDrag>();
-}
-
-IntEditFactory *IntEditFactory::getInstance()
-{
-    if (instance == nullptr)
-    {
-        instance = new IntEditFactory();
-    }
-
-    return instance;
-}
-
-template <typename EditTypeIntT>
-inline void IntEditFactory::registerPrototype()
-{
-    prototypes_[EditTypeIntT::type_] = std::move(std::make_unique<EditTypeIntT>());
-}
-
-bool Formular::sameName(std::string name)
-{
-    for (auto &component : components_)
-    {
-        if (component->getName().compare(name) == 0)
-        {
-            return true;
-        }
-    }
-    return false;
 }
 
 bool Formular::showWarning(std::string message)
@@ -446,8 +405,18 @@ bool Formular::showWarning(std::string message)
     return false;
 }
 
+bool Formular::sameName(std::string name)
+{
+    for (auto &component : components_)
+    {
+        if (component->getName().compare(name) == 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
 
-
-//save + load virtualna metoda
-//dependency injection
-//rozdelit pridavanie descriptions a attributov
+// save + load virtualna metoda
+// dependency injection
+// rozdelit pridavanie descriptions a attributovy
