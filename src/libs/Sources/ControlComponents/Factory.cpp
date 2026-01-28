@@ -57,4 +57,33 @@ inline void DoubleEditFactory::registerPrototype()
     prototypes_[EditTypeDoubleT::type_] = std::move(std::make_unique<EditTypeDoubleT>());
 }
 
+//
+
+// FLOAT
+
+FloatEditFactory *FloatEditFactory::instance = nullptr;
+
+FloatEditFactory::FloatEditFactory()
+{
+    this->registerPrototype<FloatSlider>();
+    this->registerPrototype<FloatVSSlider>();
+    this->registerPrototype<FloatDrag>();
+}
+
+FloatEditFactory *FloatEditFactory::getInstance()
+{
+    if (instance == nullptr)
+    {
+        instance = new FloatEditFactory();
+    }
+
+    return instance;
+}
+
+template <typename EditTypeFloatT>
+inline void FloatEditFactory::registerPrototype()
+{
+    prototypes_[EditTypeFloatT::type_] = std::move(std::make_unique<EditTypeFloatT>());
+}
+
 // ------------------------------------------------------------------------------------------------------

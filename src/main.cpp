@@ -24,10 +24,15 @@
 #endif
 
 #include "libs/Headers/ControlComponents/Formular.h"
+#include "AttributeDescriptionsComplete.h"
 
 // Main code
 int main(int, char **)
 {
+    std::cout << "Int description: " << AutoRegisterIntDescription::registerIntDescription << "\n";
+ 
+
+
     std::unique_ptr<Formular> formular = std::make_unique<Formular>();
 
 

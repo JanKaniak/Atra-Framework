@@ -146,54 +146,54 @@ build libimgui_backends.a: CXX_STATIC_LIBRARY_LINKER__imgui_backends_Debug CMake
 #############################################
 # Order-only phony target for myLib
 
-build cmake_object_order_depends_target_myLib: phony || cmake_object_order_depends_target_imgui
+build cmake_object_order_depends_target_myLib: phony || cmake_object_order_depends_target_imgui cmake_object_order_depends_target_nfd
 
 build CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescription.cpp || cmake_object_order_depends_target_myLib
   DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions
 
 build CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescriptions.cpp || cmake_object_order_depends_target_myLib
   DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions
 
 build CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attribute.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/Attribute.cpp || cmake_object_order_depends_target_myLib
   DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attribute.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/Attributes
 
 build CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/Attributes.cpp || cmake_object_order_depends_target_myLib
   DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/Attributes
 
 build CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/NumericInput.cpp || cmake_object_order_depends_target_myLib
   DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents
 
 build CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/Formular.cpp || cmake_object_order_depends_target_myLib
   DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents
 
 build CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/Factory.cpp || cmake_object_order_depends_target_myLib
   DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o.d
   FLAGS = -g -std=gnu++20
-  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents
 
@@ -205,7 +205,7 @@ build CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o: CXX
 #############################################
 # Link the static library libmyLib.a
 
-build libmyLib.a: CXX_STATIC_LIBRARY_LINKER__myLib_Debug CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attribute.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o || libimgui.a
+build libmyLib.a: CXX_STATIC_LIBRARY_LINKER__myLib_Debug CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attribute.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o || libimgui.a src/nativefiledialog-extended/src/libnfd.a
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/myLib.dir
   POST_BUILD = :
@@ -220,7 +220,7 @@ build libmyLib.a: CXX_STATIC_LIBRARY_LINKER__myLib_Debug CMakeFiles/myLib.dir/sr
 #############################################
 # Order-only phony target for GraphicEditor
 
-build cmake_object_order_depends_target_GraphicEditor: phony || cmake_object_order_depends_target_imgui cmake_object_order_depends_target_imgui_backends cmake_object_order_depends_target_myLib
+build cmake_object_order_depends_target_GraphicEditor: phony || cmake_object_order_depends_target_imgui cmake_object_order_depends_target_imgui_backends cmake_object_order_depends_target_myLib cmake_object_order_depends_target_nfd
 
 build CMakeFiles/GraphicEditor.dir/src/main.cpp.o: CXX_COMPILER__GraphicEditor_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/main.cpp || cmake_object_order_depends_target_GraphicEditor
   DEP_FILE = CMakeFiles/GraphicEditor.dir/src/main.cpp.o.d
@@ -237,9 +237,9 @@ build CMakeFiles/GraphicEditor.dir/src/main.cpp.o: CXX_COMPILER__GraphicEditor_u
 #############################################
 # Link the executable GraphicEditor
 
-build GraphicEditor: CXX_EXECUTABLE_LINKER__GraphicEditor_Debug CMakeFiles/GraphicEditor.dir/src/main.cpp.o | libimgui.a libimgui_backends.a libmyLib.a libimgui.a || libimgui.a libimgui_backends.a libmyLib.a
+build GraphicEditor: CXX_EXECUTABLE_LINKER__GraphicEditor_Debug CMakeFiles/GraphicEditor.dir/src/main.cpp.o | libimgui.a libimgui_backends.a libmyLib.a libimgui.a src/nativefiledialog-extended/src/libnfd.a /usr/lib/x86_64-linux-gnu/libgtk-3.so /usr/lib/x86_64-linux-gnu/libgdk-3.so /usr/lib/x86_64-linux-gnu/libz.so /usr/lib/x86_64-linux-gnu/libpangocairo-1.0.so /usr/lib/x86_64-linux-gnu/libpango-1.0.so /usr/lib/x86_64-linux-gnu/libharfbuzz.so /usr/lib/x86_64-linux-gnu/libatk-1.0.so /usr/lib/x86_64-linux-gnu/libcairo-gobject.so /usr/lib/x86_64-linux-gnu/libcairo.so /usr/lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so /usr/lib/x86_64-linux-gnu/libgio-2.0.so /usr/lib/x86_64-linux-gnu/libgobject-2.0.so /usr/lib/x86_64-linux-gnu/libglib-2.0.so || libimgui.a libimgui_backends.a libmyLib.a src/nativefiledialog-extended/src/libnfd.a
   FLAGS = -g
-  LINK_LIBRARIES = libimgui.a  libimgui_backends.a  -lSDL2  -lOpenGL  libmyLib.a  libimgui.a
+  LINK_LIBRARIES = libimgui.a  libimgui_backends.a  -lSDL2  -lOpenGL  libmyLib.a  libimgui.a  src/nativefiledialog-extended/src/libnfd.a  /usr/lib/x86_64-linux-gnu/libgtk-3.so  /usr/lib/x86_64-linux-gnu/libgdk-3.so  /usr/lib/x86_64-linux-gnu/libz.so  /usr/lib/x86_64-linux-gnu/libpangocairo-1.0.so  /usr/lib/x86_64-linux-gnu/libpango-1.0.so  /usr/lib/x86_64-linux-gnu/libharfbuzz.so  /usr/lib/x86_64-linux-gnu/libatk-1.0.so  /usr/lib/x86_64-linux-gnu/libcairo-gobject.so  /usr/lib/x86_64-linux-gnu/libcairo.so  /usr/lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so  /usr/lib/x86_64-linux-gnu/libgio-2.0.so  /usr/lib/x86_64-linux-gnu/libgobject-2.0.so  /usr/lib/x86_64-linux-gnu/libglib-2.0.so
   OBJECT_DIR = CMakeFiles/GraphicEditor.dir
   POST_BUILD = :
   PRE_LINK = :
@@ -294,13 +294,153 @@ build CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
 build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 
 # =============================================================================
+# Write statements declared in CMakeLists.txt:
+# /home/jecko192/Desktop/Bakalarka/GraphicEditor/CMakeLists.txt
+# =============================================================================
+
+
+#############################################
+# Utility command for package
+
+build src/nativefiledialog-extended/CMakeFiles/package.util: CUSTOM_COMMAND src/nativefiledialog-extended/all
+  COMMAND = cd /home/jecko192/Desktop/Bakalarka/GraphicEditor/build && /usr/bin/cpack --config ./CPackConfig.cmake
+  DESC = Run CPack packaging tool...
+  pool = console
+  restat = 1
+
+build src/nativefiledialog-extended/package: phony src/nativefiledialog-extended/CMakeFiles/package.util
+
+
+#############################################
+# Utility command for package_source
+
+build src/nativefiledialog-extended/CMakeFiles/package_source.util: CUSTOM_COMMAND
+  COMMAND = cd /home/jecko192/Desktop/Bakalarka/GraphicEditor/build && /usr/bin/cpack --config ./CPackSourceConfig.cmake /home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CPackSourceConfig.cmake
+  DESC = Run CPack packaging tool for source...
+  pool = console
+  restat = 1
+
+build src/nativefiledialog-extended/package_source: phony src/nativefiledialog-extended/CMakeFiles/package_source.util
+
+
+#############################################
+# Utility command for edit_cache
+
+build src/nativefiledialog-extended/CMakeFiles/edit_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended && /usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+  DESC = No interactive CMake dialog available...
+  restat = 1
+
+build src/nativefiledialog-extended/edit_cache: phony src/nativefiledialog-extended/CMakeFiles/edit_cache.util
+
+
+#############################################
+# Utility command for rebuild_cache
+
+build src/nativefiledialog-extended/CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended && /usr/bin/cmake --regenerate-during-build -S/home/jecko192/Desktop/Bakalarka/GraphicEditor -B/home/jecko192/Desktop/Bakalarka/GraphicEditor/build
+  DESC = Running CMake to regenerate build system...
+  pool = console
+  restat = 1
+
+build src/nativefiledialog-extended/rebuild_cache: phony src/nativefiledialog-extended/CMakeFiles/rebuild_cache.util
+
+# =============================================================================
+# Write statements declared in CMakeLists.txt:
+# /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/CMakeLists.txt
+# =============================================================================
+
+# =============================================================================
+# Object build statements for STATIC_LIBRARY target nfd
+
+
+#############################################
+# Order-only phony target for nfd
+
+build cmake_object_order_depends_target_nfd: phony || src/nativefiledialog-extended/src/CMakeFiles/nfd.dir
+
+build src/nativefiledialog-extended/src/CMakeFiles/nfd.dir/nfd_gtk.cpp.o: CXX_COMPILER__nfd_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/nfd_gtk.cpp || cmake_object_order_depends_target_nfd
+  DEP_FILE = src/nativefiledialog-extended/src/CMakeFiles/nfd.dir/nfd_gtk.cpp.o.d
+  FLAGS = -g -std=gnu++20 -nostdlib -fno-exceptions -fno-rtti
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include -I/usr/include/gtk-3.0 -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/harfbuzz -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/libmount -I/usr/include/blkid -I/usr/include/fribidi -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/webp -I/usr/include/gio-unix-2.0 -I/usr/include/atk-1.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/x86_64-linux-gnu/dbus-1.0/include
+  OBJECT_DIR = src/nativefiledialog-extended/src/CMakeFiles/nfd.dir
+  OBJECT_FILE_DIR = src/nativefiledialog-extended/src/CMakeFiles/nfd.dir
+
+
+# =============================================================================
+# Link build statements for STATIC_LIBRARY target nfd
+
+
+#############################################
+# Link the static library src/nativefiledialog-extended/src/libnfd.a
+
+build src/nativefiledialog-extended/src/libnfd.a: CXX_STATIC_LIBRARY_LINKER__nfd_Debug src/nativefiledialog-extended/src/CMakeFiles/nfd.dir/nfd_gtk.cpp.o
+  LANGUAGE_COMPILE_FLAGS = -g
+  OBJECT_DIR = src/nativefiledialog-extended/src/CMakeFiles/nfd.dir
+  POST_BUILD = :
+  PRE_LINK = :
+  TARGET_FILE = src/nativefiledialog-extended/src/libnfd.a
+  TARGET_PDB = nfd.a.dbg
+
+
+#############################################
+# Utility command for package
+
+build src/nativefiledialog-extended/src/CMakeFiles/package.util: CUSTOM_COMMAND src/nativefiledialog-extended/src/all
+  COMMAND = cd /home/jecko192/Desktop/Bakalarka/GraphicEditor/build && /usr/bin/cpack --config ./CPackConfig.cmake
+  DESC = Run CPack packaging tool...
+  pool = console
+  restat = 1
+
+build src/nativefiledialog-extended/src/package: phony src/nativefiledialog-extended/src/CMakeFiles/package.util
+
+
+#############################################
+# Utility command for package_source
+
+build src/nativefiledialog-extended/src/CMakeFiles/package_source.util: CUSTOM_COMMAND
+  COMMAND = cd /home/jecko192/Desktop/Bakalarka/GraphicEditor/build && /usr/bin/cpack --config ./CPackSourceConfig.cmake /home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CPackSourceConfig.cmake
+  DESC = Run CPack packaging tool for source...
+  pool = console
+  restat = 1
+
+build src/nativefiledialog-extended/src/package_source: phony src/nativefiledialog-extended/src/CMakeFiles/package_source.util
+
+
+#############################################
+# Utility command for edit_cache
+
+build src/nativefiledialog-extended/src/CMakeFiles/edit_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/src && /usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+  DESC = No interactive CMake dialog available...
+  restat = 1
+
+build src/nativefiledialog-extended/src/edit_cache: phony src/nativefiledialog-extended/src/CMakeFiles/edit_cache.util
+
+
+#############################################
+# Utility command for rebuild_cache
+
+build src/nativefiledialog-extended/src/CMakeFiles/rebuild_cache.util: CUSTOM_COMMAND
+  COMMAND = cd /home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/src && /usr/bin/cmake --regenerate-during-build -S/home/jecko192/Desktop/Bakalarka/GraphicEditor -B/home/jecko192/Desktop/Bakalarka/GraphicEditor/build
+  DESC = Running CMake to regenerate build system...
+  pool = console
+  restat = 1
+
+build src/nativefiledialog-extended/src/rebuild_cache: phony src/nativefiledialog-extended/src/CMakeFiles/rebuild_cache.util
+
+# =============================================================================
 # Target aliases.
 
 build imgui: phony libimgui.a
 
 build imgui_backends: phony libimgui_backends.a
 
+build libnfd.a: phony src/nativefiledialog-extended/src/libnfd.a
+
 build myLib: phony libmyLib.a
+
+build nfd: phony src/nativefiledialog-extended/src/libnfd.a
 
 # =============================================================================
 # Folder targets.
@@ -310,7 +450,21 @@ build myLib: phony libmyLib.a
 #############################################
 # Folder: /home/jecko192/Desktop/Bakalarka/GraphicEditor/build
 
-build all: phony libimgui.a libimgui_backends.a libmyLib.a GraphicEditor
+build all: phony libimgui.a libimgui_backends.a libmyLib.a GraphicEditor src/nativefiledialog-extended/all
+
+# =============================================================================
+
+#############################################
+# Folder: /home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended
+
+build src/nativefiledialog-extended/all: phony src/nativefiledialog-extended/src/all
+
+# =============================================================================
+
+#############################################
+# Folder: /home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/src
+
+build src/nativefiledialog-extended/src/all: phony src/nativefiledialog-extended/src/libnfd.a
 
 # =============================================================================
 # Built-in targets
@@ -319,14 +473,14 @@ build all: phony libimgui.a libimgui_backends.a libmyLib.a GraphicEditor
 #############################################
 # Re-run CMake if any of its inputs changed.
 
-build build.ninja: RERUN_CMAKE | /home/jecko192/Desktop/Bakalarka/GraphicEditor/CMakeLists.txt /usr/lib/x86_64-linux-gnu/cmake/SDL2/sdl2-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2/sdl2-config.cmake /usr/share/cmake-3.28/Modules/CMakeCInformation.cmake /usr/share/cmake-3.28/Modules/CMakeCXXInformation.cmake /usr/share/cmake-3.28/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake-3.28/Modules/CMakeGenericSystem.cmake /usr/share/cmake-3.28/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake-3.28/Modules/CMakeLanguageInformation.cmake /usr/share/cmake-3.28/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake-3.28/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake-3.28/Modules/CPack.cmake /usr/share/cmake-3.28/Modules/CPackComponent.cmake /usr/share/cmake-3.28/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU-C.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU-CXX.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU.cmake /usr/share/cmake-3.28/Modules/FeatureSummary.cmake /usr/share/cmake-3.28/Modules/FindOpenGL.cmake /usr/share/cmake-3.28/Modules/FindPackageHandleStandardArgs.cmake /usr/share/cmake-3.28/Modules/FindPackageMessage.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake-3.28/Modules/Platform/Linux.cmake /usr/share/cmake-3.28/Modules/Platform/UnixPaths.cmake /usr/share/cmake-3.28/Templates/CPackConfig.cmake.in CMakeCache.txt CMakeFiles/3.28.3/CMakeCCompiler.cmake CMakeFiles/3.28.3/CMakeCXXCompiler.cmake CMakeFiles/3.28.3/CMakeSystem.cmake
+build build.ninja: RERUN_CMAKE | /home/jecko192/Desktop/Bakalarka/GraphicEditor/CMakeLists.txt /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/CMakeLists.txt /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/CMakeLists.txt /usr/lib/x86_64-linux-gnu/cmake/SDL2/sdl2-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2/sdl2-config.cmake /usr/share/cmake-3.28/Modules/CMakeCInformation.cmake /usr/share/cmake-3.28/Modules/CMakeCXXInformation.cmake /usr/share/cmake-3.28/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake-3.28/Modules/CMakeGenericSystem.cmake /usr/share/cmake-3.28/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake-3.28/Modules/CMakeLanguageInformation.cmake /usr/share/cmake-3.28/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake-3.28/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake-3.28/Modules/CPack.cmake /usr/share/cmake-3.28/Modules/CPackComponent.cmake /usr/share/cmake-3.28/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU-C.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU-CXX.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU.cmake /usr/share/cmake-3.28/Modules/FeatureSummary.cmake /usr/share/cmake-3.28/Modules/FindOpenGL.cmake /usr/share/cmake-3.28/Modules/FindPackageHandleStandardArgs.cmake /usr/share/cmake-3.28/Modules/FindPackageMessage.cmake /usr/share/cmake-3.28/Modules/FindPkgConfig.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake-3.28/Modules/Platform/Linux.cmake /usr/share/cmake-3.28/Modules/Platform/UnixPaths.cmake /usr/share/cmake-3.28/Templates/CPackConfig.cmake.in CMakeCache.txt CMakeFiles/3.28.3/CMakeCCompiler.cmake CMakeFiles/3.28.3/CMakeCXXCompiler.cmake CMakeFiles/3.28.3/CMakeSystem.cmake
   pool = console
 
 
 #############################################
 # A missing CMake input file is not an error.
 
-build /home/jecko192/Desktop/Bakalarka/GraphicEditor/CMakeLists.txt /usr/lib/x86_64-linux-gnu/cmake/SDL2/sdl2-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2/sdl2-config.cmake /usr/share/cmake-3.28/Modules/CMakeCInformation.cmake /usr/share/cmake-3.28/Modules/CMakeCXXInformation.cmake /usr/share/cmake-3.28/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake-3.28/Modules/CMakeGenericSystem.cmake /usr/share/cmake-3.28/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake-3.28/Modules/CMakeLanguageInformation.cmake /usr/share/cmake-3.28/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake-3.28/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake-3.28/Modules/CPack.cmake /usr/share/cmake-3.28/Modules/CPackComponent.cmake /usr/share/cmake-3.28/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU-C.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU-CXX.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU.cmake /usr/share/cmake-3.28/Modules/FeatureSummary.cmake /usr/share/cmake-3.28/Modules/FindOpenGL.cmake /usr/share/cmake-3.28/Modules/FindPackageHandleStandardArgs.cmake /usr/share/cmake-3.28/Modules/FindPackageMessage.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake-3.28/Modules/Platform/Linux.cmake /usr/share/cmake-3.28/Modules/Platform/UnixPaths.cmake /usr/share/cmake-3.28/Templates/CPackConfig.cmake.in CMakeCache.txt CMakeFiles/3.28.3/CMakeCCompiler.cmake CMakeFiles/3.28.3/CMakeCXXCompiler.cmake CMakeFiles/3.28.3/CMakeSystem.cmake: phony
+build /home/jecko192/Desktop/Bakalarka/GraphicEditor/CMakeLists.txt /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/CMakeLists.txt /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/CMakeLists.txt /usr/lib/x86_64-linux-gnu/cmake/SDL2/sdl2-config-version.cmake /usr/lib/x86_64-linux-gnu/cmake/SDL2/sdl2-config.cmake /usr/share/cmake-3.28/Modules/CMakeCInformation.cmake /usr/share/cmake-3.28/Modules/CMakeCXXInformation.cmake /usr/share/cmake-3.28/Modules/CMakeCommonLanguageInclude.cmake /usr/share/cmake-3.28/Modules/CMakeGenericSystem.cmake /usr/share/cmake-3.28/Modules/CMakeInitializeConfigs.cmake /usr/share/cmake-3.28/Modules/CMakeLanguageInformation.cmake /usr/share/cmake-3.28/Modules/CMakeSystemSpecificInformation.cmake /usr/share/cmake-3.28/Modules/CMakeSystemSpecificInitialize.cmake /usr/share/cmake-3.28/Modules/CPack.cmake /usr/share/cmake-3.28/Modules/CPackComponent.cmake /usr/share/cmake-3.28/Modules/Compiler/CMakeCommonCompilerMacros.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU-C.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU-CXX.cmake /usr/share/cmake-3.28/Modules/Compiler/GNU.cmake /usr/share/cmake-3.28/Modules/FeatureSummary.cmake /usr/share/cmake-3.28/Modules/FindOpenGL.cmake /usr/share/cmake-3.28/Modules/FindPackageHandleStandardArgs.cmake /usr/share/cmake-3.28/Modules/FindPackageMessage.cmake /usr/share/cmake-3.28/Modules/FindPkgConfig.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU-C.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU-CXX.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-GNU.cmake /usr/share/cmake-3.28/Modules/Platform/Linux-Initialize.cmake /usr/share/cmake-3.28/Modules/Platform/Linux.cmake /usr/share/cmake-3.28/Modules/Platform/UnixPaths.cmake /usr/share/cmake-3.28/Templates/CPackConfig.cmake.in CMakeCache.txt CMakeFiles/3.28.3/CMakeCCompiler.cmake CMakeFiles/3.28.3/CMakeCXXCompiler.cmake CMakeFiles/3.28.3/CMakeSystem.cmake: phony
 
 
 #############################################

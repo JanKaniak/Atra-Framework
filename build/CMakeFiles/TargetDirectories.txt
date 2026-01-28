@@ -6,3 +6,12 @@
 /home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CMakeFiles/package_source.dir
 /home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CMakeFiles/edit_cache.dir
 /home/jecko192/Desktop/Bakalarka/GraphicEditor/build/CMakeFiles/rebuild_cache.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/CMakeFiles/package.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/CMakeFiles/package_source.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/CMakeFiles/edit_cache.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/CMakeFiles/rebuild_cache.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/src/CMakeFiles/nfd.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/src/CMakeFiles/package.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/src/CMakeFiles/package_source.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/src/CMakeFiles/edit_cache.dir
+/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/src/CMakeFiles/rebuild_cache.dir

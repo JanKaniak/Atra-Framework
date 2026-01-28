@@ -43,6 +43,13 @@
                 "Minimum" : 50.0,
                 "Maximum" : 55.5
             }
+        ],
+        "FLOAT" : [
+            {
+                "Attribute name" : "Druid",
+                "Minimum" : 0.1,
+                "Maximum" : 0.9
+            }
         ]
         
     },
@@ -89,6 +96,13 @@
                 "Attribute name" : "Čislo3",
                 "Minimum" : 53.0,
                 "Maximum" : 55.5
+            }
+        ],
+        "FLOAT" : [
+            {
+                "Attribute name" : "Mage",
+                "Minimum" : 5.3,
+                "Maximum" : 140.2
             }
         ]
     }

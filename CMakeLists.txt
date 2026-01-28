@@ -41,6 +41,8 @@ add_library(myLib
     src/libs/Sources/ControlComponents/Factory.cpp
 )
 
+add_subdirectory(src/nativefiledialog-extended)
+
 target_include_directories(myLib PUBLIC src/libs/Headers/Descriptions)
 target_include_directories(myLib PUBLIC src/libs/Headers/Attributes)
 target_include_directories(myLib PUBLIC src/libs/Headers/ControlComponents)
@@ -51,7 +53,7 @@ add_executable(GraphicEditor
 
 # Prepojenie knižníc
 target_link_libraries(GraphicEditor PRIVATE imgui imgui_backends SDL2 OpenGL myLib)
-target_link_libraries(myLib PRIVATE imgui)
+target_link_libraries(myLib PRIVATE imgui nfd)
 
 
 # Nastavenie verzie balíka pre CPack
@@ -61,3 +63,5 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_target_properties(myLib PROPERTIES LINKER_LANGUAGE CXX)
 
 include(CPack)
+
+

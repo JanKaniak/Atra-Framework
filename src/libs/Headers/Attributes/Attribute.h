@@ -1,5 +1,5 @@
 #pragma once
-#include "../Descriptions/AttributeDescription.h"
+#include "AttributeDescriptionsComplete.h"
 #include <string>
 #include <limits.h>
 #include <iostream>
@@ -21,7 +21,7 @@ public:
     virtual ~Attribute() {};
     virtual std::unique_ptr<Attribute> clone() = 0;
     virtual void setDescription(AttributeDescription *desc) = 0;
-    virtual bool saveToJson(nlohmann::json &json, std::string &outputMessage) = 0;
+    virtual bool saveToJson(nlohmann::ordered_json &json, std::string &outputMessage) = 0;
 };
 
 class AttributeInt : public Attribute
@@ -49,7 +49,7 @@ public:
         }
     }
     int getValue() { return value_; }
-    bool saveToJson(nlohmann::json &json, std::string &outputMessage) override;
+    bool saveToJson(nlohmann::ordered_json &json, std::string &outputMessage) override;
 };
 
 class AttributeDouble : public Attribute
@@ -77,5 +77,33 @@ public:
         }
     }
     double getValue() { return value_; }
-    bool saveToJson(nlohmann::json &json, std::string &outputMessage) override;
+    bool saveToJson(nlohmann::ordered_json &json, std::string &outputMessage) override;
+};
+
+class AttributeFloat : public Attribute
+{
+private:
+    float value_;
+    AttributeDescription_float *desc_;
+
+public:
+    AttributeFloat() {};
+    std::string getName() override { return desc_->getName(); }
+    AttributeType getType() override { return AttributeType::FLOAT; }
+    AttributeDescription *getDescription() override { return desc_; }
+    std::string getAgent() override { return desc_->getAgent(); }
+    inline const float getMin() { return desc_->getMin(); }
+    inline const float getMaximum() { return desc_->getMax(); }
+    void setValue(float value)  { value_ = value; }
+    std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeFloat>(*this); }
+    void setDescription(AttributeDescription *desc) override
+    {
+        if (dynamic_cast<AttributeDescription_float *>(desc))
+        {
+            desc_ = dynamic_cast<AttributeDescription_float *>(desc);
+            value_ = desc_->getMin();
+        }
+    }
+    float getValue() { return value_; }
+    bool saveToJson(nlohmann::ordered_json &json, std::string &outputMessage) override;
 };

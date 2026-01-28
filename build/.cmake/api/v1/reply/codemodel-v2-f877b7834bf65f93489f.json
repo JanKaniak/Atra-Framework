@@ -6,6 +6,10 @@
 			[
 				{
 					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
 					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
@@ -20,12 +24,46 @@
 						2,
 						3
 					]
+				},
+				{
+					"build" : "src/nativefiledialog-extended",
+					"childIndexes" : 
+					[
+						2
+					],
+					"jsonFile" : "directory-src.nativefiledialog-extended-Debug-25519ff1c745998bc16c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "src/nativefiledialog-extended"
+				},
+				{
+					"build" : "src/nativefiledialog-extended/src",
+					"jsonFile" : "directory-src.nativefiledialog-extended.src-Debug-fb2973066f34f567a9c8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "src/nativefiledialog-extended/src",
+					"targetIndexes" : 
+					[
+						4
+					]
 				}
 			],
 			"name" : "Debug",
 			"projects" : 
 			[
 				{
+					"childIndexes" : 
+					[
+						1
+					],
 					"directoryIndexes" : 
 					[
 						0
@@ -38,6 +76,19 @@
 						2,
 						3
 					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1,
+						2
+					],
+					"name" : "nativefiledialog-extended",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
 				}
 			],
 			"targets" : 
@@ -45,7 +96,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "GraphicEditor::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-GraphicEditor-Debug-4a8f4dafd25632cd430c.json",
+					"jsonFile" : "target-GraphicEditor-Debug-e1c1b66cd1ed200d9d3a.json",
 					"name" : "GraphicEditor",
 					"projectIndex" : 0
 				},
@@ -66,9 +117,16 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "myLib::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-myLib-Debug-6dd6819cfbf16695f429.json",
+					"jsonFile" : "target-myLib-Debug-1611e6ec593f7bfbf8e1.json",
 					"name" : "myLib",
 					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "nfd::@76bbc1004cace93c6c6b",
+					"jsonFile" : "target-nfd-Debug-4e9026c0dc6a90b89298.json",
+					"name" : "nfd",
+					"projectIndex" : 1
 				}
 			]
 		}

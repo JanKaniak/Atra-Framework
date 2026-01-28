@@ -1,33 +1,20 @@
 #pragma once
-#include "AttributeDescription.h"
 #include "json.hpp"
+#include "DescriptionFactory.h"
 
 #include <vector>
 #include <memory>
 #include <map>
 #include <iostream>
 
-using DescUptr = std::unique_ptr<AttributeDescription>;
 
-class DescFactory {
-private:
-    std::map<AttributeType, DescUptr> prototypes_;
 
-public:
-    inline DescUptr createDesc(AttributeType type) { return prototypes_[type]->clone(); }
-
-    template <typename AttributeDescriptionT>
-    void registerPrototype() {
-        DescUptr prototype = std::make_unique<AttributeDescriptionT>();
-        prototypes_[prototype->getType()] = std::move(prototype);
-    }
-};
 
 
 class AttributeDescriptions {
     private:
         std::vector<std::unique_ptr<AttributeDescription>> attributeDescs_;
-        DescFactory descFactory_;
+        DescFactory& descFactory_ = DescFactory::getInstance();
     public:
         AttributeDescriptions();
         void addDescription(std::string agentName,std::string attributeName, AttributeType type,AttributeTypeVariant minimum, AttributeTypeVariant maximum);
@@ -46,5 +33,11 @@ class AttributeDescriptions {
         inline int getNumberOfDescriptions() { return attributeDescs_.size();}
 
         bool deleteDescription(AttributeDescription *description);
+
+        void vypis() {
+            for (auto& nvm : attributeDescs_) {
+                std::cout << nvm.get()->getAgent() << " " << nvm.get()->getName() << "\n";
+            }
+        }
 
 };

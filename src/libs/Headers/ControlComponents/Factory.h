@@ -72,6 +72,36 @@ public:
 
 //---------------------------------------------------
 
+using FloatEditUptr = std::unique_ptr<ControlComponent>;
+class FloatEditFactory : public Factory
+{
+private:
+    static FloatEditFactory *instance;
+
+private:
+    std::map<EditTypeFloat, FloatEditUptr> prototypes_;
+    std::map<std::string, EditTypeFloat> converter{{"SLIDER", EditTypeFloat::SLIDER}, {"VSLIDER", EditTypeFloat::VSLIDER}, {"DRAG", EditTypeFloat::DRAG}};
+
+private:
+    FloatEditFactory();
+    template <typename EditTypeFloatT>
+    void registerPrototype();
+
+public:
+    static FloatEditFactory *getInstance();
+    std::unique_ptr<ControlComponent> createEdit(std::string editType)
+    {
+        EditTypeFloat edit = EditTypeFloat::SLIDER;
+        if (converter.contains(editType))
+        {
+            edit = converter[editType];
+        }
+        return prototypes_[edit]->clone();
+    }
+};
+
+//---------------------------------------------------
+
 using CharEditUptr = std::unique_ptr<ControlComponentChar>;
 class CharEditFactory : public Factory
 {
@@ -96,7 +126,7 @@ public:
 class Config
 {
 private:
-    std::map<AttributeType, Factory *> factoryChoice_{{AttributeType::INT, IntEditFactory::getInstance()}, {AttributeType::DOUBLE, DoubleEditFactory::getInstance()}};
+    std::map<AttributeType, Factory *> factoryChoice_{{AttributeType::INT, IntEditFactory::getInstance()}, {AttributeType::DOUBLE, DoubleEditFactory::getInstance()},{AttributeType::FLOAT,FloatEditFactory::getInstance()}};
 
 public:
     Factory *getFactory(AttributeType type)

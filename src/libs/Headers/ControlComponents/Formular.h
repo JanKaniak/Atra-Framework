@@ -50,11 +50,16 @@ private:
     AttributeType numAttributeType[2] = {AttributeType::INT, AttributeType::DOUBLE};
     AttributeType textAttributeType[1] = {AttributeType::CHAR};
 
+    char editBuffer[40];
+    bool drawed = false;
+    Attribute *chosenAttribute;
+
+
 private:
     std::unique_ptr<Attributes> attributes_;
     std::vector<std::unique_ptr<ControlComponent>> components_;
-    std::map<AttributeType,std::string> enumToString =  {{AttributeType::INT,"INT"},{AttributeType::DOUBLE,"DOUBLE"},{AttributeType::CHAR,"CHAR"}};
-    std::map<std::string,AttributeType> stringToEnum =  {{"INT",AttributeType::INT},{"DOUBLE",AttributeType::DOUBLE},{"CHAR",AttributeType::CHAR}};
+    std::map<AttributeType,std::string> enumToString =  {{AttributeType::INT,"INT"},{AttributeType::DOUBLE,"DOUBLE"},{AttributeType::FLOAT,"FLOAT"}};
+    std::map<std::string,AttributeType> stringToEnum =  {{"INT",AttributeType::INT},{"DOUBLE",AttributeType::DOUBLE},{"FLOAT",AttributeType::FLOAT}};
     
 private:
     /*std::map<std::string,std::function<bool(nlohmann::json&,std::string agentName, std::string &outputMessage)>> decision2_ =  { 
@@ -107,6 +112,7 @@ public:
     bool addControlType(Attribute *attribute, std::string &outputMessage);
     void showControls();
     void showAttributes();
+    void editAttribute(Attribute* attribute, std::string &outputMessage);
     void deleteAttribute(Attribute* attribute, std::string &outputMessage);
     void showEditWindow();
     void draw();
@@ -125,3 +131,12 @@ public:
 
 
 };
+
+
+
+
+//pridavanie description do zoznamu
+//editor aj pre control type
+//agent prec
+//lepsie nazvy
+//aktualizovat uml

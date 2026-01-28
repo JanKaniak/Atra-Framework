@@ -2,9 +2,9 @@
 
 AttributeDescriptions::AttributeDescriptions()
 {
-    descFactory_.registerPrototype<AttributeDescription_int>();
+    /*descFactory_.registerPrototype<AttributeDescription_int>();
     descFactory_.registerPrototype<AttributeDescription_double>();
-    // descFactory_.registerPrototype<AtributeDescription_char>();
+    descFactory_.registerPrototype<AttributeDescription_float>();*/
 }
 
 /*void AttributeDescriptions::addDescription(std::string agentName, std::string attributeName, AttributeType type, AttributeTypeVariant minimum, AttributeTypeVariant maximum)/
@@ -17,7 +17,7 @@ AttributeDescriptions::AttributeDescriptions()
 
 bool AttributeDescriptions::addDescriptions(AttributeType type, nlohmann::ordered_json &json, std::string agentName, std::string &outputMessage)
 {
-    for (auto descIt = json.begin(); descIt != json.end(); descIt++)
+    for (auto descIt = json.begin(); descIt != json.end(); ++descIt)
     {
         AttributeDescription* desc = getDescription(descIt.value()["Attribute name"].get<std::string>(), agentName);
         if (desc != nullptr)

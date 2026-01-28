@@ -16,6 +16,13 @@ enum class EditTypeInt
     DRAG
 };
 
+enum class EditTypeFloat
+{
+    SLIDER,
+    VSLIDER,
+    DRAG
+};
+
 class ControlComponent
 {
 public:
@@ -50,6 +57,10 @@ public:
             maximum_ = attributeint_->getMaximum();
         }
     }
+    std::string getName() override { return attributeint_->getName(); };
+    AttributeType getType() override { return attributeint_->getType(); };
+    std::string getAgent() override { return attributeint_->getAgent(); };
+    Attribute *getAttribute() override { return attributeint_; };
 };
 
 template <EditTypeDouble TYPE>
@@ -73,9 +84,38 @@ public:
             maximum_ = attributedouble_->getMaximum();
         }
     }
+    std::string getName() override { return attributedouble_->getName(); };
+    AttributeType getType() override { return attributedouble_->getType(); };
+    std::string getAgent() override { return attributedouble_->getAgent(); };
+    Attribute *getAttribute() override { return attributedouble_; };
 };
 
+template <EditTypeFloat TYPE>
+class ControlComponentFloat : public ControlComponent
+{
+protected:
+    float value_;
+    float minimum_;
+    float maximum_;
+    AttributeFloat *attributefloat_;
 
+public:
+    static constexpr EditTypeFloat type_ = TYPE;
+    void setAttribute(Attribute *attribute) override
+    {
+        if (dynamic_cast<AttributeFloat*>(attribute))
+        {
+            attributefloat_ = dynamic_cast<AttributeFloat*>(attribute);
+            value_ = attributefloat_->getValue();
+            minimum_ = attributefloat_->getMin();
+            maximum_ = attributefloat_->getMaximum();
+        }
+    }
+     std::string getName() override { return attributefloat_->getName(); };
+    AttributeType getType() override { return attributefloat_->getType(); };
+    std::string getAgent() override { return attributefloat_->getAgent(); };
+    Attribute *getAttribute() override { return attributefloat_; };
+};
 
 
 

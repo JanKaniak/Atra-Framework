@@ -46,4 +46,6 @@ public:
     Attribute *giveAttributeByName(std::string name);
     bool contains(std::string attributeName,std::string agent);
     bool deleteAttribute(Attribute* attribute);
+    void reverseOrder() { std::reverse(attributes_.begin(),attributes_.end());}
+    void vypis() { attributeDescs_.get()->vypis();}
 };

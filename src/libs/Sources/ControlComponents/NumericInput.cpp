@@ -38,18 +38,60 @@ void IntDrag::draw()
 //---------------------------------------------------------------------------------------
 
 // Class DoubleSlider
-void DoubleSlider::draw() { ImGui::SliderScalar(getName().c_str(), ImGuiDataType_Double, &value_, &minimum_, &maximum_);}
+void DoubleSlider::draw() { 
+    if (ImGui::SliderScalar(std::format("##{}", getName()).c_str(), ImGuiDataType_Double, &value_, &minimum_, &maximum_)) {
+        attributedouble_->setValue(value_);
+    }
+}
 
 
 //---------------------------------------------------------------------------------------
 
 // Class DoubleVSSlider
-void DoubleVSSlider::draw() { ImGui::VSliderScalar(getName().c_str(),ImVec2(50,70),ImGuiDataType_Double,&value_, &minimum_, &maximum_); }
+void DoubleVSSlider::draw() { 
+    if (ImGui::VSliderScalar(std::format("##{}", getName()).c_str(),ImVec2(50,70),ImGuiDataType_Double,&value_, &minimum_, &maximum_)) {
+        attributedouble_->setValue(value_);
+    } 
+}
 
 //---------------------------------------------------------------------------------------
 
 // Class DoubleDrag
-void DoubleDrag::draw() { ImGui::DragScalar(getName().c_str(),ImGuiDataType_Double,&value_,0.5f, &minimum_, &maximum_); }
+void DoubleDrag::draw() { if (ImGui::DragScalar(std::format("##{}", getName()).c_str(),ImGuiDataType_Double,&value_,0.5f, &minimum_, &maximum_)) {
+        attributedouble_->setValue(value_);
+    }
+ }
+
+//--------------------------------------------------------------------------------------
+
+
+
+
+
+//---------------------------------------------------------------------------------------
+
+// Class FloatSlider
+void FloatSlider::draw() { if (ImGui::SliderFloat2(std::format("##{}", getName()).c_str(), &value_, minimum_, maximum_)) {
+        attributefloat_->setValue(value_);
+    }
+}
+
+
+//---------------------------------------------------------------------------------------
+
+// Class FloatVSSlider
+void FloatVSSlider::draw() { if (ImGui::VSliderFloat(std::format("##{}", getName()).c_str(),ImVec2(50,70),&value_, minimum_, maximum_)) {
+        attributefloat_->setValue(value_);
+    }
+ }
+
+//---------------------------------------------------------------------------------------
+
+// Class FloatDrag
+void FloatDrag::draw() { if (ImGui::DragFloat2(std::format("##{}", getName()).c_str(),&value_,0.5f, minimum_, maximum_)) {
+        attributefloat_->setValue(value_);
+    }
+ }
 
 //--------------------------------------------------------------------------------------
 

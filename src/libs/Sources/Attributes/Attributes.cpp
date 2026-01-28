@@ -5,6 +5,7 @@ Attributes::Attributes()
     attributeDescs_ = std::make_unique<AttributeDescriptions>();
     attributeFactory_.registerPrototype<AttributeInt>();
     attributeFactory_.registerPrototype<AttributeDouble>();
+    attributeFactory_.registerPrototype<AttributeFloat>();
 }
 
 /*void Attributes::addAttribute(std::string agentName,std::string attributeName, AttributeType type, AttributeTypeVariant minimum, AttributeTypeVariant maximum) {
