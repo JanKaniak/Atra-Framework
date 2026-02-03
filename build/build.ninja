@@ -148,15 +148,15 @@ build libimgui_backends.a: CXX_STATIC_LIBRARY_LINKER__imgui_backends_Debug CMake
 
 build cmake_object_order_depends_target_myLib: phony || cmake_object_order_depends_target_imgui cmake_object_order_depends_target_nfd
 
-build CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescription.cpp || cmake_object_order_depends_target_myLib
-  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o.d
+build CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp || cmake_object_order_depends_target_myLib
+  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp.o.d
   FLAGS = -g -std=gnu++20
   INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions
 
-build CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescriptions.cpp || cmake_object_order_depends_target_myLib
-  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o.d
+build CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptionsContainer.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescriptionsContainer.cpp || cmake_object_order_depends_target_myLib
+  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptionsContainer.cpp.o.d
   FLAGS = -g -std=gnu++20
   INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include
   OBJECT_DIR = CMakeFiles/myLib.dir
@@ -169,8 +169,8 @@ build CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attribute.cpp.o: CXX_COMP
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/Attributes
 
-build CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/Attributes.cpp || cmake_object_order_depends_target_myLib
-  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o.d
+build CMakeFiles/myLib.dir/src/libs/Sources/Attributes/AttributesContainer.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/AttributesContainer.cpp || cmake_object_order_depends_target_myLib
+  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/Attributes/AttributesContainer.cpp.o.d
   FLAGS = -g -std=gnu++20
   INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include
   OBJECT_DIR = CMakeFiles/myLib.dir
@@ -205,7 +205,7 @@ build CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o: CXX
 #############################################
 # Link the static library libmyLib.a
 
-build libmyLib.a: CXX_STATIC_LIBRARY_LINKER__myLib_Debug CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attribute.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o || libimgui.a src/nativefiledialog-extended/src/libnfd.a
+build libmyLib.a: CXX_STATIC_LIBRARY_LINKER__myLib_Debug CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptionsContainer.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attribute.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/AttributesContainer.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o || libimgui.a src/nativefiledialog-extended/src/libnfd.a
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/myLib.dir
   POST_BUILD = :

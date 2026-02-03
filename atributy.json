@@ -1,5 +1,5 @@
-{
-    "Person": {
+[
+    {
         "INT": [
             {
                 "Attribute name": "Attribute1",
@@ -21,39 +21,42 @@
                 "Minimum": 10,
                 "Maximum": 1000
             }
-        ],
-        "DOUBLE" : [
+        ]
+    },
+    {
+        "DOUBLE": [
             {
-                "Attribute name" : "Šiška",
-                "Minimum" : 500.0,
-                "Maximum" : 574.4
+                "Attribute name": "Šiška",
+                "Minimum": 500.0,
+                "Maximum": 574.4
             },
             {
-                "Attribute name" : "Čislo1",
-                "Minimum" : 10.0,
-                "Maximum" : 10.4
+                "Attribute name": "Čislo1",
+                "Minimum": 10.0,
+                "Maximum": 10.4
             },
             {
-                "Attribute name" : "Čislo2",
-                "Minimum" : 1.5,
-                "Maximum" : 99.0
+                "Attribute name": "Čislo2",
+                "Minimum": 1.5,
+                "Maximum": 99.0
             },
             {
-                "Attribute name" : "Čislo3",
-                "Minimum" : 50.0,
-                "Maximum" : 55.5
-            }
-        ],
-        "FLOAT" : [
-            {
-                "Attribute name" : "Druid",
-                "Minimum" : 0.1,
-                "Maximum" : 0.9
+                "Attribute name": "Čislo3",
+                "Minimum": 50.0,
+                "Maximum": 55.5
             }
         ]
-        
     },
-    "GG": {
+    {
+        "FLOAT": [
+            {
+                "Attribute name": "Druid",
+                "Minimum": 0.1,
+                "Maximum": 0.9
+            }
+        ]
+    },
+    {
         "INT": [
             {
                 "Attribute name": "Meno",
@@ -75,35 +78,24 @@
                 "Minimum": 74,
                 "Maximum": 79
             }
-        ],
-        "DOUBLE" : [
+        ]
+    },
+    {
+        "DOUBLE": [
             {
-                "Attribute name" : "Šiška2",
-                "Minimum" : 80.0,
-                "Maximum" : 85.0
-            },
-            {
-                "Attribute name" : "Čislo1",
-                "Minimum" : 10.2,
-                "Maximum" : 10.4
-            },
-            {
-                "Attribute name" : "Čislo2",
-                "Minimum" : 1.5,
-                "Maximum" : 999.0
-            },
-            {
-                "Attribute name" : "Čislo3",
-                "Minimum" : 53.0,
-                "Maximum" : 55.5
+                "Attribute name": "Šiška2",
+                "Minimum": 80.0,
+                "Maximum": 85.0
             }
-        ],
-        "FLOAT" : [
+        ]
+    },
+    {
+        "FLOAT": [
             {
-                "Attribute name" : "Mage",
-                "Minimum" : 5.3,
-                "Maximum" : 140.2
+                "Attribute name": "Mage",
+                "Minimum": 5.3,
+                "Maximum": 140.2
             }
         ]
     }
-}
+]

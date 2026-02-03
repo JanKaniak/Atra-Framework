@@ -4,17 +4,25 @@
 // Class IntSlider
 void IntSlider::draw()
 {
+    if ((float)(attributeint_->getMaximum() - attributeint_->getMin()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributeint_->getMaximum() - attributeint_->getMin()) * 0.99f);
+    } else {
+        ImGui::PushItemWidth(minimumWidth_);
+    }
+    
     if (ImGui::SliderInt(std::format("##{}", getName()).c_str(), &value_, attributeint_->getMin(), attributeint_->getMaximum()))
     {
         attributeint_->setValue(value_);
     }
+    ImGui::PopItemWidth();
 }
 //---------------------------------------------------------------------------------------
 
 // Class IntVSSlider
 void IntVSSlider::draw()
 {
-    if (ImGui::VSliderInt(std::format("##{}", getName()).c_str(), ImVec2(20, 50), &value_, attributeint_->getMin(), attributeint_->getMaximum()))
+
+    if (ImGui::VSliderInt(std::format("##{}", getName()).c_str(), ImVec2(50, 100), &value_, attributeint_->getMin(), attributeint_->getMaximum()))
     {
         attributeint_->setValue(value_);
     }
@@ -25,10 +33,17 @@ void IntVSSlider::draw()
 // Class IntDrag
 void IntDrag::draw()
 {
+    if ((float)(attributeint_->getMaximum() - attributeint_->getMin()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributeint_->getMaximum() - attributeint_->getMin()) * 0.99f);
+    } else {
+        ImGui::PushItemWidth(minimumWidth_);
+    }
+
     if (ImGui::DragInt(std::format("##{}", getName()).c_str(), &value_, 1.0f, attributeint_->getMin(), attributeint_->getMaximum()))
     {
         attributeint_->setValue(value_);
     }
+    ImGui::PopItemWidth();
 }
 
 
@@ -39,17 +54,24 @@ void IntDrag::draw()
 
 // Class DoubleSlider
 void DoubleSlider::draw() { 
+    if ((float)(attributedouble_->getMaximum() - attributedouble_->getMin()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributedouble_->getMaximum() - attributedouble_->getMin()) * 0.99f);
+    } else {
+        ImGui::PushItemWidth(minimumWidth_);
+    }
+    
     if (ImGui::SliderScalar(std::format("##{}", getName()).c_str(), ImGuiDataType_Double, &value_, &minimum_, &maximum_)) {
         attributedouble_->setValue(value_);
     }
+    ImGui::PopItemWidth();
 }
 
 
 //---------------------------------------------------------------------------------------
 
 // Class DoubleVSSlider
-void DoubleVSSlider::draw() { 
-    if (ImGui::VSliderScalar(std::format("##{}", getName()).c_str(),ImVec2(50,70),ImGuiDataType_Double,&value_, &minimum_, &maximum_)) {
+void DoubleVSSlider::draw() {
+    if (ImGui::VSliderScalar(std::format("##{}", getName()).c_str(),ImVec2(30,100),ImGuiDataType_Double,&value_, &minimum_, &maximum_)) {
         attributedouble_->setValue(value_);
     } 
 }
@@ -57,9 +79,17 @@ void DoubleVSSlider::draw() {
 //---------------------------------------------------------------------------------------
 
 // Class DoubleDrag
-void DoubleDrag::draw() { if (ImGui::DragScalar(std::format("##{}", getName()).c_str(),ImGuiDataType_Double,&value_,0.5f, &minimum_, &maximum_)) {
+void DoubleDrag::draw() { 
+    if ((float)(attributedouble_->getMaximum() - attributedouble_->getMin()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributedouble_->getMaximum() - attributedouble_->getMin()) * 0.99f);
+    } else {
+        ImGui::PushItemWidth(minimumWidth_);
+    }
+
+    if (ImGui::DragScalar(std::format("##{}", getName()).c_str(),ImGuiDataType_Double,&value_,0.5f, &minimum_, &maximum_)) {
         attributedouble_->setValue(value_);
     }
+    ImGui::PopItemWidth();
  }
 
 //--------------------------------------------------------------------------------------
@@ -71,16 +101,25 @@ void DoubleDrag::draw() { if (ImGui::DragScalar(std::format("##{}", getName()).c
 //---------------------------------------------------------------------------------------
 
 // Class FloatSlider
-void FloatSlider::draw() { if (ImGui::SliderFloat2(std::format("##{}", getName()).c_str(), &value_, minimum_, maximum_)) {
+void FloatSlider::draw() {
+    if ((float)(attributefloat_->getMaximum() - attributefloat_->getMin()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributefloat_->getMaximum() - attributefloat_->getMin()) * 0.99f);
+    } else {
+        ImGui::PushItemWidth(minimumWidth_);
+    }
+
+    if (ImGui::SliderFloat(std::format("##{}", getName()).c_str(), &value_, minimum_, maximum_)) {
         attributefloat_->setValue(value_);
     }
+    ImGui::PopItemWidth();
 }
 
 
 //---------------------------------------------------------------------------------------
 
 // Class FloatVSSlider
-void FloatVSSlider::draw() { if (ImGui::VSliderFloat(std::format("##{}", getName()).c_str(),ImVec2(50,70),&value_, minimum_, maximum_)) {
+void FloatVSSlider::draw() { 
+    if (ImGui::VSliderFloat(std::format("##{}", getName()).c_str(),ImVec2(30,100),&value_, minimum_, maximum_)) {
         attributefloat_->setValue(value_);
     }
  }
@@ -88,9 +127,17 @@ void FloatVSSlider::draw() { if (ImGui::VSliderFloat(std::format("##{}", getName
 //---------------------------------------------------------------------------------------
 
 // Class FloatDrag
-void FloatDrag::draw() { if (ImGui::DragFloat2(std::format("##{}", getName()).c_str(),&value_,0.5f, minimum_, maximum_)) {
+void FloatDrag::draw() { 
+    if ((float)(attributefloat_->getMaximum() - attributefloat_->getMin()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributefloat_->getMaximum() - attributefloat_->getMin()) * 0.99f);
+    } else {
+        ImGui::PushItemWidth(minimumWidth_);
+    }
+
+    if (ImGui::DragFloat(std::format("##{}", getName()).c_str(),&value_,0.5f, minimum_, maximum_)) {
         attributefloat_->setValue(value_);
     }
+    ImGui::PopItemWidth();
  }
 
 //--------------------------------------------------------------------------------------

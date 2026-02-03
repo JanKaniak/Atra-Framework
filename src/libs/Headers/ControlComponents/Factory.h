@@ -5,8 +5,19 @@
 
 class Factory
 {
+protected:
+    std::vector<std::string> nameOfControlTypesVector_;
 public:
     virtual std::unique_ptr<ControlComponent> createEdit(std::string type) = 0;
+    bool findInVector(const std::vector<std::string> vector, std::string text) {
+        for (std::string object : vector) {
+            if (object.compare(text) == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+    const std::vector<std::string> getNameOfControlTypesVector() { return nameOfControlTypesVector_;}
 };
 
 using IntEditUptr = std::unique_ptr<ControlComponent>;
@@ -17,8 +28,10 @@ private:
     static IntEditFactory *instance;
 
 private:
+    
     std::map<EditTypeInt, IntEditUptr> prototypes_;
-    std::map<std::string, EditTypeInt> converter{{"SLIDER", EditTypeInt::SLIDER}, {"VSLIDER", EditTypeInt::VSLIDER}, {"DRAG", EditTypeInt::DRAG}};
+    std::map<std::string, EditTypeInt> stringToEnum{{"SLIDER", EditTypeInt::SLIDER}, {"VSLIDER", EditTypeInt::VSLIDER}, {"DRAG", EditTypeInt::DRAG}};
+    std::map<EditTypeInt, std::string> enumToString{{EditTypeInt::SLIDER, "SLIDER"}, {EditTypeInt::VSLIDER, "VSLIDER"}, {EditTypeInt::DRAG, "DRAG"}};
 
 private:
     IntEditFactory();
@@ -32,9 +45,9 @@ public:
     std::unique_ptr<ControlComponent> createEdit(std::string editType)
     {
         EditTypeInt edit = EditTypeInt::SLIDER;
-        if (converter.contains(editType))
+        if (stringToEnum.contains(editType))
         {
-            edit = converter[editType];
+            edit = stringToEnum[editType];
         }
         return prototypes_[edit]->clone();
     }
@@ -50,7 +63,8 @@ private:
 
 private:
     std::map<EditTypeDouble, DoubleEditUptr> prototypes_;
-    std::map<std::string, EditTypeDouble> converter{{"SLIDER", EditTypeDouble::SLIDER}, {"VSLIDER", EditTypeDouble::VSLIDER}, {"DRAG", EditTypeDouble::DRAG}};
+    std::map<std::string, EditTypeDouble> stringToEnum{{"SLIDER", EditTypeDouble::SLIDER}, {"VSLIDER", EditTypeDouble::VSLIDER}, {"DRAG", EditTypeDouble::DRAG}};
+    std::map<EditTypeDouble, std::string> enumToString{{EditTypeDouble::SLIDER, "SLIDER"}, {EditTypeDouble::VSLIDER, "VSLIDER"}, {EditTypeDouble::DRAG, "DRAG"}};
 
 private:
     DoubleEditFactory();
@@ -62,9 +76,9 @@ public:
     std::unique_ptr<ControlComponent> createEdit(std::string editType)
     {
         EditTypeDouble edit = EditTypeDouble::SLIDER;
-        if (converter.contains(editType))
+        if (stringToEnum.contains(editType))
         {
-            edit = converter[editType];
+            edit = stringToEnum[editType];
         }
         return prototypes_[edit]->clone();
     }
@@ -80,7 +94,8 @@ private:
 
 private:
     std::map<EditTypeFloat, FloatEditUptr> prototypes_;
-    std::map<std::string, EditTypeFloat> converter{{"SLIDER", EditTypeFloat::SLIDER}, {"VSLIDER", EditTypeFloat::VSLIDER}, {"DRAG", EditTypeFloat::DRAG}};
+    std::map<std::string, EditTypeFloat> stringToEnum{{"SLIDER", EditTypeFloat::SLIDER}, {"VSLIDER", EditTypeFloat::VSLIDER}, {"DRAG", EditTypeFloat::DRAG}};
+    std::map<EditTypeFloat, std::string> enumToString{{EditTypeFloat::SLIDER, "SLIDER"}, {EditTypeFloat::VSLIDER, "VSLIDER"}, {EditTypeFloat::DRAG, "DRAG"}};
 
 private:
     FloatEditFactory();
@@ -92,9 +107,9 @@ public:
     std::unique_ptr<ControlComponent> createEdit(std::string editType)
     {
         EditTypeFloat edit = EditTypeFloat::SLIDER;
-        if (converter.contains(editType))
+        if (stringToEnum.contains(editType))
         {
-            edit = converter[editType];
+            edit = stringToEnum[editType];
         }
         return prototypes_[edit]->clone();
     }

@@ -43,15 +43,15 @@
 },
 {
   "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescription.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescription.cpp",
-  "output": "CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescription.cpp.o"
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp",
+  "output": "CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp.o"
 },
 {
   "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescriptions.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescriptions.cpp",
-  "output": "CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptions.cpp.o"
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptionsContainer.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescriptionsContainer.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Descriptions/AttributeDescriptionsContainer.cpp",
+  "output": "CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptionsContainer.cpp.o"
 },
 {
   "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
@@ -61,9 +61,9 @@
 },
 {
   "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/Attributes.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/Attributes.cpp",
-  "output": "CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attributes.cpp.o"
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/AttributesContainer.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/AttributesContainer.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/AttributesContainer.cpp",
+  "output": "CMakeFiles/myLib.dir/src/libs/Sources/Attributes/AttributesContainer.cpp.o"
 },
 {
   "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",

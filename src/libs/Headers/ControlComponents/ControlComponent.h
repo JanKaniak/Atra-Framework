@@ -1,5 +1,5 @@
 #pragma once
-#include "../Attributes/Attribute.h"
+#include "AttributesContainer.h"
 #include <variant>
 
 enum class EditTypeDouble
@@ -25,11 +25,15 @@ enum class EditTypeFloat
 
 class ControlComponent
 {
+protected:
+    std::string controlType_;
+
+    public:
+    std::string getType() { return controlType_; };
+
 public:
     virtual void draw() = 0;
     virtual std::string getName() = 0;
-    virtual AttributeType getType() = 0;
-    virtual std::string getAgent() = 0;
     virtual ~ControlComponent() = default;
     virtual void setAttribute(Attribute *attribute) = 0;
     virtual std::unique_ptr<ControlComponent> clone() = 0;
@@ -44,12 +48,15 @@ protected:
     int minimum_;
     int maximum_;
     AttributeInt *attributeint_;
+    std::map<EditTypeInt, std::string> enumtoString = {{EditTypeInt::SLIDER, "SLIDER"},{EditTypeInt::VSLIDER, "VSLIDER"}, {EditTypeInt::DRAG, "DRAG"}};
+    float minimumWidth_;
 
 public:
     static constexpr EditTypeInt type_ = TYPE;
     void setAttribute(Attribute *attribute) override
     {
-        if (dynamic_cast<AttributeInt*>(attribute))
+        controlType_ = enumtoString[type_];
+        if (dynamic_cast<AttributeInt *>(attribute))
         {
             attributeint_ = dynamic_cast<AttributeInt *>(attribute);
             value_ = attributeint_->getValue();
@@ -58,8 +65,6 @@ public:
         }
     }
     std::string getName() override { return attributeint_->getName(); };
-    AttributeType getType() override { return attributeint_->getType(); };
-    std::string getAgent() override { return attributeint_->getAgent(); };
     Attribute *getAttribute() override { return attributeint_; };
 };
 
@@ -71,22 +76,23 @@ protected:
     double minimum_;
     double maximum_;
     AttributeDouble *attributedouble_;
+    std::map<EditTypeDouble, std::string> enumtoString = {{EditTypeDouble::SLIDER, "SLIDER"},{EditTypeDouble::VSLIDER, "VSLIDER"}, {EditTypeDouble::DRAG, "DRAG"}};
+    float minimumWidth_;
 
 public:
     static constexpr EditTypeDouble type_ = TYPE;
     void setAttribute(Attribute *attribute) override
     {
-        if (dynamic_cast<AttributeDouble*>(attribute))
+        controlType_ = enumtoString[type_];
+        if (dynamic_cast<AttributeDouble *>(attribute))
         {
-            attributedouble_ = dynamic_cast<AttributeDouble*>(attribute);
+            attributedouble_ = dynamic_cast<AttributeDouble *>(attribute);
             value_ = attributedouble_->getValue();
             minimum_ = attributedouble_->getMin();
             maximum_ = attributedouble_->getMaximum();
         }
     }
     std::string getName() override { return attributedouble_->getName(); };
-    AttributeType getType() override { return attributedouble_->getType(); };
-    std::string getAgent() override { return attributedouble_->getAgent(); };
     Attribute *getAttribute() override { return attributedouble_; };
 };
 
@@ -98,40 +104,25 @@ protected:
     float minimum_;
     float maximum_;
     AttributeFloat *attributefloat_;
+    std::map<EditTypeFloat, std::string> enumtoString = {{EditTypeFloat::SLIDER, "SLIDER"},{EditTypeFloat::VSLIDER, "VSLIDER"}, {EditTypeFloat::DRAG, "DRAG"}};
+    float minimumWidth_;
 
 public:
     static constexpr EditTypeFloat type_ = TYPE;
     void setAttribute(Attribute *attribute) override
     {
-        if (dynamic_cast<AttributeFloat*>(attribute))
+        controlType_ = enumtoString[type_];
+        if (dynamic_cast<AttributeFloat *>(attribute))
         {
-            attributefloat_ = dynamic_cast<AttributeFloat*>(attribute);
+            attributefloat_ = dynamic_cast<AttributeFloat *>(attribute);
             value_ = attributefloat_->getValue();
             minimum_ = attributefloat_->getMin();
             maximum_ = attributefloat_->getMaximum();
         }
     }
-     std::string getName() override { return attributefloat_->getName(); };
-    AttributeType getType() override { return attributefloat_->getType(); };
-    std::string getAgent() override { return attributefloat_->getAgent(); };
+    std::string getName() override { return attributefloat_->getName(); };
     Attribute *getAttribute() override { return attributefloat_; };
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class ControlComponentChar : public ControlComponent
 {
@@ -144,4 +135,3 @@ public:
     ControlComponentChar() {};
     virtual std::unique_ptr<ControlComponent> clone() = 0;
 };
-

@@ -9,7 +9,9 @@ class IntSlider : public ControlComponentInt<EditTypeInt::SLIDER>
 
 private:
 public:
-    IntSlider() {};
+    IntSlider() {
+        minimumWidth_ = 100;
+    };
     void draw() override;
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<IntSlider>(*this); };
 };
@@ -18,7 +20,9 @@ class IntVSSlider : public ControlComponentInt<EditTypeInt::VSLIDER>
 {
 private:
 public:
-    IntVSSlider() {};
+    IntVSSlider() {
+        minimumWidth_ = 100;
+    };
 
     void draw() override;
     
@@ -29,7 +33,9 @@ public:
 class IntDrag : public ControlComponentInt<EditTypeInt::DRAG>
 {
 public:
-    IntDrag() {};
+    IntDrag() {
+        minimumWidth_ = 100;
+    };
 
     void draw() override;
     
@@ -41,28 +47,34 @@ public:
 class DoubleSlider : public ControlComponentDouble<EditTypeDouble::SLIDER>
 {
 public:
-    DoubleSlider() {};
+    DoubleSlider() {
+        minimumWidth_ = 100;
+    };
     void draw() override;
     
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleSlider>(*this); };
     
 };
 
-class DoubleVSSlider : public ControlComponentDouble<EditTypeDouble::SLIDER>
+class DoubleVSSlider : public ControlComponentDouble<EditTypeDouble::VSLIDER>
 {
 public:
-    DoubleVSSlider() {};
+    DoubleVSSlider() {
+        minimumWidth_ = 100;
+    };
     void draw() override;
     
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleVSSlider>(*this); };
 };
 
-class DoubleDrag : public ControlComponentDouble<EditTypeDouble::SLIDER>
+class DoubleDrag : public ControlComponentDouble<EditTypeDouble::DRAG>
 {
 private:
 
 public:
-    DoubleDrag() {};
+    DoubleDrag() {
+        minimumWidth_ = 100;
+    };
     void draw() override;
     
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleDrag>(*this); };
@@ -73,29 +85,35 @@ public:
 class FloatSlider : public ControlComponentFloat<EditTypeFloat::SLIDER>
 {
 public:
-    FloatSlider() {};
+    FloatSlider() {
+        minimumWidth_ = 100;
+    };
     void draw() override;
    
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<FloatSlider>(*this); };
     
 };
 
-class FloatVSSlider : public ControlComponentFloat<EditTypeFloat::SLIDER>
+class FloatVSSlider : public ControlComponentFloat<EditTypeFloat::VSLIDER>
 {
 public:
-    FloatVSSlider() {};
+    FloatVSSlider() {
+        minimumWidth_ = 100;
+    };
     void draw() override;
 
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<FloatVSSlider>(*this); };
 
 };
 
-class FloatDrag : public ControlComponentFloat<EditTypeFloat::SLIDER>
+class FloatDrag : public ControlComponentFloat<EditTypeFloat::DRAG>
 {
 private:
 
 public:
-    FloatDrag() {};
+    FloatDrag() {
+        minimumWidth_ = 100;
+    };
     void draw() override;
 
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<FloatDrag>(*this); };

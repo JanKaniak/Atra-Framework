@@ -1,8 +1,9 @@
-#include "Attribute.h"
+#include "ImplementedAttribute.h"
 
 // INT -----------------------------------------------------------------------------------------
 
 bool AttributeInt::saveToJson(nlohmann::ordered_json &json, std::string &outputMessage)  {
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum",getMin()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Maximum",getMaximum()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Value",getValue()));
@@ -10,42 +11,12 @@ bool AttributeInt::saveToJson(nlohmann::ordered_json &json, std::string &outputM
 } 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ---------------------------------------------------------------------------------------------------
 
 // DOUBLE -----------------------------------------------------------------------------------------
 
 bool AttributeDouble::saveToJson(nlohmann::ordered_json &json, std::string &outputMessage)  {
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum",getMin()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Maximum",getMaximum()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Value",getValue()));
@@ -57,6 +28,7 @@ bool AttributeDouble::saveToJson(nlohmann::ordered_json &json, std::string &outp
 // FLOAT -----------------------------------------------------------------------------------------
 
 bool AttributeFloat::saveToJson(nlohmann::ordered_json &json, std::string &outputMessage)  {
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum",getMin()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Maximum",getMaximum()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Value",getValue()));

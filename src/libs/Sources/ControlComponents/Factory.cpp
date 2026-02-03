@@ -25,6 +25,9 @@ IntEditFactory *IntEditFactory::getInstance()
 template <typename EditTypeIntT>
 inline void IntEditFactory::registerPrototype()
 {
+    if (!findInVector(nameOfControlTypesVector_,enumToString[EditTypeIntT::type_])) {
+        nameOfControlTypesVector_.emplace_back(enumToString[EditTypeIntT::type_]);
+    }
     prototypes_[EditTypeIntT::type_] = std::move(std::make_unique<EditTypeIntT>());
 }
 
@@ -54,6 +57,9 @@ DoubleEditFactory *DoubleEditFactory::getInstance()
 template <typename EditTypeDoubleT>
 inline void DoubleEditFactory::registerPrototype()
 {
+    if (!findInVector(nameOfControlTypesVector_,enumToString[EditTypeDoubleT::type_])) {
+        nameOfControlTypesVector_.emplace_back(enumToString[EditTypeDoubleT::type_]);
+    }
     prototypes_[EditTypeDoubleT::type_] = std::move(std::make_unique<EditTypeDoubleT>());
 }
 
@@ -83,6 +89,9 @@ FloatEditFactory *FloatEditFactory::getInstance()
 template <typename EditTypeFloatT>
 inline void FloatEditFactory::registerPrototype()
 {
+    if (!findInVector(nameOfControlTypesVector_,enumToString[EditTypeFloatT::type_])) {
+        nameOfControlTypesVector_.emplace_back(enumToString[EditTypeFloatT::type_]);
+    }
     prototypes_[EditTypeFloatT::type_] = std::move(std::make_unique<EditTypeFloatT>());
 }
 
