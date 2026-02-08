@@ -29,11 +29,6 @@
 // Main code
 int main(int, char **)
 {
-    std::cout << "Int description: " << AutoRegisterIntDescription::registerIntDescription << "\n";
-    std::cout << "Double description: " << AutoRegisterDoubleDescription::registerDoubleDescription << "\n";
-    std::cout << "Float description: " << AutoRegisterFloatDescription::registerFloatDescription << "\n";
- 
-
 
     std::unique_ptr<Formular> formular = std::make_unique<Formular>();
 

@@ -6,7 +6,7 @@ Attributes::Attributes()
     attributeFactory_ = AttributeFactory::getInstance();
 }
 
-void Attributes::createAttributes()
+bool Attributes::createAttributes(std::string &outputMessage)
 {
     for (int i = 0; i < attributeDescs_->getSize(); i++)
     {
@@ -14,9 +14,16 @@ void Attributes::createAttributes()
             continue;
         }
         AttributeDescription *desc = attributeDescs_->getDescription(i);
-        attributes_.push_back(attributeFactory_->createAttribute(desc->getType()));
+        std::unique_ptr<Attribute> tmpAttributePointer = attributeFactory_->createAttribute(desc->getType());
+        if (tmpAttributePointer == nullptr) {
+            outputMessage = "This attribute type does not exist, check if it is registered or correctness of name!";
+            return false;
+        }
+        attributes_.push_back(std::move(tmpAttributePointer));
         attributes_.at(attributes_.size() - 1)->setDescription(desc);
+        
     }
+    return true;
 }
 
 bool Attributes::deleteAttribute(Attribute *attribute)

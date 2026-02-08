@@ -7,8 +7,6 @@
 #include <stdexcept>
 #include <memory>
 
-using AttributeTypeVariant = std::variant<int, double, char>;
-
 class Attribute
 {
 protected:

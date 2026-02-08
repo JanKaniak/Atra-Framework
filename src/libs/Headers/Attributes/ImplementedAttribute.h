@@ -1,3 +1,4 @@
+#pragma once
 #include "AttributeFactory.h"
 
 class AttributeInt : public Attribute
@@ -99,6 +100,41 @@ public:
 struct AutoRegisterFloatAttribute {
     inline static bool registerFloatAttribute = [] () {
         AttributeFactory::getInstance()->registerPrototype(std::make_unique<AttributeFloat>());
+        return true;
+    }();
+};
+
+
+class AttributeChar : public Attribute
+{
+private:
+    char value_;
+    AttributeDescription_char *desc_;
+
+public:
+    AttributeChar() {};
+    std::string getName() override { return desc_->getName(); }
+    AttributeType getType() override { return AttributeType::CHAR; }
+    AttributeDescription *getDescription() override { return desc_; }
+    inline const int getMin() { return desc_->getMin(); }
+    inline const int getMaximum() { return desc_->getMax(); }
+    void setValue(char value)  { value_ = value; }
+    std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeChar>(*this); }
+    void setDescription(AttributeDescription *desc) override
+    {
+        if (dynamic_cast<AttributeDescription_char *>(desc))
+        {
+            desc_ = dynamic_cast<AttributeDescription_char *>(desc);
+            value_ = 'a';
+        }
+    }
+    char getValue() { return value_; }
+    bool saveToJson(nlohmann::ordered_json &json, std::string &outputMessage) override;
+};
+
+struct AutoRegisterCharAttribute {
+    inline static bool registerFloatAttribute = [] () {
+        AttributeFactory::getInstance()->registerPrototype(std::make_unique<AttributeChar>());
         return true;
     }();
 };

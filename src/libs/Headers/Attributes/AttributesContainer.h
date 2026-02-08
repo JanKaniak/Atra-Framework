@@ -18,7 +18,7 @@ public:
     Attributes();
     bool addDescriptions(AttributeType type, nlohmann::ordered_json &json, std::string &outputMessage) { return attributeDescs_->addDescriptions(type,json,outputMessage);}
     bool addDescriptions(std::string attributeName, AttributeType type, std::string &outputMessage) { return attributeDescs_->addDescriptions(attributeName, type,outputMessage);}
-    void createAttributes();
+    bool createAttributes(std::string &outputMessage);
     void setAttributeValue(std::string name, AttributeType type, AttributeTypeVariant value);
     inline Attribute *getLast() { return attributes_.at(attributes_.size() - 1).get(); }
     inline int getSize() { return attributes_.size(); }

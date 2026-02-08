@@ -1,40 +1,21 @@
 #pragma once
-#include "../ControlComponents/ControlComponent.h"
-#include "../imgui/imgui.h"
+#include "ControlComponent.h"
+#include "imgui.h"
 #include <iostream>
 #include <tuple>
 #include <variant>
 
-/*
 
-class CharInput : public ControlComponentChar {
-    private:
-        AtributeChar* atributechar_;
 
+class TextField : public ControlComponentChar<EditTypeChar::TEXT> {
     public:
-        CharInput() : ControlComponentChar() {}
+        TextField() {
+            minimumWidth_ = 100;
+        }
 
         void draw() override {
-            ImGui::InputText(atributeName_.c_str(),value_,sizeof(value_));
-            //atributechar_->setValue(value_);
+            ImGui::InputText(attributeChar_->getName().c_str(),&value_,sizeof(value_));
         }
-
-        ControlComponentChar* clone () override { return new CharInput(*this);};
-
-        void setAtribute(Atribute* atribute) override {
-            if (AtributeChar* aatribute = dynamic_cast<AtributeChar*>(atribute)) {
-                atributechar_ = aatribute;
-            }
-            value_[0] = std::get<char>(atributechar_->getValue());
-            minimum_ = atributechar_->getMin();
-            maximum_ = atributechar_->getMaximum();
-            atributeName_ = atributechar_->getName();
-            atributeType_ = atributechar_->getType();
-        }
+        std::unique_ptr<ControlComponent> clone() override { return std::make_unique<TextField>(*this); };
 
 };
-
-
-
-
-*/

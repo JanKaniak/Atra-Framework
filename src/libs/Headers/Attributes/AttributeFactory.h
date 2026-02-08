@@ -1,3 +1,4 @@
+#pragma once
 #include "AttributeDescriptionsContainer.h"
 #include "Attribute.h"
 

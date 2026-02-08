@@ -24,7 +24,7 @@ using AttributeTypeVariant = std::variant<int,double,char>;
 class Formular
 {
 private:
-    Config config;
+    Config *config;
 
 
 private:
@@ -38,6 +38,10 @@ private:
     bool nameExists = false;
     bool drawed = false;
     bool decision = false;
+    bool showSettingWindow_;
+
+private:
+    ImVec2 showAttributesWindowSize_;
 
 private:
     
@@ -47,6 +51,8 @@ private:
 private:
     char bufferMin[40] = "0";
     char bufferMax[40] = "50";
+    std::filesystem::path descriptionsPath_;
+    std::filesystem::path controlTypesPath_;
     
 private:
     std::string infoMessage = "";
@@ -60,7 +66,7 @@ private:
 private:
     std::unique_ptr<Attributes> attributes_;
     std::vector<std::unique_ptr<ControlComponent>> components_;
-    std::map<AttributeType,std::string> enumToString =  {{AttributeType::INT,"INT"},{AttributeType::DOUBLE,"DOUBLE"},{AttributeType::FLOAT,"FLOAT"}};
+    //std::map<AttributeType,std::string> enumToString =  {{AttributeType::INT,"INT"},{AttributeType::DOUBLE,"DOUBLE"},{AttributeType::FLOAT,"FLOAT"}};
     std::map<std::string,AttributeType> stringToEnum =  {{"INT",AttributeType::INT},{"DOUBLE",AttributeType::DOUBLE},{"FLOAT",AttributeType::FLOAT}};
     
 
@@ -69,8 +75,9 @@ public:
     bool addControlType(std::string atributeName, std::string edtitType, std::string &outputMessage);
     bool addControlType(Attribute *attribute, std::string &outputMessage);
     bool addOrReplaceControlTypeByVector(std::vector<std::string> controlTypesVector, std::string &outputMessage);
-    bool replaceControlType(Attribute *attribute, std::string &outputMessage);
+    bool replaceControlType(Attribute *attribute, std::string controlType ,std::string &outputMessage);
     void showControls();
+    void showSettings();
     void showLogger();
     void showAttributes();
     void editAttribute(Attribute* attribute, std::string &outputMessage);
@@ -80,8 +87,8 @@ public:
     void draw();
     inline int getNumberOfAttributes() { return attributes_->getSize(); }
     inline int getNumberOfComponents() { return components_.size();}
-    int readFileDescriptions(const char *path,std::string &outputMessage);
-    int readFileControlTypes(const char *path,std::string &outputMessage);
+    int readFileDescriptions(std::filesystem::path path,std::string &outputMessage);
+    int readFileControlTypes(std::filesystem::path path,std::string &outputMessage);
     bool saveToFile(std::string &outputMessage);
     bool sameName(std::string name);
     bool showWarning(std::string message);
