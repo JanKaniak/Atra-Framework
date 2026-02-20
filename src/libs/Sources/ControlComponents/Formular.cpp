@@ -1,5 +1,6 @@
 #include "Formular.h"
 #include "nfd.h"
+#include "imgui_internal.h"
 
 #include <time.h>
 
@@ -26,7 +27,7 @@ bool Formular::addControlType(std::string attributeName, std::string editType, s
         Factory *factory = config->getFactory(attributes_->giveAttributeByName(attributeName)->getType());
         if (factory == nullptr)
         {
-            outputMessage = std::format("Controls for {}  attribute type does not exist!", AttributeTypeConverter::getInstance()->convertEnumToString(attributes_->giveAttributeByName(attributeName)->getType()));
+            outputMessage = std::format("Controls for {}  attribute type does not exist!", AttributeTypeConverter::EnumToString(attributes_->giveAttributeByName(attributeName)->getType()));
             return false;
         }
         if (components_.empty())
@@ -201,37 +202,11 @@ void Formular::showControls()
     ImGui::SetNextWindowSize(ImVec2(0 / 3, size.y));
     if (ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar))
     {
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
-                if (ImGui::MenuItem("Load attribute descriptions"))
-                {
-                    readFileDescriptions(descriptionsPath_, infoMessage);
-                }
-
-                if (ImGui::MenuItem("Load control types", nullptr, nullptr, attributes_->getSize() > 0))
-                {
-                    readFileControlTypes(controlTypesPath_, infoMessage);
-                }
-                ImGui::EndMenu();
-            }
-
-            if (ImGui::BeginMenu("Options"))
-            {
-                if (ImGui::MenuItem("Settings"))
-                {
-                    showSettingWindow_ = true;
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
-        }
         showLogger();
 
         if (ImGui::Button("Load Attribute description", ImVec2(0, 30)))
         {
-            numberOfLoadedAtributes = readFileDescriptions(descriptionsPath_, infoMessage);
+            numberOfLoadedAtributes = readFileDescriptions(infoMessage);
         }
 
         if (ImGui::Button("Add description", ImVec2(0, 30)))
@@ -332,15 +307,18 @@ void Formular::showSettings()
     ImGui::InputText("Path for attributes descriptions", descriptionsPath, sizeof(descriptionsPath));
     ImGui::InputText("Path for control types", controlTypesPath, sizeof(controlTypesPath));
 
-    if (ImGui::Button("Save")) {
-        if (descriptionsPath[0] != '\0' && controlTypesPath[0] != '\0') {
+    if (ImGui::Button("Save"))
+    {
+        if (descriptionsPath[0] != '\0' && controlTypesPath[0] != '\0')
+        {
             descriptionsPath_ = descriptionsPath;
             controlTypesPath_ = controlTypesPath;
             showSettingWindow_ = false;
         }
     }
 
-    if (ImGui::Button("Close")) {
+    if (ImGui::Button("Close"))
+    {
         showSettingWindow_ = false;
     }
     ImGui::End();
@@ -390,7 +368,6 @@ void Formular::showAddDescriptionWindow()
     static bool correctMinimum = false;
     static bool correctMaximum = false;
 
-
     if (ImGui::BeginPopupModal("Edtiacne okno", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
         if (ImGui::RadioButton("Numeric", selected == 0))
@@ -426,10 +403,10 @@ void Formular::showAddDescriptionWindow()
                     {
                         continue;
                     }
-                    bool selected = (chosenType == AttributeTypeConverter::getInstance()->convertEnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()).c_str());
-                    if (ImGui::Selectable(AttributeTypeConverter::getInstance()->convertEnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()).c_str(), selected))
+                    bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
+                    if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
                     {
-                        chosenType = AttributeTypeConverter::getInstance()->convertEnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()).c_str();
+                        chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
                     }
                     if (selected)
                     {
@@ -454,7 +431,7 @@ void Formular::showAddDescriptionWindow()
             nameExists = sameName(buffer);
             if (!nameExists)
             {
-                attributes_->addDescriptions(std::string(buffer), AttributeTypeConverter::getInstance()->convertStringtoEnum(chosenType), infoMessage);
+                attributes_->addDescriptions(std::string(buffer), AttributeTypeConverter::StringToEnum(chosenType), infoMessage);
                 savedAndCorrect = true;
                 addDescriptionWindow = false;
             }
@@ -471,7 +448,6 @@ void Formular::showAddDescriptionWindow()
 
 void Formular::showModifyControlTypesWindow()
 {
-
     static std::vector<std::string> chosenTypeVector;
     static bool overWrite;
     if (attributes_->getSize() == 0)
@@ -522,7 +498,7 @@ void Formular::showModifyControlTypesWindow()
             {
                 ImGui::Text("%s", attributes_->giveAttribute(i)->getName().c_str());
                 ImGui::SameLine();
-                ImGui::Text("%s", AttributeTypeConverter::getInstance()->convertEnumToString(attributes_->giveAttribute(i)->getType()).c_str());
+                ImGui::Text("%s", AttributeTypeConverter::EnumToString(attributes_->giveAttribute(i)->getType()).data());
                 ImGui::SameLine();
                 Factory *factory = config->getFactory(attributes_->giveAttribute(i)->getType());
                 if (ImGui::BeginCombo(std::format("Control Type##{}", attributes_->giveAttribute(i)->getName()).c_str(), chosenTypeVector.at(i).c_str()))
@@ -595,7 +571,7 @@ void Formular::showAttributes()
                 ImGui::TableNextColumn();
                 component->draw();
                 ImGui::TableNextColumn();
-                ImGui::Text("%s", AttributeTypeConverter::getInstance()->convertEnumToString(component->getAttribute()->getType()).c_str());
+                ImGui::Text("%s", AttributeTypeConverter::EnumToString(component->getAttribute()->getType()).data());
                 ImGui::TableNextColumn();
                 if (ImGui::Button("Edit", ImVec2(0, 30)))
                 {
@@ -621,19 +597,22 @@ void Formular::showAttributes()
     if (ImGui::BeginPopup("Edit window"))
     {
         static bool exist;
-        char editBuffer[40];
+        static char editBuffer[40] = "";
+        if (editBuffer[0] == '\0')
+        {
+            strcpy(editBuffer, chosenAttribute->getName().c_str());
+        }
         ImGui::InputText("Attribute name", editBuffer, sizeof(editBuffer));
         if (exist)
         {
             ImGui::Text("%s", "Attribute with this name already exists!");
         }
-        ImGui::Text("Attribute type: %s", AttributeTypeConverter::getInstance()->convertEnumToString(chosenAttribute->getType()).c_str());
+        ImGui::Text("Attribute type: %s", AttributeTypeConverter::EnumToString(chosenAttribute->getType()).data());
 
         if (ImGui::Button("Save", ImVec2(0, 30)))
         {
             if (!exist)
             {
-                strcpy(editBuffer, chosenAttribute->getName().c_str());
                 exist = false;
                 ImGui::CloseCurrentPopup();
             }
@@ -646,6 +625,7 @@ void Formular::showAttributes()
         if (ImGui::Button("Close", ImVec2(0, 30)))
         {
             ImGui::CloseCurrentPopup();
+            std::memset(editBuffer, 0, sizeof(editBuffer[0]));
         }
         ImGui::EndPopup();
     }
@@ -692,9 +672,30 @@ void Formular::draw()
     }
 }
 
-int Formular::readFileDescriptions(std::filesystem::path path, std::string &outputMessage)
+bool Formular::loadDescriptions(nlohmann::ordered_json json)
 {
-    std::filesystem::path outputPath_ = path;
+    for (auto &descriptions : json) // attributeDescriptions = list of attributes, attributeTypeKey = attribute type
+    {
+
+        for (auto &descriptionsOfTheSameType : descriptions.items())
+        {
+            if (!attributes_->addDescriptions(AttributeTypeConverter::StringToEnum(descriptionsOfTheSameType.key()), descriptionsOfTheSameType.value(), infoMessage))
+            {
+                return false;
+            }
+        }
+    }
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    char buffer[100];
+    strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
+    infoMessage = std::format("{}  Successfully loaded {} attributes descriptions!", buffer, attributes_->getNumberOfDescriptions());
+    return true;
+}
+
+int Formular::readFileDescriptions(std::string &outputMessage)
+{
+    std::filesystem::path outputPath_;
     NFD_Init();
     nfdu8char_t *outputPath;
     nfdu8filteritem_t filters[1] = {{"Json file", "json"}};
@@ -729,72 +730,66 @@ int Formular::readFileDescriptions(std::filesystem::path path, std::string &outp
     }
     nlohmann::ordered_json jsonFile = nlohmann::ordered_json::parse(file);
     file.close();
-    for (auto &descriptions : jsonFile) // attributeDescriptions = list of attributes, attributeTypeKey = attribute type
-    {
-
-        for (auto &descriptionsOfTheSameType : descriptions.items())
-        {
-            if (!attributes_->addDescriptions(AttributeTypeConverter::getInstance()->convertStringtoEnum(descriptionsOfTheSameType.key()), descriptionsOfTheSameType.value(), outputMessage))
-            {
-                return -1;
-            }
-        }
+    if (!loadDescriptions(jsonFile)) {
+        return -1;
     }
-    time_t now = time(NULL);
-    struct tm *t = localtime(&now);
-    char buffer[100];
-    strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-    outputMessage = std::format("{}  Successfully loaded {} attributes descriptions!", buffer, attributes_->getNumberOfDescriptions());
     return attributes_->getSize();
 }
 
-int Formular::readFileControlTypes(std::filesystem::path path, std::string &outputMessage)
+int Formular::readFileControlTypes(nlohmann::json json, std::string &outputMessage)
 {
-    std::filesystem::path outputPath_ = path;
-    NFD_Init();
-    nfdu8char_t *outputPath;
-    nfdu8filteritem_t filters[1] = {{"Json file", "json"}};
-    nfdopendialogu8args_t args = {0};
-    args.filterList = filters;
-    args.filterCount = 1;
-    nfdresult_t result = NFD_OpenDialogU8_With(&outputPath, &args);
-
+    nlohmann::json jsonFile;
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
     char buffer[100];
+    if (json.empty())
+    {
+        std::filesystem::path outputPath_;
+        NFD_Init();
+        nfdu8char_t *outputPath;
+        nfdu8filteritem_t filters[1] = {{"Json file", "json"}};
+        nfdopendialogu8args_t args = {0};
+        args.filterList = filters;
+        args.filterCount = 1;
+        nfdresult_t result = NFD_OpenDialogU8_With(&outputPath, &args);
 
-    if (result == NFD_OKAY)
-    {
-        outputPath_ = outputPath;
-        NFD_FreePathU8(outputPath);
-    }
-    else if (result == NFD_CANCEL)
-    {
-        outputPath_ = "";
+        if (result == NFD_OKAY)
+        {
+            outputPath_ = outputPath;
+            NFD_FreePathU8(outputPath);
+        }
+        else if (result == NFD_CANCEL)
+        {
+            outputPath_ = "";
+        }
+        else
+        {
+            strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
+            outputMessage = std::format("{}  Error: {}, ", buffer, NFD_GetError());
+            return -1;
+        }
+
+        NFD_Quit();
+        if (outputPath_.empty())
+        {
+            return INT_MAX;
+        }
+        std::ifstream file(outputPath_);
+
+        strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
+        if (!file.is_open())
+        {
+            outputMessage = std::format("{}  File does not exist!", buffer);
+            return -1;
+        }
+
+        jsonFile = nlohmann::json::parse(file);
+        file.close();
     }
     else
     {
-        strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-        outputMessage = std::format("{}  Error: {}, ", buffer, NFD_GetError());
-        return -1;
+        jsonFile = json;
     }
-
-    NFD_Quit();
-    if (outputPath_.empty())
-    {
-        return INT_MAX;
-    }
-    std::ifstream file(outputPath_);
-
-    strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-    if (!file.is_open())
-    {
-        outputMessage = std::format("{}  File does not exist!", buffer);
-        return -1;
-    }
-
-    nlohmann::json jsonFile = nlohmann::json::parse(file);
-    file.close();
     int tmpNumberOfLoadedControls = 0;
     int tmpOverWrittedControls = 0;
 
@@ -877,17 +872,17 @@ int Formular::readFileControlTypes(std::filesystem::path path, std::string &outp
     return tmpNumberOfLoadedControls;
 }
 
-bool Formular::saveToFile(std::string &outputMessage)
+nlohmann::ordered_json Formular::saveOutput()
 {
-    nlohmann::ordered_json jsonTemp;
-    jsonTemp = nlohmann::ordered_json::array();
+    nlohmann::ordered_json tempJson;
+    tempJson = nlohmann::ordered_json::array();
     int positionInArray = 0;
     for (int i = 0; i < attributes_->getSize(); ++i)
     {
         Attribute *attribute = attributes_->giveAttribute(i);
-        jsonTemp.push_back(nlohmann::ordered_json::object());
-        jsonTemp[positionInArray][AttributeTypeConverter::getInstance()->convertEnumToString(attribute->getType())] = nlohmann::ordered_json::array();
-        if (jsonTemp.empty())
+        tempJson.push_back(nlohmann::ordered_json::object());
+        tempJson[positionInArray][AttributeTypeConverter::EnumToString(attribute->getType())] = nlohmann::ordered_json::array();
+        if (tempJson.empty())
         {
             return false;
         }
@@ -899,19 +894,24 @@ bool Formular::saveToFile(std::string &outputMessage)
                 positionInArray++;
                 break;
             }
-            auto attributeType = jsonTemp[positionInArray].find(AttributeTypeConverter::getInstance()->convertEnumToString(attributes_->giveAttribute(j)->getType()));
-            if (jsonTemp[positionInArray].end() == attributeType)
+            auto attributeType = tempJson[positionInArray].find(AttributeTypeConverter::EnumToString(attributes_->giveAttribute(j)->getType()));
+            if (tempJson[positionInArray].end() == attributeType)
             {
-                outputMessage = "Attribute type does not exist in this file yet!";
+                infoMessage = "Attribute type does not exist in this file yet!";
                 return false;
             }
             attributeType.value().push_back(nlohmann::ordered_json::object());
-            attributes_->giveAttribute(j)->saveToJson(attributeType.value()[attributeType.value().size() - 1], outputMessage);
+            attributes_->giveAttribute(j)->saveToJson(attributeType.value()[attributeType.value().size() - 1], infoMessage);
         }
     }
 
+    return tempJson;
+}
+
+bool Formular::saveToFile(std::string &outputMessage)
+{
     std::ofstream file("output.json");
-    file << jsonTemp;
+    file << saveOutput();
     file.close();
     outputMessage = "Attributes were successfully saved in the file!";
     return true;

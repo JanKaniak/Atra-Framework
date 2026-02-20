@@ -396,7 +396,7 @@ public: \
         { \
             attribute##attributeTypeName##_ = dynamic_cast<Attribute##attributeTypeName *>(attribute); \
             value_ = attribute##attributeTypeName##_->getValue(); \
-            minimum_ = attribute##attributeTypeName##_->getMin(); \
+            minimum_ = attribute##attributeTypeName##_->getMinimum(); \
             maximum_ = attribute##attributeTypeName##_->getMaximum(); \
         } \
     } \

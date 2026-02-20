@@ -4,7 +4,7 @@
 
 bool AttributeInt::saveToJson(nlohmann::ordered_json &json, std::string &outputMessage)  {
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
-    json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum",getMin()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum",getMinimum()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Maximum",getMaximum()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Value",getValue()));
     return true;
@@ -17,7 +17,7 @@ bool AttributeInt::saveToJson(nlohmann::ordered_json &json, std::string &outputM
 
 bool AttributeDouble::saveToJson(nlohmann::ordered_json &json, std::string &outputMessage)  {
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
-    json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum",getMin()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum",getMinimum()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Maximum",getMaximum()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Value",getValue()));
     return true;
@@ -29,7 +29,7 @@ bool AttributeDouble::saveToJson(nlohmann::ordered_json &json, std::string &outp
 
 bool AttributeFloat::saveToJson(nlohmann::ordered_json &json, std::string &outputMessage)  {
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
-    json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum",getMin()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum",getMinimum()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Maximum",getMaximum()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Value",getValue()));
     return true;
@@ -39,7 +39,7 @@ bool AttributeFloat::saveToJson(nlohmann::ordered_json &json, std::string &outpu
 
 bool AttributeChar::saveToJson(nlohmann::ordered_json &json, std::string &outputMessage)  {
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
-    json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum",getMin()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum",getMinimum()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Maximum",getMaximum()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Value",getValue()));
     return true;

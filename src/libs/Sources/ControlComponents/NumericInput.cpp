@@ -3,8 +3,8 @@
 // Class IntSlider
 void IntSlider::draw()
 {
-    if ((float)(attributeInt_->getMaximum() - attributeInt_->getMin()) * 0.99f > minimumWidth_) {
-        ImGui::PushItemWidth((float)(attributeInt_->getMaximum() - attributeInt_->getMin()) * 0.99f);
+    if ((float)(attributeInt_->getMaximum() - attributeInt_->getMinimum()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributeInt_->getMaximum() - attributeInt_->getMinimum()) * 0.99f);
     } else {
         ImGui::PushItemWidth(minimumWidth_);
     }
@@ -32,13 +32,13 @@ void IntVSSlider::draw()
 // Class IntDrag
 void IntDrag::draw()
 {
-    if ((float)(attributeInt_->getMaximum() - attributeInt_->getMin()) * 0.99f > minimumWidth_) {
-        ImGui::PushItemWidth((float)(attributeInt_->getMaximum() - attributeInt_->getMin()) * 0.99f);
+    if ((float)(attributeInt_->getMaximum() - attributeInt_->getMinimum()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributeInt_->getMaximum() - attributeInt_->getMinimum()) * 0.99f);
     } else {
         ImGui::PushItemWidth(minimumWidth_);
     }
 
-    if (ImGui::DragInt(std::format("##{}", getName()).c_str(), &value_, 1.0f, attributeInt_->getMin(), attributeInt_->getMaximum()))
+    if (ImGui::DragInt(std::format("##{}", getName()).c_str(), &value_, 1.0f, attributeInt_->getMinimum(), attributeInt_->getMaximum()))
     {
         attributeInt_->setValue(value_);
     }
@@ -53,8 +53,8 @@ void IntDrag::draw()
 
 // Class DoubleSlider
 void DoubleSlider::draw() { 
-    if ((float)(attributeDouble_->getMaximum() - attributeDouble_->getMin()) * 0.99f > minimumWidth_) {
-        ImGui::PushItemWidth((float)(attributeDouble_->getMaximum() - attributeDouble_->getMin()) * 0.99f);
+    if ((float)(attributeDouble_->getMaximum() - attributeDouble_->getMinimum()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributeDouble_->getMaximum() - attributeDouble_->getMinimum()) * 0.99f);
     } else {
         ImGui::PushItemWidth(minimumWidth_);
     }
@@ -79,8 +79,8 @@ void DoubleVSSlider::draw() {
 
 // Class DoubleDrag
 void DoubleDrag::draw() { 
-    if ((float)(attributeDouble_->getMaximum() - attributeDouble_->getMin()) * 0.99f > minimumWidth_) {
-        ImGui::PushItemWidth((float)(attributeDouble_->getMaximum() - attributeDouble_->getMin()) * 0.99f);
+    if ((float)(attributeDouble_->getMaximum() - attributeDouble_->getMinimum()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributeDouble_->getMaximum() - attributeDouble_->getMinimum()) * 0.99f);
     } else {
         ImGui::PushItemWidth(minimumWidth_);
     }
@@ -101,8 +101,8 @@ void DoubleDrag::draw() {
 
 // Class FloatSlider
 void FloatSlider::draw() {
-    if ((float)(attributeFloat_->getMaximum() - attributeFloat_->getMin()) * 0.99f > minimumWidth_) {
-        ImGui::PushItemWidth((float)(attributeFloat_->getMaximum() - attributeFloat_->getMin()) * 0.99f);
+    if ((float)(attributeFloat_->getMaximum() - attributeFloat_->getMinimum()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributeFloat_->getMaximum() - attributeFloat_->getMinimum()) * 0.99f);
     } else {
         ImGui::PushItemWidth(minimumWidth_);
     }
@@ -127,8 +127,8 @@ void FloatVSSlider::draw() {
 
 // Class FloatDrag
 void FloatDrag::draw() { 
-    if ((float)(attributeFloat_->getMaximum() - attributeFloat_->getMin()) * 0.99f > minimumWidth_) {
-        ImGui::PushItemWidth((float)(attributeFloat_->getMaximum() - attributeFloat_->getMin()) * 0.99f);
+    if ((float)(attributeFloat_->getMaximum() - attributeFloat_->getMinimum()) * 0.99f > minimumWidth_) {
+        ImGui::PushItemWidth((float)(attributeFloat_->getMaximum() - attributeFloat_->getMinimum()) * 0.99f);
     } else {
         ImGui::PushItemWidth(minimumWidth_);
     }

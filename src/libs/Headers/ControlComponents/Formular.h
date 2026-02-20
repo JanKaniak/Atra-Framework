@@ -62,6 +62,9 @@ private:
     AttributeType textAttributeType[1] = {AttributeType::CHAR};
     Attribute *chosenAttribute;
 
+private:
+    
+
 
 private:
     std::unique_ptr<Attributes> attributes_;
@@ -87,9 +90,11 @@ public:
     void draw();
     inline int getNumberOfAttributes() { return attributes_->getSize(); }
     inline int getNumberOfComponents() { return components_.size();}
-    int readFileDescriptions(std::filesystem::path path,std::string &outputMessage);
-    int readFileControlTypes(std::filesystem::path path,std::string &outputMessage);
-    bool saveToFile(std::string &outputMessage);
+    int readFileDescriptions(std::string &outputMessage);
+    bool loadDescriptions(nlohmann::ordered_json json);
+    int readFileControlTypes(nlohmann::json json,std::string &outputMessage);
+    nlohmann::ordered_json saveOutput();
+    bool saveToFile(std::string& outputMessage);
     bool sameName(std::string name);
     bool showWarning(std::string message);
     bool isEmpty() { return components_.empty(); };

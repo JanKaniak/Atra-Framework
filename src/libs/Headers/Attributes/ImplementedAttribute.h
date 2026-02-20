@@ -12,8 +12,8 @@ public:
     std::string getName() override { return desc_->getName(); }
     AttributeType getType() override { return AttributeType::INT; }
     AttributeDescription *getDescription() override { return desc_; }
-    inline const int getMin() { return desc_->getMin(); }
-    inline const int getMaximum() { return desc_->getMax(); }
+    inline const int getMinimum() { return desc_->getMinimum(); }
+    inline const int getMaximum() { return desc_->getMaximum(); }
     void setValue(int value) { value_ = value; }
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeInt>(*this); }
     void setDescription(AttributeDescription *desc) override
@@ -21,7 +21,7 @@ public:
         if (dynamic_cast<AttributeDescription_int *>(desc))
         {
             desc_ = dynamic_cast<AttributeDescription_int *>(desc);
-            value_ = desc_->getMin();
+            value_ = desc_->getMinimum();
         }
     }
     int getValue() { return value_; }
@@ -46,8 +46,8 @@ public:
     std::string getName() override { return desc_->getName(); }
     AttributeType getType() override { return AttributeType::DOUBLE; }
     AttributeDescription *getDescription() override { return desc_; }
-    inline const double getMin() { return desc_->getMin(); }
-    inline const double getMaximum() { return desc_->getMax(); }
+    inline const double getMinimum() { return desc_->getMinimum(); }
+    inline const double getMaximum() { return desc_->getMaximum(); }
     void setValue(double value)  { value_ = value; }
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeDouble>(*this); }
     void setDescription(AttributeDescription *desc) override
@@ -55,7 +55,7 @@ public:
         if (dynamic_cast<AttributeDescription_double *>(desc))
         {
             desc_ = dynamic_cast<AttributeDescription_double *>(desc);
-            value_ = desc_->getMin();
+            value_ = desc_->getMinimum();
         }
     }
     double getValue() { return value_; }
@@ -81,8 +81,8 @@ public:
     std::string getName() override { return desc_->getName(); }
     AttributeType getType() override { return AttributeType::FLOAT; }
     AttributeDescription *getDescription() override { return desc_; }
-    inline const float getMin() { return desc_->getMin(); }
-    inline const float getMaximum() { return desc_->getMax(); }
+    inline const float getMinimum() { return desc_->getMinimum(); }
+    inline const float getMaximum() { return desc_->getMaximum(); }
     void setValue(float value)  { value_ = value; }
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeFloat>(*this); }
     void setDescription(AttributeDescription *desc) override
@@ -90,7 +90,7 @@ public:
         if (dynamic_cast<AttributeDescription_float *>(desc))
         {
             desc_ = dynamic_cast<AttributeDescription_float *>(desc);
-            value_ = desc_->getMin();
+            value_ = desc_->getMinimum();
         }
     }
     float getValue() { return value_; }
@@ -116,8 +116,8 @@ public:
     std::string getName() override { return desc_->getName(); }
     AttributeType getType() override { return AttributeType::CHAR; }
     AttributeDescription *getDescription() override { return desc_; }
-    inline const int getMin() { return desc_->getMin(); }
-    inline const int getMaximum() { return desc_->getMax(); }
+    inline const int getMinimum() { return desc_->getMinimum(); }
+    inline const int getMaximum() { return desc_->getMaximum(); }
     void setValue(char value)  { value_ = value; }
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeChar>(*this); }
     void setDescription(AttributeDescription *desc) override

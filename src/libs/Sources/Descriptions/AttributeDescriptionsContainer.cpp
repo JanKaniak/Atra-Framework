@@ -28,7 +28,7 @@ bool AttributeDescriptionsContainer::addDescriptions(AttributeType type, nlohman
         }
         std::unique_ptr<AttributeDescription> tmpDescription = descFactory_->createDesc(type);
         if (tmpDescription == nullptr) {
-            outputMessage = "This attribute description does not exist, check if it is registered or correctness of name!";
+            outputMessage = std::format("The {} attribute description does not exist, check if it is registered or correctness of name!",AttributeTypeConverter::EnumToString(type));
             return false;
         }
         attributeDescs_.push_back(std::move(tmpDescription));

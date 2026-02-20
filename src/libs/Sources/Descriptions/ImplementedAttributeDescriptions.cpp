@@ -1,11 +1,9 @@
-#include "AttributeDescription.h"
 #include "ImplementedAttributeDescriptions.h"
 
 #include <iostream>
 
-// INT
-std::unique_ptr<AttributeDescription> AttributeDescription_int::clone() { return std::make_unique<AttributeDescription_int>(*this); }
-void AttributeDescription_int::setLimit(int minimum, int maximum)
+template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+void IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum)
 {
     if (minimum < maximum)
     {
@@ -14,16 +12,25 @@ void AttributeDescription_int::setLimit(int minimum, int maximum)
     }
 }
 
-bool AttributeDescription_int::jsonParse(nlohmann::ordered_json &json, std::string &outputMessage)
+template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::string &outputMessage)
 {
-    if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end()) {
+    if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end()) {
         outputMessage = "Incorrect json format!";
         return false;
     }
-    if (!json["Minimum"].is_number_integer() || !json["Maximum"].is_number_integer())
+    if ((!json["Minimum"].is_number_integer() && json["Minimum"].type() != TypeEnumT) || (!json["Maximum"].is_number_integer() && json["Maximum"].type() != TypeEnumT))
     {
         std::cout << json["Minimum"] << "\n";
-        outputMessage = "Bounds must be integer value!";
+        outputMessage = "Bounds must be number value!";
+        return false;
+    }
+
+    auto tmpMinimum = json["Minimum"].get<long long>();
+    auto tmpMaximum = json["Maximum"].get<long long>();
+
+    if ((tmpMaximum > std::numeric_limits<TypeT>::max() || tmpMaximum < std::numeric_limits<TypeT>::min()) || (tmpMinimum > std::numeric_limits<TypeT>::max() || tmpMinimum < std::numeric_limits<TypeT>::min())) {
+        outputMessage = "Bounds must be INSERT value!";
         return false;
     }
 
@@ -33,59 +40,32 @@ bool AttributeDescription_int::jsonParse(nlohmann::ordered_json &json, std::stri
     }
 
     setName(json["Attribute name"].get<std::string>());
-    setLimit(json["Minimum"].get<int>(), json["Maximum"].get<int>());
+    setLimit(json["Minimum"].get<TypeT>(), json["Maximum"].get<TypeT>());
     return true;
 }
 
-//---------------------------------------------------------------------------------------------------------
 
-
-
-// DOUBLE
-std::unique_ptr<AttributeDescription> AttributeDescription_double::clone() { return std::make_unique<AttributeDescription_double>(*this); }
-void AttributeDescription_double::setLimit(double minimum, double maximum) {
-            if (minimum < maximum) {
-                min_ = minimum;
-                max_ = maximum;
-            }
-        }
-
-bool AttributeDescription_double::jsonParse(nlohmann::ordered_json &json, std::string &outputMessage)
+template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+void DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum)
 {
-    if (!json["Minimum"].is_number_float() || !json["Maximum"].is_number_float())
+    if (minimum < maximum)
     {
-        outputMessage = "Bounds must be double value!";
-        return false;
+        min_ = minimum;
+        max_ = maximum;
     }
-
-    if(!json["Attribute name"].is_string()) {
-        outputMessage = "Name must be string type!";
-        return false;
-    }
-
-    setName(json["Attribute name"].get<std::string>());
-    setLimit(json["Minimum"].get<double>(), json["Maximum"].get<double>());
-    return true;
 }
 
-//---------------------------------------------------------------------------------------------------------
-
-
-
-// FLOAT
-std::unique_ptr<AttributeDescription> AttributeDescription_float::clone() { return std::make_unique<AttributeDescription_float>(*this); }
-void AttributeDescription_float::setLimit(float minimum, float maximum) {
-            if (minimum < maximum) {
-                min_ = minimum;
-                max_ = maximum;
-            }
-        }
-
-bool AttributeDescription_float::jsonParse(nlohmann::ordered_json &json, std::string &outputMessage)
+template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::string &outputMessage)
 {
-    if (!json["Minimum"].is_number_float() || !json["Maximum"].is_number_float())
+    if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end()) {
+        outputMessage = "Incorrect json format!";
+        return false;
+    }
+    if ((!json["Minimum"].is_number_float() && json["Minimum"].type() != TypeEnumT) || (!json["Minimum"].is_number_float() && json["Maximum"].type() != TypeEnumT))
     {
-        outputMessage = "Bounds must be float value!";
+        std::cout << json["Minimum"] << "\n";
+        outputMessage = "Bounds must be number value!";
         return false;
     }
 
@@ -95,69 +75,13 @@ bool AttributeDescription_float::jsonParse(nlohmann::ordered_json &json, std::st
     }
 
     setName(json["Attribute name"].get<std::string>());
-    setLimit(json["Minimum"].get<float>(), json["Maximum"].get<float>());
+    setLimit(json["Minimum"].get<TypeT>(), json["Maximum"].get<TypeT>());
     return true;
 }
 
-//---------------------------------------------------------------------------------------------------------
 
-// LONG
-std::unique_ptr<AttributeDescription> AttributeDescription_long::clone() { return std::make_unique<AttributeDescription_long>(*this); }
-void AttributeDescription_long::setLimit(long minimum, long maximum) {
-            if (minimum < maximum) {
-                min_ = minimum;
-                max_ = maximum;
-            }
-        }
 
-bool AttributeDescription_long::jsonParse(nlohmann::ordered_json &json, std::string &outputMessage)
-{
-    if (!json["Minimum"].is_number_integer() || !json["Maximum"].is_number_integer())
-    {
-        outputMessage = "Bounds must be long value!";
-        return false;
-    }
 
-    if(!json["Attribute name"].is_string()) {
-        outputMessage = "Name must be string type!";
-        return false;
-    }
-
-    setName(json["Attribute name"].get<std::string>());
-    setLimit(json["Minimum"].get<long>(), json["Maximum"].get<long>());
-    return true;
-}
-
-//---------------------------------------------------------------------------------------------------------
-
-// U_INT
-std::unique_ptr<AttributeDescription> AttributeDescription_u_int::clone() { return std::make_unique<AttributeDescription_u_int>(*this); }
-void AttributeDescription_u_int::setLimit(uint minimum, uint maximum) {
-            if (minimum < maximum) {
-                min_ = minimum;
-                max_ = maximum;
-            }
-        }
-
-bool AttributeDescription_u_int::jsonParse(nlohmann::ordered_json &json, std::string &outputMessage)
-{
-    if (!json["Minimum"].is_number_unsigned() || !json["Maximum"].is_number_unsigned())
-    {
-        outputMessage = "Bounds must be unsigned int value!";
-        return false;
-    }
-
-    if(!json["Attribute name"].is_string()) {
-        outputMessage = "Name must be string type!";
-        return false;
-    }
-
-    setName(json["Attribute name"].get<std::string>());
-    setLimit(json["Minimum"].get<uint>(), json["Maximum"].get<uint>());
-    return true;
-}
-
-//---------------------------------------------------------------------------------------------------------
 
 // CHAR
 std::unique_ptr<AttributeDescription> AttributeDescription_char::clone() { return std::make_unique<AttributeDescription_char>(*this); }
@@ -186,4 +110,13 @@ bool AttributeDescription_char::jsonParse(nlohmann::ordered_json &json, std::str
 }
 
 
+std::unique_ptr<AttributeDescription> AttributeDescription_int::clone() { return std::make_unique<AttributeDescription_int>(*this);}
+
+std::unique_ptr<AttributeDescription> AttributeDescription_double::clone() { return std::make_unique<AttributeDescription_double>(*this);}
+
+std::unique_ptr<AttributeDescription> AttributeDescription_float::clone() { return std::make_unique<AttributeDescription_float>(*this);}
+
+std::unique_ptr<AttributeDescription> AttributeDescription_long::clone() { return std::make_unique<AttributeDescription_long>(*this);}
+
+std::unique_ptr<AttributeDescription> AttributeDescription_uint::clone() { return std::make_unique<AttributeDescription_uint>(*this);}
 
