@@ -113,19 +113,19 @@ bool Formular::addOrReplaceControlTypeByVector(std::vector<std::string> controlT
         {
             if (components_.empty())
             {
-                components_.push_back(factory->createEdit(""));
+                components_.push_back(factory->createEdit(controlTypesVector.at(i)));
                 components_.at(components_.size() - 1)->setAttribute(attributes_->giveAttribute(i));
-                return true;
+                continue;
             }
 
             if (i >= components_.size())
             {
-                components_.push_back(factory->createEdit(""));
+                components_.push_back(factory->createEdit(controlTypesVector.at(i)));
                 components_.at(components_.size() - 1)->setAttribute(attributes_->giveAttribute(i));
-                return true;
+                continue;
             }
 
-            components_.emplace(components_.begin() + i, factory->createEdit(""));
+            components_.emplace(components_.begin() + i, factory->createEdit(controlTypesVector.at(i)));
             components_.at(i)->setAttribute(attributes_->giveAttribute(i));
         }
         else
@@ -217,35 +217,18 @@ void Formular::showControls()
         ImGui::BeginDisabled(attributes_->getNumberOfDescriptions() == 0);
         if (ImGui::Button("Generate attributes from descriptions", ImVec2(0, 30)))
         {
-
+            time_t now = time(NULL);
+            struct tm *t = localtime(&now);
+            char buffer[100];
+            strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
             if (attributes_->createAttributes(infoMessage))
             {
-                time_t now = time(NULL);
-                struct tm *t = localtime(&now);
-                char buffer[100];
-                strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-                static int size;
-                static bool changed = false;
-                if (size == 0)
-                {
-                    size = attributes_->getSize();
-                    changed = true;
-                }
-                else if (attributes_->getSize() != size)
-                {
-                    size = attributes_->getSize();
-                    changed = true;
-                }
 
-                if (changed)
-                {
-                    infoMessage = std::format("{}  Attributes were successfuly generated from descriptions!", buffer, size);
-                    changed = false;
-                }
-                else
-                {
-                    infoMessage = std::format("{}  All attributes with actual descriptions are generated!", buffer, size);
-                }
+                infoMessage = std::format("{}  Attributes were successfuly generated from descriptions!", buffer);
+            }
+            else
+            {
+                infoMessage = std::format("{}  All attributes with actual descriptions are generated!", buffer);
             }
         }
         ImGui::EndDisabled();
@@ -253,7 +236,7 @@ void Formular::showControls()
         ImGui::BeginDisabled(attributes_->getSize() == 0);
         if (ImGui::Button("Load Control types", ImVec2(0, 30)))
         {
-            numberOfLoadedControls = readFileControlTypes(controlTypesPath_, infoMessage);
+            numberOfLoadedControls = readFileControlTypes();
         }
         ImGui::SameLine();
         ImGui::Checkbox("Use default controls", &useDefaultControls);
@@ -730,79 +713,80 @@ int Formular::readFileDescriptions(std::string &outputMessage)
     }
     nlohmann::ordered_json jsonFile = nlohmann::ordered_json::parse(file);
     file.close();
-    if (!loadDescriptions(jsonFile)) {
+    if (!loadDescriptions(jsonFile))
+    {
         return -1;
     }
     return attributes_->getSize();
 }
 
-int Formular::readFileControlTypes(nlohmann::json json, std::string &outputMessage)
+int Formular::readFileControlTypes()
 {
-    nlohmann::json jsonFile;
     time_t now = time(NULL);
     struct tm *t = localtime(&now);
     char buffer[100];
-    if (json.empty())
+    std::filesystem::path outputPath_;
+    NFD_Init();
+    nfdu8char_t *outputPath;
+    nfdu8filteritem_t filters[1] = {{"Json file", "json"}};
+    nfdopendialogu8args_t args = {0};
+    args.filterList = filters;
+    args.filterCount = 1;
+    nfdresult_t result = NFD_OpenDialogU8_With(&outputPath, &args);
+
+    if (result == NFD_OKAY)
     {
-        std::filesystem::path outputPath_;
-        NFD_Init();
-        nfdu8char_t *outputPath;
-        nfdu8filteritem_t filters[1] = {{"Json file", "json"}};
-        nfdopendialogu8args_t args = {0};
-        args.filterList = filters;
-        args.filterCount = 1;
-        nfdresult_t result = NFD_OpenDialogU8_With(&outputPath, &args);
-
-        if (result == NFD_OKAY)
-        {
-            outputPath_ = outputPath;
-            NFD_FreePathU8(outputPath);
-        }
-        else if (result == NFD_CANCEL)
-        {
-            outputPath_ = "";
-        }
-        else
-        {
-            strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-            outputMessage = std::format("{}  Error: {}, ", buffer, NFD_GetError());
-            return -1;
-        }
-
-        NFD_Quit();
-        if (outputPath_.empty())
-        {
-            return INT_MAX;
-        }
-        std::ifstream file(outputPath_);
-
-        strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-        if (!file.is_open())
-        {
-            outputMessage = std::format("{}  File does not exist!", buffer);
-            return -1;
-        }
-
-        jsonFile = nlohmann::json::parse(file);
-        file.close();
+        outputPath_ = outputPath;
+        NFD_FreePathU8(outputPath);
+    }
+    else if (result == NFD_CANCEL)
+    {
+        outputPath_ = "";
     }
     else
     {
-        jsonFile = json;
+        strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
+        infoMessage = std::format("{}  Error: {}, ", buffer, NFD_GetError());
+        return -1;
     }
-    int tmpNumberOfLoadedControls = 0;
-    int tmpOverWrittedControls = 0;
+
+    NFD_Quit();
+    if (outputPath_.empty())
+    {
+        return INT_MAX;
+    }
+    std::ifstream file(outputPath_);
 
     strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
+    if (!file.is_open())
+    {
+        infoMessage = std::format("{}  File does not exist!", buffer);
+        return -1;
+    }
+
+    nlohmann::json jsonFile = nlohmann::json::parse(file);
+    file.close();
+    strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
+    return loadControlTypes(jsonFile);
+}
+int Formular::loadControlTypes(nlohmann::json json)
+{
+    time_t now = time(NULL);
+    struct tm *t = localtime(&now);
+    char buffer[100];
+    strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
+
+    int tmpNumberOfLoadedControls = 0;
+    int tmpOverWrittedControls = 0;
     if (attributes_->getSize() == 0)
     {
-        outputMessage = std::format("{}  Before creating control types attributes must exist!", buffer);
+        infoMessage = std::format("{}  Before creating control types attributes must exist!", buffer);
         return -1;
     }
     for (int i = 0; i < attributes_->getSize(); i++)
     {
-        auto editType = jsonFile.find(attributes_->giveAttribute(i)->getName());
-        if (editType == jsonFile.end())
+        auto editType = json.find(attributes_->giveAttribute(i)->getName());
+        if (editType == json.end())
         {
             if (!useDefaultControls)
             {
@@ -814,7 +798,7 @@ int Formular::readFileControlTypes(nlohmann::json json, std::string &outputMessa
                 continue;
             }
 
-            if (!addControlType(attributes_->giveAttribute(i), outputMessage))
+            if (!addControlType(attributes_->giveAttribute(i), infoMessage))
             {
                 return -1;
             }
@@ -824,7 +808,7 @@ int Formular::readFileControlTypes(nlohmann::json json, std::string &outputMessa
         if (!editType.value().is_string())
         {
             components_.clear();
-            outputMessage = "Control type name must be a string!";
+            infoMessage = "Control type name must be a string!";
             return -1;
         }
 
@@ -835,7 +819,7 @@ int Formular::readFileControlTypes(nlohmann::json json, std::string &outputMessa
                 continue;
             }
 
-            if (!replaceControlType(attributes_->giveAttributeByName(editType.key()), editType.value(), outputMessage))
+            if (!replaceControlType(attributes_->giveAttributeByName(editType.key()), editType.value(), infoMessage))
             {
                 return -1;
             }
@@ -843,7 +827,7 @@ int Formular::readFileControlTypes(nlohmann::json json, std::string &outputMessa
             continue;
         }
 
-        if (!addControlType(attributes_->giveAttribute(i)->getName(), editType.value(), outputMessage))
+        if (!addControlType(attributes_->giveAttribute(i)->getName(), editType.value(), infoMessage))
         {
             return -1;
         }
@@ -852,22 +836,22 @@ int Formular::readFileControlTypes(nlohmann::json json, std::string &outputMessa
     strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
     if (tmpOverWrittedControls > 0)
     {
-        outputMessage = std::format("{}  {} controls were successfuly overwritten!", buffer, tmpOverWrittedControls);
+        infoMessage = std::format("{}  {} controls were successfuly overwritten!", buffer, tmpOverWrittedControls);
         return tmpOverWrittedControls;
     }
     if (tmpNumberOfLoadedControls == 0)
     {
-        outputMessage = std::format("{}  Either control types in file have incorrect names or you're trying to overwrite existing control types, check you file or enable overwritting.", buffer);
+        infoMessage = std::format("{}  Either control types in file have incorrect names or you're trying to overwrite existing control types, check you file or enable overwritting.", buffer);
         return -1;
     }
     if (tmpNumberOfLoadedControls < components_.size())
     {
-        outputMessage = std::format("{}  Successfully loaded {} controls and some attributes were given default control types because they were missing in a file!", buffer, tmpNumberOfLoadedControls);
+        infoMessage = std::format("{}  Successfully loaded {} controls and some attributes were given default control types because they were missing in a file!", buffer, tmpNumberOfLoadedControls);
     }
     else if (tmpNumberOfLoadedControls == components_.size())
     {
 
-        outputMessage = std::format("{}  Successfully loaded {} control!s", buffer, tmpNumberOfLoadedControls);
+        infoMessage = std::format("{}  Successfully loaded {} control!s", buffer, tmpNumberOfLoadedControls);
     }
     return tmpNumberOfLoadedControls;
 }

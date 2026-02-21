@@ -47,11 +47,10 @@ struct UINT {
     static constexpr AttributeType typeEnum = AttributeType::UINT;
 };
 
-using AttributeTypes = std::tuple<INT>;
+using AttributeTypes = std::tuple<INT,DOUBLE,FLOAT,CHAR,LONG,UINT>;
 
 template <typename Tuple>
 struct StructUnpack;
-
 
 template <typename... Ts>
 struct StructUnpack<std::tuple<Ts...>> {
@@ -73,7 +72,6 @@ struct AttributeTypeConverter
         });
     }
 
-    template <typename...AttributeTypesT>
     static constexpr AttributeType StringToEnum(std::string_view attributeType)
     {
         return StructUnpack<AttributeTypes>::unpack([&]<typename... AttributeTypesParameter>() {

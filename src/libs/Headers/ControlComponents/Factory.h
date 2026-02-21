@@ -1,5 +1,4 @@
 #pragma once
-#include "AttributeDescription.h"
 #include "NumericInput.h"
 #include "CharacterInput.h"
 
@@ -35,10 +34,7 @@ private:
 
 
 private:
-    
-    std::map<EditTypeInt, IntEditUptr> prototypes_;
-    std::map<std::string, EditTypeInt> stringToEnum{{"SLIDER", EditTypeInt::SLIDER}, {"VSLIDER", EditTypeInt::VSLIDER}, {"DRAG", EditTypeInt::DRAG}};
-    std::map<EditTypeInt, std::string> enumToString{{EditTypeInt::SLIDER, "SLIDER"}, {EditTypeInt::VSLIDER, "VSLIDER"}, {EditTypeInt::DRAG, "DRAG"}};
+    std::map<EditTypeNumber, IntEditUptr> prototypes_;
 
 private:
     IntEditFactory();
@@ -51,8 +47,8 @@ public:
 
     std::unique_ptr<ControlComponent> createEdit(std::string editType)
     {
-        EditTypeInt edit = EditTypeIntConverter::getInstance()->stringToEnumConverter(editType);
-        if (edit == EditTypeInt::DEFAULT)
+        EditTypeNumber edit = EditTypeNumberConverter::StringToEnum(editType);
+        if (edit == EditTypeNumber::NOTACONTROL)
         {
             return nullptr;
         }
@@ -63,7 +59,7 @@ public:
         if (prototypes_.size() == 0) {
             return nullptr;
         }
-        return prototypes_[EditTypeInt::SLIDER]->clone();
+        return prototypes_[EditTypeNumber::SLIDER]->clone();
     }
 };
 
@@ -76,9 +72,7 @@ private:
     static DoubleEditFactory *instance;
 
 private:
-    std::map<EditTypeDouble, DoubleEditUptr> prototypes_;
-    std::map<std::string, EditTypeDouble> stringToEnum{{"SLIDER", EditTypeDouble::SLIDER}, {"VSLIDER", EditTypeDouble::VSLIDER}, {"DRAG", EditTypeDouble::DRAG}};
-    std::map<EditTypeDouble, std::string> enumToString{{EditTypeDouble::SLIDER, "SLIDER"}, {EditTypeDouble::VSLIDER, "VSLIDER"}, {EditTypeDouble::DRAG, "DRAG"}};
+    std::map<EditTypeNumber, DoubleEditUptr> prototypes_;
 
 private:
     DoubleEditFactory();
@@ -91,8 +85,8 @@ public:
      const AttributeType type_ = AttributeType::DOUBLE;
     std::unique_ptr<ControlComponent> createEdit(std::string editType)
     {
-        EditTypeDouble edit = EditTypeDoubleConverter::getInstance()->stringToEnumConverter(editType);
-        if (edit == EditTypeDouble::DEFAULT)
+        EditTypeNumber edit = EditTypeNumberConverter::StringToEnum(editType);
+        if (edit == EditTypeNumber::NOTACONTROL)
         {
             return nullptr;
         }
@@ -103,7 +97,7 @@ public:
         if (prototypes_.size() == 0) {
             return nullptr;
         }
-        return prototypes_[EditTypeDouble::SLIDER]->clone();
+        return prototypes_[EditTypeNumber::SLIDER]->clone();
     }
 };
 
@@ -116,9 +110,7 @@ private:
     static FloatEditFactory *instance;
 
 private:
-    std::map<EditTypeFloat, FloatEditUptr> prototypes_;
-    std::map<std::string, EditTypeFloat> stringToEnum{{"SLIDER", EditTypeFloat::SLIDER}, {"VSLIDER", EditTypeFloat::VSLIDER}, {"DRAG", EditTypeFloat::DRAG}};
-    std::map<EditTypeFloat, std::string> enumToString{{EditTypeFloat::SLIDER, "SLIDER"}, {EditTypeFloat::VSLIDER, "VSLIDER"}, {EditTypeFloat::DRAG, "DRAG"}};
+    std::map<EditTypeNumber, FloatEditUptr> prototypes_;
 
 private:
     FloatEditFactory();
@@ -131,8 +123,8 @@ public:
     const AttributeType type_ = AttributeType::FLOAT;
     std::unique_ptr<ControlComponent> createEdit(std::string editType)
     {
-        EditTypeFloat edit = EditTypeFloatConverter::getInstance()->stringToEnumConverter(editType);
-        if (edit == EditTypeFloat::DEFAULT)
+        EditTypeNumber edit = EditTypeNumberConverter::StringToEnum(editType);
+        if (edit == EditTypeNumber::NOTACONTROL)
         {
             return nullptr;
         }
@@ -143,7 +135,7 @@ public:
         if (prototypes_.size() == 0) {
             return nullptr;
         }
-        return prototypes_[EditTypeFloat::SLIDER]->clone();
+        return prototypes_[EditTypeNumber::SLIDER]->clone();
     }
 };
 
@@ -157,8 +149,6 @@ private:
 
 private:
     std::map<EditTypeChar, CharEditUptr> prototypes_;
-    std::map<std::string, EditTypeChar> stringToEnum{{"TEXT", EditTypeChar::TEXT}};
-    std::map<EditTypeChar, std::string> enumToString{{EditTypeChar::TEXT, "TEXT"}};
 
 private:
     CharEditFactory();
@@ -171,8 +161,8 @@ public:
     const AttributeType type_ = AttributeType::FLOAT;
     std::unique_ptr<ControlComponent> createEdit(std::string editType)
     {
-        EditTypeChar edit = EditTypeCharConverter::getInstance()->stringToEnumConverter(editType);
-        if (edit == EditTypeChar::DEFAULT)
+        EditTypeChar edit = EditTypeCharConverter::StringToEnum(editType);
+        if (edit == EditTypeChar::NOTACONTROL)
         {
             return nullptr;
         }

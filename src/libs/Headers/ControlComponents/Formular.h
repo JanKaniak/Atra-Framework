@@ -1,9 +1,7 @@
 #pragma once
-#include "NumericInput.h"
-#include "CharacterInput.h"
 #include "json.hpp"
 #include "Factory.h"
-
+#include "AttributesContainer.h"
 #include <iostream>
 #include <map>
 #include <memory>
@@ -69,8 +67,6 @@ private:
 private:
     std::unique_ptr<Attributes> attributes_;
     std::vector<std::unique_ptr<ControlComponent>> components_;
-    //std::map<AttributeType,std::string> enumToString =  {{AttributeType::INT,"INT"},{AttributeType::DOUBLE,"DOUBLE"},{AttributeType::FLOAT,"FLOAT"}};
-    std::map<std::string,AttributeType> stringToEnum =  {{"INT",AttributeType::INT},{"DOUBLE",AttributeType::DOUBLE},{"FLOAT",AttributeType::FLOAT}};
     
 
 public:
@@ -92,7 +88,8 @@ public:
     inline int getNumberOfComponents() { return components_.size();}
     int readFileDescriptions(std::string &outputMessage);
     bool loadDescriptions(nlohmann::ordered_json json);
-    int readFileControlTypes(nlohmann::json json,std::string &outputMessage);
+    int readFileControlTypes();
+    int loadControlTypes(nlohmann::json json);
     nlohmann::ordered_json saveOutput();
     bool saveToFile(std::string& outputMessage);
     bool sameName(std::string name);

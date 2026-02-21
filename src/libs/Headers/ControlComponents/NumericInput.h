@@ -4,7 +4,7 @@
 #include <variant>
 #include <format>
 
-class IntSlider : public ControlComponentInt<EditTypeInt::SLIDER>
+class IntSlider : public ControlComponentInt<EditTypeNumber::SLIDER>
 {
 
 private:
@@ -16,7 +16,7 @@ public:
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<IntSlider>(*this); };
 };
 
-class IntVSSlider : public ControlComponentInt<EditTypeInt::VSLIDER>
+class IntVSSlider : public ControlComponentInt<EditTypeNumber::VSLIDER>
 {
 private:
 public:
@@ -30,7 +30,7 @@ public:
     
 };
 
-class IntDrag : public ControlComponentInt<EditTypeInt::DRAG>
+class IntDrag : public ControlComponentInt<EditTypeNumber::DRAG>
 {
 public:
     IntDrag() {
@@ -44,7 +44,7 @@ public:
 
 //------------------------------------------------------------------------------------------
 
-class DoubleSlider : public ControlComponentDouble<EditTypeDouble::SLIDER>
+class DoubleSlider : public ControlComponentDouble<EditTypeNumber::SLIDER>
 {
 public:
     DoubleSlider() {
@@ -56,7 +56,7 @@ public:
     
 };
 
-class DoubleVSSlider : public ControlComponentDouble<EditTypeDouble::VSLIDER>
+class DoubleVSSlider : public ControlComponentDouble<EditTypeNumber::VSLIDER>
 {
 public:
     DoubleVSSlider() {
@@ -67,7 +67,7 @@ public:
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleVSSlider>(*this); };
 };
 
-class DoubleDrag : public ControlComponentDouble<EditTypeDouble::DRAG>
+class DoubleDrag : public ControlComponentDouble<EditTypeNumber::DRAG>
 {
 private:
 
@@ -82,7 +82,7 @@ public:
 
 //------------------------------------------------------------------------------------------
 
-class FloatSlider : public ControlComponentFloat<EditTypeFloat::SLIDER>
+class FloatSlider : public ControlComponentFloat<EditTypeNumber::SLIDER>
 {
 public:
     FloatSlider() {
@@ -94,7 +94,7 @@ public:
     
 };
 
-class FloatVSSlider : public ControlComponentFloat<EditTypeFloat::VSLIDER>
+class FloatVSSlider : public ControlComponentFloat<EditTypeNumber::VSLIDER>
 {
 public:
     FloatVSSlider() {
@@ -106,7 +106,7 @@ public:
 
 };
 
-class FloatDrag : public ControlComponentFloat<EditTypeFloat::DRAG>
+class FloatDrag : public ControlComponentFloat<EditTypeNumber::DRAG>
 {
 private:
 

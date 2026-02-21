@@ -14,7 +14,7 @@ class TextField : public ControlComponentChar<EditTypeChar::TEXT> {
         }
 
         void draw() override {
-            ImGui::InputText(attributeChar_->getName().c_str(),&value_,sizeof(value_));
+            ImGui::InputText(attributechar_->getName().c_str(),&value_,sizeof(value_));
         }
         std::unique_ptr<ControlComponent> clone() override { return std::make_unique<TextField>(*this); };
 

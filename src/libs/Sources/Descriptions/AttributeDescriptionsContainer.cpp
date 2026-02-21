@@ -8,6 +8,10 @@ AttributeDescriptionsContainer::AttributeDescriptionsContainer()
 
 bool AttributeDescriptionsContainer::addDescriptions(AttributeType type, nlohmann::ordered_json &json, std::string &outputMessage)
 {
+    if (type == AttributeType::NOTATYPE) {
+        outputMessage = "Incorrect attribute type name!";
+        return false;
+    }
     for (auto descIt = json.begin(); descIt != json.end(); ++descIt)
     {
         if (descIt.value().find("Attribute name") == descIt.value().end())
@@ -22,9 +26,7 @@ bool AttributeDescriptionsContainer::addDescriptions(AttributeType type, nlohman
         AttributeDescription *desc = getDescription(descIt.value()["Attribute name"].get<std::string>());
         if (desc != nullptr)
         {
-            attributeDescs_.clear();
-            outputMessage = "Attribute already exists!";
-            return false;
+            continue;
         }
         std::unique_ptr<AttributeDescription> tmpDescription = descFactory_->createDesc(type);
         if (tmpDescription == nullptr) {

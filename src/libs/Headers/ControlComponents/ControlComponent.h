@@ -1,359 +1,97 @@
 #pragma once
-#include "AttributesContainer.h"
+#include "ImplementedAttribute.h"
 #include <variant>
 
-#define Edit_type_int \
-    X_INT(DEFAULT) \
-    X_INT(SLIDER) \
-    X_INT(VSLIDER) \
-    X_INT(DRAG)
-
-
-
-#define Edit_type_double \
-    X_DOUBLE(DEFAULT) \
-    X_DOUBLE(SLIDER) \
-    X_DOUBLE(VSLIDER) \
-    X_DOUBLE(DRAG)
-
-#define Edit_type_float \
-    X_FLOAT(DEFAULT) \
-    X_FLOAT(SLIDER) \
-    X_FLOAT(VSLIDER) \
-    X_FLOAT(DRAG)
-
-#define Edit_type_text \
-    X_TEXT(DEFAULT) \
-    X_TEXT(TEXT)
-
-
-enum class EditTypeInt {
-    #define X_INT(editType) editType,
-    Edit_type_int
-    #undef X_INT
+enum class EditTypeNumber
+{
+    NOTACONTROL,
+    SLIDER,
+    VSLIDER,
+    DRAG
 };
 
-enum class EditTypeDouble {
-    #define X_DOUBLE(editType) editType,
-    Edit_type_double
-    #undef X_DOUBLE
+enum class EditTypeChar
+{
+    NOTACONTROL,
+    TEXT,
 };
 
-enum class EditTypeFloat {
-    #define X_FLOAT(editType) editType,
-    Edit_type_float
-    #undef X_FLOAT
+struct NUMBERSLIDER
+{
+    static constexpr EditTypeNumber typeEnum = EditTypeNumber::SLIDER;
+    static constexpr std::string_view typeString = "SLIDER";
 };
 
-enum class EditTypeChar {
-    #define X_TEXT(editType) editType,
-    Edit_type_text
-    #undef X_TEXT
+struct NUMBERVSLIDER
+{
+    static constexpr EditTypeNumber typeEnum = EditTypeNumber::VSLIDER;
+    static constexpr std::string_view typeString = "VSLIDER";
 };
 
-/*#define Master_list \
-    Register_master(EditTypeInt) \
-    Register_master(EditTypeDouble) \
-    Register_master(EditTypeFloat) \
-    Register_master(EditTypeText) 
-
-#define Register_master(enumType) \
-    std::string EnumToString(enumType editType) { \
-        switch (editType) { \
-            case enumType : return #editType; \
-        } \
-        return ""; \
-    } \
-    \
-Master_list 
-#undef Register_master 
-
-
-
-#define Attribute_type(attributeType) \
-class ConverterEnumAndString##attributeType { \
-    private: \
-    static ConverterEnumAndString##attributeType *instance_; \
-    public: \
-    ConverterEnumAndString##attributeType *getInstance() { \
-        static ConverterEnumAndString##attributeType *instance_; \
-        if (instance_ == nullptr) { \
-            return instance_ = new ConverterEnumAndString##attributeType(); \
-        } \
-        return instance_; \
-    } \
-    \
-    
-}; 
-Attribute_types
-#undef Attribute_type*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class EditTypeIntConverter {
-private:
-    std::map<EditTypeInt, std::string> enumToString = {
-        #define X_INT(editType) {EditTypeInt::editType, #editType},
-        Edit_type_int
-        #undef X_INT
-    };
-
-    std::map<std::string, EditTypeInt> stringToEnum = {
-        #define X_INT(editType) {#editType, EditTypeInt::editType},
-        Edit_type_int
-        #undef X_INT
-    };
-    
-private:
-    static EditTypeIntConverter *instance_;
-    EditTypeIntConverter() = default;
-public:
-    static EditTypeIntConverter *getInstance() {
-       static EditTypeIntConverter *instance_;
-       if (instance_ == nullptr) {
-        return new EditTypeIntConverter();
-       } 
-       return instance_;
-    }
-     std::string enumToStringConverter(EditTypeInt type) {
-        if (enumToString.find(type) == enumToString.end()) {
-            return "";
-        }
-        return enumToString[type];
-    }
-
-    bool containsEnum(std::string type) {
-        if (stringToEnum.find(type) == stringToEnum.end()) {
-            return false;
-        }
-        return true;
-    }
-
-    EditTypeInt stringToEnumConverter(std::string type) {
-        if (stringToEnum.find(type) == stringToEnum.end()) {
-            return EditTypeInt::DEFAULT;
-        }
-        return stringToEnum[type];
-
-    }
-
-    bool containsString(EditTypeInt type) {
-        if (enumToString.find(type) == enumToString.end()) {
-            return false;
-        }
-        return true;
-    }
-
+struct NUMBERDRAG
+{
+    static constexpr EditTypeNumber typeEnum = EditTypeNumber::DRAG;
+    static constexpr std::string_view typeString = "DRAG";
 };
 
+struct CHARTEXT
+{
+    static constexpr EditTypeChar typeEnum = EditTypeChar::TEXT;
+    static constexpr std::string_view typeString = "TEXT";
+};
 
+using NumberEditTypes = std::tuple<NUMBERSLIDER, NUMBERVSLIDER, NUMBERDRAG>;
+using CharEditTypes = std::tuple<CHARTEXT>;
 
-
-class EditTypeDoubleConverter {
-private:
-    std::unordered_map<EditTypeDouble, std::string> enumToString = {
-        #define X_DOUBLE(editType) {EditTypeDouble::editType, #editType},
-        Edit_type_double
-        #undef X_DOUBLE
-    };
-
-    std::unordered_map<std::string, EditTypeDouble> stringToEnum = {
-        #define X_DOUBLE(editType) {#editType, EditTypeDouble::editType},
-        Edit_type_double
-        #undef X_DOUBLE
-    };
-    
-private:
-    static EditTypeDoubleConverter *instance_;
-    EditTypeDoubleConverter() = default;
-public:
-    static EditTypeDoubleConverter *getInstance() {
-       static EditTypeDoubleConverter *instance_;
-       if (instance_ == nullptr) {
-        return new EditTypeDoubleConverter();
-       } 
-       return instance_;
+struct EditTypeNumberConverter
+{
+    static constexpr std::string_view EnumToString(EditTypeNumber editTypeNumber)
+    {
+        return StructUnpack<NumberEditTypes>::unpack([&]<typename... EditTypeNumberParameter>()
+                                                     {
+            std::string_view type = "";
+            ((EditTypeNumberParameter::typeEnum == editTypeNumber ? type = EditTypeNumberParameter::typeString : ""), ...);
+            return type; });
     }
 
-     std::string enumToStringConverter(EditTypeDouble type) {
-        if (enumToString.find(type) == enumToString.end()) {
-            return "";
-        }
-        return enumToString[type];
-    }
-
-    bool containsEnum(std::string type) {
-        if (stringToEnum.find(type) == stringToEnum.end()) {
-            return false;
-        }
-        return true;
-    }
-
-    EditTypeDouble stringToEnumConverter(std::string type) {
-        return stringToEnum[type];
-
-    }
-
-    bool containsString(EditTypeDouble type) {
-        if (enumToString.find(type) == enumToString.end()) {
-            return false;
-        }
-        return true;
+    static constexpr EditTypeNumber StringToEnum(std::string_view editTypeNumber)
+    {
+        return StructUnpack<NumberEditTypes>::unpack([&]<typename... EditTypeNumberParameter>()
+                                                     {
+            EditTypeNumber type = EditTypeNumber::SLIDER;
+            ((EditTypeNumberParameter::typeString == editTypeNumber ? type = EditTypeNumberParameter::typeEnum : EditTypeNumber::NOTACONTROL), ...);
+            return type; });
     }
 };
 
-
-
-
-
-
-
-class EditTypeFloatConverter {
-private:
-    std::map<EditTypeFloat, std::string> enumToString = {
-        #define X_FLOAT(editType) {EditTypeFloat::editType, #editType},
-        Edit_type_float
-        #undef X_FLOAT
-    };
-
-    std::map<std::string, EditTypeFloat> stringToEnum = {
-        #define X_FLOAT(editType) {#editType, EditTypeFloat::editType},
-        Edit_type_float
-        #undef X_FLOAT
-    };
-    
-private:
-    static EditTypeFloatConverter *instance_;
-    EditTypeFloatConverter() = default;
-public:
-    static EditTypeFloatConverter *getInstance() {
-       static EditTypeFloatConverter *instance_;
-       if (instance_ == nullptr) {
-        return new EditTypeFloatConverter();
-       } 
-       return instance_;
+struct EditTypeCharConverter
+{
+    static constexpr std::string_view EnumToString(EditTypeChar charEditTypes)
+    {
+        return StructUnpack<CharEditTypes>::unpack([&]<typename... EditTypeCharParameter>()
+                                                   {
+            std::string_view type = "";
+            ((EditTypeCharParameter::typeEnum == charEditTypes ? type = EditTypeCharParameter::typeString : ""), ...);
+            return type; });
     }
 
-
-     std::string enumToStringConverter(EditTypeFloat type) {
-        if (enumToString.find(type) == enumToString.end()) {
-            return "";
-        }
-        return enumToString[type];
-    }
-
-    bool containsEnum(std::string type) {
-        if (stringToEnum.find(type) == stringToEnum.end()) {
-            return false;
-        }
-        return true;
-    }
-
-    EditTypeFloat stringToEnumConverter(std::string type) {
-        return stringToEnum[type];
-
-    }
-
-    bool containsString(EditTypeFloat type) {
-        if (enumToString.find(type) == enumToString.end()) {
-            return false;
-        }
-        return true;
+    static constexpr EditTypeChar StringToEnum(std::string_view charEditTypes)
+    {
+        return StructUnpack<CharEditTypes>::unpack([&]<typename... EditTypeCharParameter>()
+                                                   {
+            EditTypeChar type = EditTypeChar::NOTACONTROL;
+            ((EditTypeCharParameter::typeString == charEditTypes ? type = EditTypeCharParameter::typeEnum : EditTypeChar::NOTACONTROL), ...);
+            return type; });
     }
 };
-
-
-class EditTypeCharConverter {
-private:
-    std::map<EditTypeChar, std::string> enumToString = {
-        #define X_TEXT(editType) {EditTypeChar::editType, #editType},
-        Edit_type_text
-        #undef X_TEXT
-    };
-
-    std::map<std::string, EditTypeChar> stringToEnum = {
-        #define X_TEXT(editType) {#editType, EditTypeChar::editType},
-        Edit_type_text
-        #undef X_TEXT
-    };
-    
-private:
-    static EditTypeCharConverter *instance_;
-    EditTypeCharConverter() = default;
-public:
-    static EditTypeCharConverter *getInstance() {
-       static EditTypeCharConverter *instance_;
-       if (instance_ == nullptr) {
-        return new EditTypeCharConverter();
-       } 
-       return instance_;
-    }
-
-
-     std::string enumToStringConverter(EditTypeChar type) {
-        if (enumToString.find(type) == enumToString.end()) {
-            return "";
-        }
-        return enumToString[type];
-    }
-
-    bool containsEnum(std::string type) {
-        if (stringToEnum.find(type) == stringToEnum.end()) {
-            return false;
-        }
-        return true;
-    }
-
-    EditTypeChar stringToEnumConverter(std::string type) {
-        return stringToEnum[type];
-
-    }
-
-    bool containsString(EditTypeChar type) {
-        if (enumToString.find(type) == enumToString.end()) {
-            return false;
-        }
-        return true;
-    }
-};
-
-
-
-
-
-
-
-
-
 
 class ControlComponent
 {
 protected:
-    std::string controlType_;
+    // std::string controlType_;
 
-    public:
-    std::string getType() { return controlType_; };
+public:
+    virtual std::string getType() = 0;
 
 public:
     virtual void draw() = 0;
@@ -364,103 +102,54 @@ public:
     virtual Attribute *getAttribute() = 0;
 };
 
-
-
-
-
-
-#define Control_components \
-    X(Int,int) \
-    X(Double,double) \
-    X(Float,float) \
-    X(Char, char)
-
-
-#define X(attributeTypeName,type) \
-template <EditType##attributeTypeName TYPE> \
-class ControlComponent##attributeTypeName : public ControlComponent \
-{ \
-protected: \
-    type value_; \
-    type minimum_; \
-    type maximum_; \
-    Attribute##attributeTypeName *attribute##attributeTypeName##_; \
-    float minimumWidth_; \
- \
-public: \
-    static constexpr EditType##attributeTypeName type_ = TYPE; \
-    void setAttribute(Attribute *attribute) override \
-    { \
-        controlType_ = EditType##attributeTypeName##Converter::getInstance()->enumToStringConverter(type_); \
-        if (dynamic_cast<Attribute##attributeTypeName *>(attribute)) \
-        { \
-            attribute##attributeTypeName##_ = dynamic_cast<Attribute##attributeTypeName *>(attribute); \
-            value_ = attribute##attributeTypeName##_->getValue(); \
-            minimum_ = attribute##attributeTypeName##_->getMinimum(); \
-            maximum_ = attribute##attributeTypeName##_->getMaximum(); \
-        } \
-    } \
-    std::string getName() override { return attribute##attributeTypeName##_->getName(); }; \
-    Attribute *getAttribute() override { return attribute##attributeTypeName##_; }; \
-};
-Control_components
-#undef X
-
-
-
-/*template <EditTypeInt TYPE>
-class ControlComponentInt : public ControlComponent
+template <EditTypeNumber TYPE, typename TypeT, typename AttributeT>
+class NumberBaseControlComponent : public ControlComponent
 {
 protected:
-    int value_;
-    int minimum_;
-    int maximum_;
-    AttributeInt *attributeint_;
+    TypeT value_;
+    TypeT minimum_;
+    TypeT maximum_;
+    AttributeT *attribute_;
     float minimumWidth_;
 
 public:
-    static constexpr EditTypeInt type_ = TYPE;
-    void setAttribute(Attribute *attribute) override;
-    std::string getName() override { return attributeint_->getName(); };
-    Attribute *getAttribute() override { return attributeint_; };
-};
+    static constexpr EditTypeNumber type_ = TYPE;
+    void setAttribute(Attribute *attribute) override
+    {
 
-template <EditTypeDouble TYPE>
-class ControlComponentDouble : public ControlComponent
+        if (dynamic_cast<AttributeT *>(attribute))
+        {
+            attribute_ = dynamic_cast<AttributeT *>(attribute);
+            value_ = attribute_->getValue();
+            minimum_ = attribute_->getMinimum();
+            maximum_ = attribute_->getMaximum();
+        }
+    }
+    std::string getName() override { return attribute_->getName(); };
+    Attribute *getAttribute() override { return attribute_; };
+    std::string getType() override { return EditTypeNumberConverter::EnumToString(type_).data(); }
+};
+template <EditTypeNumber TYPE>
+class ControlComponentInt : public NumberBaseControlComponent<TYPE, int, AttributeInt>
 {
-protected:
-    double value_;
-    double minimum_;
-    double maximum_;
-    AttributeDouble *attributedouble_;
-    float minimumWidth_;
-
 public:
-    static constexpr EditTypeDouble type_ = TYPE;
-    void setAttribute(Attribute *attribute) override;
-    std::string getName() override { return attributedouble_->getName(); };
-    Attribute *getAttribute() override { return attributedouble_; };
 };
 
-template <EditTypeFloat TYPE>
-class ControlComponentFloat : public ControlComponent
+template <EditTypeNumber TYPE>
+class ControlComponentDouble : public NumberBaseControlComponent<TYPE, double, AttributeDouble>
 {
-protected:
-    float value_;
-    float minimum_;
-    float maximum_;
-    AttributeFloat *attributefloat_;
-    float minimumWidth_;
-
 public:
-    static constexpr EditTypeFloat type_ = TYPE;
-    void setAttribute(Attribute *attribute) override;
-    std::string getName() override { return attributefloat_->getName(); };
-    Attribute *getAttribute() override { return attributefloat_; };
+    static constexpr EditTypeNumber type_ = TYPE;
 };
 
+template <EditTypeNumber TYPE>
+class ControlComponentFloat : public NumberBaseControlComponent<TYPE, float, AttributeFloat>
+{
+public:
+    static constexpr EditTypeNumber type_ = TYPE;
+};
 
-template <EditTypeText TYPE>
+template <EditTypeChar TYPE>
 class ControlComponentChar : public ControlComponent
 {
 protected:
@@ -471,9 +160,18 @@ protected:
     float minimumWidth_;
 
 public:
-    static constexpr EditTypeText type_ = TYPE;
-    void setAttribute(Attribute *attribute) override;
+    static constexpr EditTypeChar type_ = TYPE;
+    void setAttribute(Attribute *attribute) override
+    {
+        if (dynamic_cast<AttributeChar *>(attribute))
+        {
+            attributechar_ = dynamic_cast<AttributeChar *>(attribute);
+            value_ = attributechar_->getValue();
+            minimum_ = attributechar_->getMinimum();
+            maximum_ = attributechar_->getMaximum();
+        }
+    }
     std::string getName() override { return attributechar_->getName(); };
     Attribute *getAttribute() override { return attributechar_; };
+    std::string getType() override { return EditTypeCharConverter::EnumToString(type_).data(); }
 };
-*/

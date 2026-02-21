@@ -197,6 +197,13 @@ build CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o: CXX
   OBJECT_DIR = CMakeFiles/myLib.dir
   OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents
 
+build CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/ControlComponents.cpp.o: CXX_COMPILER__myLib_unscanned_Debug /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/ControlComponents.cpp || cmake_object_order_depends_target_myLib
+  DEP_FILE = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/ControlComponents.cpp.o.d
+  FLAGS = -g -std=gnu++20
+  INCLUDES = -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include
+  OBJECT_DIR = CMakeFiles/myLib.dir
+  OBJECT_FILE_DIR = CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents
+
 
 # =============================================================================
 # Link build statements for STATIC_LIBRARY target myLib
@@ -205,7 +212,7 @@ build CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o: CXX
 #############################################
 # Link the static library libmyLib.a
 
-build libmyLib.a: CXX_STATIC_LIBRARY_LINKER__myLib_Debug CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptionsContainer.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attribute.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/AttributesContainer.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o || libimgui.a src/nativefiledialog-extended/src/libnfd.a
+build libmyLib.a: CXX_STATIC_LIBRARY_LINKER__myLib_Debug CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/AttributeDescriptionsContainer.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/Attribute.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/AttributesContainer.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/NumericInput.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Factory.cpp.o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/ControlComponents.cpp.o || libimgui.a src/nativefiledialog-extended/src/libnfd.a
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles/myLib.dir
   POST_BUILD = :

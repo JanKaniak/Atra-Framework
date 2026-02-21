@@ -25,9 +25,9 @@ IntEditFactory *IntEditFactory::getInstance()
 template <typename EditTypeIntT>
 inline void IntEditFactory::registerPrototype()
 {
-    if (!findInVector(nameOfControlTypesVector_, enumToString[EditTypeIntT::type_]))
+    if (!findInVector(nameOfControlTypesVector_, EditTypeNumberConverter::EnumToString(EditTypeIntT::type_).data()))
     {
-        nameOfControlTypesVector_.emplace_back(enumToString[EditTypeIntT::type_]);
+        nameOfControlTypesVector_.emplace_back(EditTypeNumberConverter::EnumToString(EditTypeIntT::type_));
     }
     prototypes_[EditTypeIntT::type_] = std::move(std::make_unique<EditTypeIntT>());
 }
@@ -58,9 +58,9 @@ DoubleEditFactory *DoubleEditFactory::getInstance()
 template <typename EditTypeDoubleT>
 inline void DoubleEditFactory::registerPrototype()
 {
-    if (!findInVector(nameOfControlTypesVector_, enumToString[EditTypeDoubleT::type_]))
+    if (!findInVector(nameOfControlTypesVector_, EditTypeNumberConverter::EnumToString(EditTypeDoubleT::type_).data()))
     {
-        nameOfControlTypesVector_.emplace_back(enumToString[EditTypeDoubleT::type_]);
+        nameOfControlTypesVector_.emplace_back(EditTypeNumberConverter::EnumToString(EditTypeDoubleT::type_));
     }
     prototypes_[EditTypeDoubleT::type_] = std::move(std::make_unique<EditTypeDoubleT>());
 }
@@ -91,9 +91,9 @@ FloatEditFactory *FloatEditFactory::getInstance()
 template <typename EditTypeFloatT>
 inline void FloatEditFactory::registerPrototype()
 {
-    if (!findInVector(nameOfControlTypesVector_, enumToString[EditTypeFloatT::type_]))
+    if (!findInVector(nameOfControlTypesVector_, EditTypeNumberConverter::EnumToString(EditTypeFloatT::type_).data()))
     {
-        nameOfControlTypesVector_.emplace_back(enumToString[EditTypeFloatT::type_]);
+        nameOfControlTypesVector_.emplace_back(EditTypeNumberConverter::EnumToString(EditTypeFloatT::type_));
     }
     prototypes_[EditTypeFloatT::type_] = std::move(std::make_unique<EditTypeFloatT>());
 }
@@ -123,9 +123,9 @@ CharEditFactory *CharEditFactory::getInstance()
 template <typename EditTypeCharT>
 inline void CharEditFactory::registerPrototype()
 {
-    if (!findInVector(nameOfControlTypesVector_, enumToString[EditTypeCharT::type_]))
+    if (!findInVector(nameOfControlTypesVector_, EditTypeCharConverter::EnumToString(EditTypeCharT::type_).data()))
     {
-        nameOfControlTypesVector_.emplace_back(enumToString[EditTypeCharT::type_]);
+        nameOfControlTypesVector_.emplace_back(EditTypeCharConverter::EnumToString(EditTypeCharT::type_));
     }
     prototypes_[EditTypeCharT::type_] = std::move(std::make_unique<EditTypeCharT>());
 }

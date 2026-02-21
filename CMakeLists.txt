@@ -39,6 +39,7 @@ add_library(myLib
     src/libs/Sources/ControlComponents/NumericInput.cpp
     src/libs/Sources/ControlComponents/Formular.cpp
     src/libs/Sources/ControlComponents/Factory.cpp
+    src/libs/Sources/ControlComponents/ControlComponents.cpp
 )
 
 add_subdirectory(src/nativefiledialog-extended)

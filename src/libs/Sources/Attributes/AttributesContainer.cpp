@@ -8,11 +8,13 @@ Attributes::Attributes()
 
 bool Attributes::createAttributes(std::string &outputMessage)
 {
+    bool noChange = false;
     for (int i = 0; i < attributeDescs_->getSize(); i++)
     {
         if (contains(attributeDescs_->getDescription(i)->getName())) {
             continue;
         }
+        noChange = true;
         AttributeDescription *desc = attributeDescs_->getDescription(i);
         std::unique_ptr<Attribute> tmpAttributePointer = attributeFactory_->createAttribute(desc->getType());
         if (tmpAttributePointer == nullptr) {
@@ -23,7 +25,7 @@ bool Attributes::createAttributes(std::string &outputMessage)
         attributes_.at(attributes_.size() - 1)->setDescription(desc);
         
     }
-    return true;
+    return noChange;
 }
 
 bool Attributes::deleteAttribute(Attribute *attribute)
