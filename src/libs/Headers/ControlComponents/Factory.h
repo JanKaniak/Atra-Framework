@@ -1,6 +1,7 @@
 #pragma once
 #include "NumericInput.h"
 #include "CharacterInput.h"
+#include "LogicInput.h"
 
 #include <map>
 
@@ -178,6 +179,44 @@ public:
 
 //---------------------------------------------------
 
+using LogicEditUptr = std::unique_ptr<ControlComponent>;
+class LogicEditFactory : public Factory
+{
+private:
+    static LogicEditFactory *instance;
+
+private:
+    std::map<EditTypeLogic, LogicEditUptr> prototypes_;
+
+private:
+    LogicEditFactory();
+
+    template <typename EditTypeLogicT>
+    void registerPrototype();
+
+public:
+    static LogicEditFactory *getInstance();
+    const AttributeType type_ = AttributeType::BOOL;
+    std::unique_ptr<ControlComponent> createEdit(std::string editType)
+    {
+        EditTypeLogic edit = EditTypeLogicConverter::StringToEnum(editType);
+        if (edit == EditTypeLogic::NOTACONTROL)
+        {
+            return nullptr;
+        }
+        return prototypes_[edit]->clone();
+    }
+    std::unique_ptr<ControlComponent> createDefaultEdit()  {
+        if (prototypes_.size() == 0) {
+            return nullptr;
+        }
+        return prototypes_[EditTypeLogic::CHECKBOX]->clone();
+    }
+};
+
+
+//---------------------------------------------------
+
 
 class Config
 {
@@ -201,7 +240,8 @@ public:
     FactoryR(Int, IntEditFactory) \
     FactoryR(Double, DoubleEditFactory) \
     FactoryR(Float, FloatEditFactory) \
-    FactoryR(Char, CharEditFactory)
+    FactoryR(Char, CharEditFactory) \
+    FactoryR(Logic, LogicEditFactory)
 
 #define FactoryR(type,factory) \
 struct AutoRegister##type##Factory { \

@@ -3,7 +3,6 @@
 #include "Attribute.h"
 
 using AttributeUptr = std::unique_ptr<Attribute>;
-using AttributeTypeVariant = std::variant<int, double, char>;
 
 class AttributeFactory
 {
@@ -13,25 +12,14 @@ private:
     AttributeFactory() = default;
 
 public:
-    inline AttributeUptr createAttribute(AttributeType type)
-    {
-        if (prototypes_.find(type) == prototypes_.end())
-        {
-            return nullptr;
-        }
-        return prototypes_[type]->clone();
-    }
-    static AttributeFactory *getInstance()
-    {
-        static AttributeFactory *instance_;
-        if (instance_ == nullptr)
-        {
-            instance_ = new AttributeFactory();
-        }
-        return instance_;
-    }
+    AttributeUptr createAttribute(AttributeType type);
+    static AttributeFactory *getInstance();
+    template <AttributeType TypeT>
     void registerPrototype(AttributeUptr prototype)
     {
-        prototypes_[prototype->getType()] = std::move(prototype);
+        if (prototypes_.find(TypeT) == prototypes_.end())
+        {
+            prototypes_[TypeT] = std::move(prototype);
+        }
     }
 };

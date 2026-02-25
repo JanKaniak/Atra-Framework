@@ -14,79 +14,87 @@ enum class AttributeType
     FLOAT,
     CHAR,
     LONG,
-    UINT
+    UINT,
+    BOOL
 };
 
-struct INT {
+struct Int
+{
     static constexpr std::string_view typeString = "INT";
     static constexpr AttributeType typeEnum = AttributeType::INT;
 };
 
-struct DOUBLE {
+struct Double
+{
     static constexpr std::string_view typeString = "DOUBLE";
     static constexpr AttributeType typeEnum = AttributeType::DOUBLE;
 };
 
-struct FLOAT {
+struct Float
+{
     static constexpr std::string_view typeString = "FLOAT";
     static constexpr AttributeType typeEnum = AttributeType::FLOAT;
 };
 
-struct CHAR {
+struct Char
+{
     static constexpr std::string_view typeString = "CHAR";
     static constexpr AttributeType typeEnum = AttributeType::CHAR;
 };
 
-struct LONG {
+struct Long
+{
     static constexpr std::string_view typeString = "LONG";
     static constexpr AttributeType typeEnum = AttributeType::LONG;
 };
 
-struct UINT {
+struct Uint
+{
     static constexpr std::string_view typeString = "UINT";
     static constexpr AttributeType typeEnum = AttributeType::UINT;
 };
 
-using AttributeTypes = std::tuple<INT,DOUBLE,FLOAT,CHAR,LONG,UINT>;
+struct Bool
+{
+    static constexpr std::string_view typeString = "BOOL";
+    static constexpr AttributeType typeEnum = AttributeType::BOOL;
+};
+
+using AttributeTypes = std::tuple<Int, Double, Float, Char, Long, Uint, Bool>;
 
 template <typename Tuple>
 struct StructUnpack;
 
 template <typename... Ts>
-struct StructUnpack<std::tuple<Ts...>> {
+struct StructUnpack<std::tuple<Ts...>>
+{
     template <typename FunctionT>
-    static constexpr auto unpack(FunctionT&& predicate) {
+    static constexpr auto unpack(FunctionT &&predicate)
+    {
         return predicate.template operator()<Ts...>();
     }
 };
-
 
 struct AttributeTypeConverter
 {
     static constexpr std::string_view EnumToString(AttributeType attributeType)
     {
-        return StructUnpack<AttributeTypes>::unpack([&]<typename... AttributeTypesParameter>() {
+        return StructUnpack<AttributeTypes>::unpack([&]<typename... AttributeTypesParameter>()
+                                                    {
             std::string_view type = "";
             ((AttributeTypesParameter::typeEnum == attributeType ? type = AttributeTypesParameter::typeString : ""), ...);
-            return type;
-        });
+            return type; });
     }
 
     static constexpr AttributeType StringToEnum(std::string_view attributeType)
     {
-        return StructUnpack<AttributeTypes>::unpack([&]<typename... AttributeTypesParameter>() {
+        return StructUnpack<AttributeTypes>::unpack([&]<typename... AttributeTypesParameter>()
+                                                    {
             AttributeType type = AttributeType::NOTATYPE;
             ((AttributeTypesParameter::typeString == attributeType ? type = AttributeTypesParameter::typeEnum : AttributeType::NOTATYPE), ...);
-            return type;
-        });
+            return type; });
     }
 };
-
-/*enum class Category {
-    NUMERIC,
-    TEXT,
-    OTHER
-};*/
 
 class AttributeDescription
 {
@@ -110,4 +118,5 @@ public:
     virtual ~AttributeDescription() = default;
     virtual std::unique_ptr<AttributeDescription> clone() = 0;
     virtual bool jsonParse(nlohmann::ordered_json &json, std::string &outputMessage) = 0;
+    virtual void drawInputForChangingLimits(std::string &outputMessage) = 0;
 };

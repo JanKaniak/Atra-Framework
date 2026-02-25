@@ -132,6 +132,40 @@ inline void CharEditFactory::registerPrototype()
 
 // ------------------------------------------------------------------------------------------------------
 
+// BOOL
+
+LogicEditFactory *LogicEditFactory::instance = nullptr;
+
+LogicEditFactory::LogicEditFactory() : Factory(AttributeType::BOOL)
+{
+    this->registerPrototype<CheckBox>();
+    this->registerPrototype<LogicButton>();
+}
+
+LogicEditFactory *LogicEditFactory::getInstance()
+{
+    if (instance == nullptr)
+    {
+        instance = new LogicEditFactory();
+    }
+
+    return instance;
+}
+
+template <typename EditTypeLogicT>
+inline void LogicEditFactory::registerPrototype()
+{
+    if (!findInVector(nameOfControlTypesVector_, EditTypeLogicConverter::EnumToString(EditTypeLogicT::type_).data()))
+    {
+        nameOfControlTypesVector_.emplace_back(EditTypeLogicConverter::EnumToString(EditTypeLogicT::type_));
+    }
+    prototypes_[EditTypeLogicT::type_] = std::move(std::make_unique<EditTypeLogicT>());
+}
+
+
+
+//-------------------------------------------------------------------------------------------------------
+
 // Config
 Config *Config::instance_ = nullptr;
 

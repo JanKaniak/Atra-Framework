@@ -1,0 +1,145 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				},
+				{
+					"build" : "src/nativefiledialog-extended",
+					"childIndexes" : 
+					[
+						2
+					],
+					"jsonFile" : "directory-src.nativefiledialog-extended-Debug-25519ff1c745998bc16c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "src/nativefiledialog-extended"
+				},
+				{
+					"build" : "src/nativefiledialog-extended/src",
+					"jsonFile" : "directory-src.nativefiledialog-extended.src-Debug-fb2973066f34f567a9c8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "src/nativefiledialog-extended/src",
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "GraphicEditor",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1,
+						2
+					],
+					"name" : "nativefiledialog-extended",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						4
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "GraphicEditor::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-GraphicEditor-Debug-a9a9b5fd3bd61d5e8204.json",
+					"name" : "GraphicEditor",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "imgui::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-imgui-Debug-d11af69536fc2bff28d3.json",
+					"name" : "imgui",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "imgui_backends::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-imgui_backends-Debug-54a5119b1e3448147545.json",
+					"name" : "imgui_backends",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "myLib::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-myLib-Debug-27e2f5f51925fa204f78.json",
+					"name" : "myLib",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "nfd::@76bbc1004cace93c6c6b",
+					"jsonFile" : "target-nfd-Debug-4e9026c0dc6a90b89298.json",
+					"name" : "nfd",
+					"projectIndex" : 1
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+		"source" : "/home/jecko192/Desktop/Bakalarka/GraphicEditor"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

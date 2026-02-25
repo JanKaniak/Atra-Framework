@@ -34,12 +34,13 @@ target_include_directories(imgui_backends PUBLIC src/imgui)
 add_library(myLib
     src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp
     src/libs/Sources/Descriptions/AttributeDescriptionsContainer.cpp
-    src/libs/Sources/Attributes/Attribute.cpp
+    src/libs/Sources/Attributes/ImplementedAttribute.cpp
     src/libs/Sources/Attributes/AttributesContainer.cpp
     src/libs/Sources/ControlComponents/NumericInput.cpp
     src/libs/Sources/ControlComponents/Formular.cpp
     src/libs/Sources/ControlComponents/Factory.cpp
     src/libs/Sources/ControlComponents/ControlComponents.cpp
+    src/libs/Sources/Attributes/AttributeFactory.cpp
 )
 
 add_subdirectory(src/nativefiledialog-extended)

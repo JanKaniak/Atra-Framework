@@ -228,7 +228,10 @@ void Formular::showControls()
             }
             else
             {
-                infoMessage = std::format("{}  All attributes with actual descriptions are generated!", buffer);
+                if (infoMessage.empty())
+                {
+                    infoMessage = std::format("{}  All attributes with actual descriptions are generated!", buffer);
+                }
             }
         }
         ImGui::EndDisabled();
@@ -348,25 +351,27 @@ void Formular::showAddDescriptionWindow()
     static int selected;
     static std::string chosenType;
     static std::string category = "NUMERIC";
-    static bool correctMinimum = false;
-    static bool correctMaximum = false;
+    static bool addedAndCorrect = false;
 
     if (ImGui::BeginPopupModal("Edtiacne okno", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
         if (ImGui::RadioButton("Numeric", selected == 0))
         {
             selected = 0;
+            category = "NUMERIC";
         }
         ImGui::SameLine();
         if (ImGui::RadioButton("Text", selected == 1))
         {
             selected = 1;
+            category = "TEXT";
         }
 
         ImGui::SameLine();
-        if (ImGui::RadioButton("Boolean", selected == 2))
+        if (ImGui::RadioButton("Logic", selected == 2))
         {
             selected = 2;
+            category = "LOGIC";
         }
 
         ImGui::InputText("Názov atribútut", buffer, sizeof(buffer));
@@ -374,6 +379,7 @@ void Formular::showAddDescriptionWindow()
         {
             ImGui::Text("Meno atributu už existuje!");
         }
+
         switch (selected)
         {
 
@@ -403,20 +409,52 @@ void Formular::showAddDescriptionWindow()
 
         case 1:
             break;
+        case 2:
+            if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
+            {
+                for (int i = 0; i < attributes_->getRegisteredDescriptionsTypes().size(); ++i)
+                {
+                    if (attributes_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
+                    {
+                        continue;
+                    }
+                    bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
+                    if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
+                    {
+                        chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
+                    }
+                    if (selected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                }
+
+                ImGui::EndCombo();
+            }
 
         default:
             break;
         }
-        static bool savedAndCorrect = false;
-        if (ImGui::Button("Save"))
-        {
 
-            nameExists = sameName(buffer);
-            if (!nameExists)
+        if (!addedAndCorrect)
+        {
+            if (ImGui::Button("Add description"))
             {
-                attributes_->addDescriptions(std::string(buffer), AttributeTypeConverter::StringToEnum(chosenType), infoMessage);
-                savedAndCorrect = true;
-                addDescriptionWindow = false;
+
+                nameExists = sameName(buffer);
+                if (!nameExists)
+                {
+                    attributes_->addDescriptions(std::string(buffer), AttributeTypeConverter::StringToEnum(chosenType), infoMessage);
+                    addedAndCorrect = true;
+                }
+            }
+        }
+        else
+        {
+            attributes_->getDescription(attributes_->getNumberOfDescriptions() - 1)->drawInputForChangingLimits(infoMessage);
+            if (ImGui::Button("Save"))
+            {
+                addedAndCorrect = false;
             }
         }
         ImGui::SameLine();
@@ -424,7 +462,6 @@ void Formular::showAddDescriptionWindow()
         {
             ImGui::CloseCurrentPopup();
         }
-
         ImGui::EndPopup();
     }
 }
@@ -471,7 +508,7 @@ void Formular::showModifyControlTypesWindow()
             {
                 ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1, 0, 0, 1));
                 empty = true;
-                flags = ImGuiChildFlags_Border | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
+                flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
             }
             else
             {
@@ -642,16 +679,6 @@ void Formular::deleteAttribute(Attribute *attribute, std::string &outputMessage)
     {
 
         outputMessage = "Attribute was deleted!";
-    }
-}
-
-void Formular::draw()
-{
-    for (auto &component : components_)
-    {
-        component->draw();
-        ImVec2 actucalPosition = ImGui::GetCursorPos();
-        ImGui::SetCursorPos(ImVec2(actucalPosition.x, actucalPosition.y + 30));
     }
 }
 

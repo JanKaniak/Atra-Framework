@@ -71,14 +71,18 @@ private:
 
 public:
     Formular();
+    void showControls();
+    void showAttributes();
+    bool loadDescriptions(nlohmann::ordered_json json);
+    int loadControlTypes(nlohmann::json json);
+    nlohmann::ordered_json saveOutput();
+private:
     bool addControlType(std::string atributeName, std::string edtitType, std::string &outputMessage);
     bool addControlType(Attribute *attribute, std::string &outputMessage);
     bool addOrReplaceControlTypeByVector(std::vector<std::string> controlTypesVector, std::string &outputMessage);
     bool replaceControlType(Attribute *attribute, std::string controlType ,std::string &outputMessage);
-    void showControls();
     void showSettings();
     void showLogger();
-    void showAttributes();
     void editAttribute(Attribute* attribute, std::string &outputMessage);
     void deleteAttribute(Attribute* attribute, std::string &outputMessage);
     void showAddDescriptionWindow();
@@ -87,10 +91,7 @@ public:
     inline int getNumberOfAttributes() { return attributes_->getSize(); }
     inline int getNumberOfComponents() { return components_.size();}
     int readFileDescriptions(std::string &outputMessage);
-    bool loadDescriptions(nlohmann::ordered_json json);
     int readFileControlTypes();
-    int loadControlTypes(nlohmann::json json);
-    nlohmann::ordered_json saveOutput();
     bool saveToFile(std::string& outputMessage);
     bool sameName(std::string name);
     bool showWarning(std::string message);

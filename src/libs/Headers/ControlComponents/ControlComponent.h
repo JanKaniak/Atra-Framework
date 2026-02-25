@@ -16,6 +16,13 @@ enum class EditTypeChar
     TEXT,
 };
 
+enum class EditTypeLogic
+{
+    NOTACONTROL,
+    CHECKBOX,
+    BUTTON
+};
+
 struct NUMBERSLIDER
 {
     static constexpr EditTypeNumber typeEnum = EditTypeNumber::SLIDER;
@@ -40,8 +47,22 @@ struct CHARTEXT
     static constexpr std::string_view typeString = "TEXT";
 };
 
+struct CHECKBOX
+{
+    static constexpr EditTypeLogic typeEnum = EditTypeLogic::CHECKBOX;
+    static constexpr std::string_view typeString = "CHECKBOX";
+};
+
+struct Button
+{
+    static constexpr EditTypeLogic typeEnum = EditTypeLogic::BUTTON;
+    static constexpr std::string_view typeString = "BUTTON";
+};
+
+
 using NumberEditTypes = std::tuple<NUMBERSLIDER, NUMBERVSLIDER, NUMBERDRAG>;
 using CharEditTypes = std::tuple<CHARTEXT>;
+using LogicEditTypes = std::tuple<CHECKBOX,Button>;
 
 struct EditTypeNumberConverter
 {
@@ -84,6 +105,38 @@ struct EditTypeCharConverter
             return type; });
     }
 };
+
+struct EditTypeLogicConverter
+{
+    static constexpr std::string_view EnumToString(EditTypeLogic logicEditTypes)
+    {
+        return StructUnpack<LogicEditTypes>::unpack([&]<typename... EditTypeLogicParameter>()
+                                                   {
+            std::string_view type = "";
+            ((EditTypeLogicParameter::typeEnum == logicEditTypes ? type = EditTypeLogicParameter::typeString : ""), ...);
+            return type; });
+    }
+
+    static constexpr EditTypeLogic StringToEnum(std::string_view logicEditTypes)
+    {
+        return StructUnpack<LogicEditTypes>::unpack([&]<typename... EditTypeLogicParameter>()
+                                                   {
+            EditTypeLogic type = EditTypeLogic::NOTACONTROL;
+            ((EditTypeLogicParameter::typeString == logicEditTypes ? type = EditTypeLogicParameter::typeEnum : EditTypeLogic::NOTACONTROL), ...);
+            return type; });
+    }
+};
+
+class ConfigControlTypes {
+private:
+    std::map<AttributeType,EditTypeNumber> numberConfigControls_;
+    std::map<AttributeType,EditTypeChar> textConfigControls_;
+
+};
+
+
+
+
 
 class ControlComponent
 {
@@ -174,4 +227,27 @@ public:
     std::string getName() override { return attributechar_->getName(); };
     Attribute *getAttribute() override { return attributechar_; };
     std::string getType() override { return EditTypeCharConverter::EnumToString(type_).data(); }
+};
+
+template <EditTypeLogic TYPE>
+class ControlComponentBool : public ControlComponent
+{
+protected:
+    bool value_;
+    AttributeBool *attributebool_;
+    float minimumWidth_;
+
+public:
+    static constexpr EditTypeLogic type_ = TYPE;
+    void setAttribute(Attribute *attribute) override
+    {
+        if (dynamic_cast<AttributeBool *>(attribute))
+        {
+            attributebool_ = dynamic_cast<AttributeBool *>(attribute);
+            value_ = attributebool_->getValue();
+        }
+    }
+    std::string getName() override { return attributebool_->getName(); };
+    Attribute *getAttribute() override { return attributebool_; };
+    std::string getType() override { return EditTypeLogicConverter::EnumToString(type_).data(); }
 };
