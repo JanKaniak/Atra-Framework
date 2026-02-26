@@ -6,21 +6,17 @@ AttributeDescriptionsContainer::AttributeDescriptionsContainer()
     descFactory_ = DescFactory::getInstance();
 }
 
-bool AttributeDescriptionsContainer::addDescriptions(AttributeType type, nlohmann::ordered_json &json, std::string &outputMessage)
+bool AttributeDescriptionsContainer::addDescriptions(AttributeType type, nlohmann::ordered_json &json, std::vector<Message>& messagesHistory)
 {
     if (type == AttributeType::NOTATYPE) {
-        outputMessage = "Incorrect attribute type name!";
+        messagesHistory.emplace_back(Message("Incorrect attribute type name!"));
         return false;
     }
     for (auto descIt = json.begin(); descIt != json.end(); ++descIt)
     {
         if (descIt.value().find("Attribute name") == descIt.value().end())
         {
-            time_t now = time(NULL);
-            struct tm *t = localtime(&now);
-            char buffer[100];
-            strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-            outputMessage = std::format("{}   Incorrect json format!", buffer);
+            messagesHistory.emplace_back(Message("Incorrect json format!"));
             return false;
         }
         AttributeDescription *desc = getDescription(descIt.value()["Attribute name"].get<std::string>());
@@ -30,12 +26,12 @@ bool AttributeDescriptionsContainer::addDescriptions(AttributeType type, nlohman
         }
         std::unique_ptr<AttributeDescription> tmpDescription = descFactory_->createDesc(type);
         if (tmpDescription == nullptr) {
-            outputMessage = std::format("The {} attribute description does not exist, check if it is registered or correctness of name!",AttributeTypeConverter::EnumToString(type));
+            messagesHistory.emplace_back(Message(std::format("The {} attribute description does not exist, check if it is registered or correctness of name!",AttributeTypeConverter::EnumToString(type))));
             return false;
         }
         attributeDescs_.push_back(std::move(tmpDescription));
         desc = getLast();
-        if (!desc->jsonParse(descIt.value(), outputMessage))
+        if (!desc->jsonParse(descIt.value(), messagesHistory))
         {
             attributeDescs_.clear();
             return false;
@@ -44,11 +40,11 @@ bool AttributeDescriptionsContainer::addDescriptions(AttributeType type, nlohman
     return true;
 }
 
-bool AttributeDescriptionsContainer::addDescriptions(std::string attributeName, AttributeType type, std::string &outputMessage)
+bool AttributeDescriptionsContainer::addDescriptions(std::string attributeName, AttributeType type, std::vector<Message>& messagesHistory)
 {
     if (getDescription(attributeName) != nullptr)
     {
-        outputMessage = "Attribute with this name already exists!";
+        messagesHistory.emplace_back(Message("Attribute with this name already exists!"));
         return false;
     }
 
@@ -80,4 +76,22 @@ bool AttributeDescriptionsContainer::deleteDescription(AttributeDescription *des
         }
     }
     return false;
+}
+
+bool AttributeDescriptionsContainer::deleteLastDescription(std::vector<Message>& messagesHistory) {
+    if (attributeDescs_.empty()) {
+        messagesHistory.emplace_back(Message("There are no attribute descriptions to remove!"));
+        return false;
+    }
+
+    if (attributeDescs_.rbegin()->get()->isAssigned()) {
+        messagesHistory.emplace_back(Message("Can't remove assigned attribute description!"));
+        return false;
+    }
+
+    attributeDescs_.erase(attributeDescs_.end()-1);
+    messagesHistory.emplace_back(Message("Attribute description successfuly removed!"));
+    return true;
+
+    
 }

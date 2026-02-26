@@ -2,6 +2,8 @@
 
 #include "json.hpp"
 #include "imgui.h"
+#include "Messages.h"
+
 #include <string>
 #include <variant>
 #include <memory>
@@ -119,9 +121,10 @@ protected:
     AttributeType type_;
     std::string category_;
     ImGuiDataType dataType_;
+    bool assigned_;
 
 public:
-    AttributeDescription(AttributeType type) : type_(type) {};
+    AttributeDescription(AttributeType type) : type_(type), assigned_(false) {};
     inline std::string getName() { return name_; };
     inline AttributeType getType() { return type_; };
     inline std::string_view getTypeString() { return AttributeTypeConverter::EnumToString(type_); }
@@ -129,10 +132,12 @@ public:
     inline void setName(std::string name) { name_ = name; };
     inline void setCategory(std::string category) { category_ = category; }
     inline ImGuiDataType getDataType() { return dataType_; }
+    inline void setAssigned(bool assigned) { assigned_ = assigned;}
+    inline bool isAssigned() {return assigned_;}
 
 public:
     virtual ~AttributeDescription() = default;
     virtual std::unique_ptr<AttributeDescription> clone() = 0;
-    virtual bool jsonParse(nlohmann::ordered_json &json, std::string &outputMessage) = 0;
-    virtual void drawInputForChangingLimits(std::string &outputMessage) = 0;
+    virtual bool jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) = 0;
+    virtual void drawInputForChangingLimits(std::vector<Message>& messagesHistory) = 0;
 };

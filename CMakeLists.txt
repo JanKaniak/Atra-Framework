@@ -48,7 +48,9 @@ add_subdirectory(src/nativefiledialog-extended)
 target_include_directories(myLib PUBLIC src/libs/Headers/Descriptions)
 target_include_directories(myLib PUBLIC src/libs/Headers/Attributes)
 target_include_directories(myLib PUBLIC src/libs/Headers/ControlComponents)
+target_include_directories(myLib PUBLIC src/libs/Headers/Basic)
 target_include_directories(myLib PUBLIC src/nlohmannJson)
+
 
 add_executable(GraphicEditor 
     src/main.cpp)

@@ -16,9 +16,9 @@ private:
 
 public:
     Attributes();
-    bool addDescriptions(AttributeType type, nlohmann::ordered_json &json, std::string &outputMessage) { return attributeDescs_->addDescriptions(type,json,outputMessage);}
-    bool addDescriptions(std::string attributeName, AttributeType type, std::string &outputMessage) { return attributeDescs_->addDescriptions(attributeName, type,outputMessage);}
-    bool createAttributes(std::string &outputMessage);
+    bool addDescriptions(AttributeType type, nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) { return attributeDescs_->addDescriptions(type,json,messagesHistory);}
+    bool addDescriptions(std::string attributeName, AttributeType type, std::vector<Message>& messagesHistory) { return attributeDescs_->addDescriptions(attributeName, type,messagesHistory);}
+    bool createAttributes(std::vector<Message>& messagesHistory);
     inline Attribute *getLast() { return attributes_.at(attributes_.size() - 1).get(); }
     inline int getSize() { return attributes_.size(); }
     inline int getNumberOfDescriptions() {return attributeDescs_->getSize();}
@@ -30,4 +30,5 @@ public:
     inline std::vector<AttributeTypeC> getRegisteredDescriptionsTypes() { return attributeDescs_->getRegisteredDescriptionsTypes();}
     int getPosition(std::string attributeName);
     AttributeDescription* getDescription(int rank) { return attributeDescs_->getDescription(rank);}
+    bool deleteLastDescription(std::vector<Message>& messagesHistory) { return attributeDescs_->deleteLastDescription(messagesHistory);}
 };

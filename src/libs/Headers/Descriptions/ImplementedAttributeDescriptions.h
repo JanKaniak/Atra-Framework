@@ -2,6 +2,8 @@
 
 #include "json.hpp"
 #include "DescriptionFactory.h"
+
+
 #include <string>
 #include <variant>
 #include <memory>
@@ -24,9 +26,9 @@ public:
 
     constexpr TypeT getMinimum() { return min_; }
     constexpr TypeT getMaximum() { return max_; }
-    bool setLimit(TypeT minimum, TypeT maximum, std::string& outputMessage);
-    bool jsonParse(nlohmann::ordered_json &json, std::string &outputMessage) override;
-    void drawInputForChangingLimits(std::string& outputMessage) override;
+    bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message>& messagesHistory);
+    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
+    void drawInputForChangingLimits(std::vector<Message>& messagesHistory) override;
 };
 
 template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
@@ -45,9 +47,9 @@ public:
 
     constexpr TypeT getMinimum() { return min_; }
     constexpr TypeT getMaximum() { return max_; }
-    bool setLimit(TypeT minimum, TypeT maximum, std::string& outputMessage);
-    bool jsonParse(nlohmann::ordered_json &json, std::string &outputMessage) override;
-    void drawInputForChangingLimits(std::string& outputMessage) override;
+    bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message>& messagesHistory);
+    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
+    void drawInputForChangingLimits(std::vector<Message>& messagesHistory) override;
 };
 
 template <typename AttributeDescriptionType>
@@ -148,11 +150,11 @@ class AttributeDescription_bool : public AttributeDescription {
         AttributeDescription_bool() : AttributeDescription(AttributeType::BOOL) {
             category_ = "LOGIC";
         }
-        bool jsonParse(nlohmann::ordered_json &json, std::string &outputMessage) override;
+        bool jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
         std::unique_ptr<AttributeDescription> clone() override;
 
     private:
-        void drawInputForChangingLimits(std::string &outputMessage) override {}
+        void drawInputForChangingLimits(std::vector<Message>& messagesHistory) override {}
 };
 
 struct AutoRegisterBoolDescription : public AutoRegisterDescription<AttributeDescription_bool>

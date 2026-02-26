@@ -10,20 +10,14 @@
 #include <fstream>
 #include <format>
 
-using AttributeTypeVariant = std::variant<int,double,char>;
-
-
-
-
-
-
-
+using AttributeTypeVariant = std::variant<int, double, char>;
 
 class Formular
 {
+    
+
 private:
     Config *config;
-
 
 private:
     bool mainWindows = true;
@@ -42,7 +36,6 @@ private:
     ImVec2 showAttributesWindowSize_;
 
 private:
-    
     int numberOfLoadedAtributes = INT_MAX;
     int numberOfLoadedControls = INT_MAX;
 
@@ -51,23 +44,20 @@ private:
     char bufferMax[40] = "50";
     std::filesystem::path descriptionsPath_;
     std::filesystem::path controlTypesPath_;
-    
+
 private:
     std::string infoMessage = "";
-   
+
 private:
     AttributeType numAttributeType[2] = {AttributeType::INT, AttributeType::DOUBLE};
     AttributeType textAttributeType[1] = {AttributeType::CHAR};
     Attribute *chosenAttribute;
 
 private:
-    
-
-
 private:
     std::unique_ptr<Attributes> attributes_;
     std::vector<std::unique_ptr<ControlComponent>> components_;
-    
+    std::vector<Message> messageHistory_;
 
 public:
     Formular();
@@ -76,23 +66,25 @@ public:
     bool loadDescriptions(nlohmann::ordered_json json);
     int loadControlTypes(nlohmann::json json);
     nlohmann::ordered_json saveOutput();
+    void addLogMessage(std::string_view time, std::string_view message);
+
 private:
-    bool addControlType(std::string atributeName, std::string edtitType, std::string &outputMessage);
-    bool addControlType(Attribute *attribute, std::string &outputMessage);
-    bool addOrReplaceControlTypeByVector(std::vector<std::string> controlTypesVector, std::string &outputMessage);
-    bool replaceControlType(Attribute *attribute, std::string controlType ,std::string &outputMessage);
+    bool addControlType(std::string atributeName, std::string edtitType);
+    bool addControlType(Attribute *attribute);
+    bool addOrReplaceControlTypeByVector(std::vector<std::string> controlTypesVector);
+    bool replaceControlType(Attribute *attribute, std::string controlType);
     void showSettings();
     void showLogger();
-    void editAttribute(Attribute* attribute, std::string &outputMessage);
-    void deleteAttribute(Attribute* attribute, std::string &outputMessage);
+    void editAttribute(Attribute *attribute);
+    void deleteAttribute(Attribute *attribute);
     void showAddDescriptionWindow();
     void showModifyControlTypesWindow();
     void draw();
     inline int getNumberOfAttributes() { return attributes_->getSize(); }
-    inline int getNumberOfComponents() { return components_.size();}
-    int readFileDescriptions(std::string &outputMessage);
+    inline int getNumberOfComponents() { return components_.size(); }
+    int readFileDescriptions();
     int readFileControlTypes();
-    bool saveToFile(std::string& outputMessage);
+    bool saveToFile();
     bool sameName(std::string name);
     bool showWarning(std::string message);
     bool isEmpty() { return components_.empty(); };
@@ -101,17 +93,11 @@ private:
     int positionOfComponentByAttributeName(std::string attributeName);
     
 
-// ==========
-
-
-
+    // ==========
 };
 
-
-
-
-//pridavanie description do zoznamu
-//editor aj pre control type
-//agent prec
-//lepsie nazvy
-//aktualizovat uml
+// pridavanie description do zoznamu
+// editor aj pre control type
+// agent prec
+// lepsie nazvy
+// aktualizovat uml

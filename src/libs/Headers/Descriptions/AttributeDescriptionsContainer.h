@@ -2,6 +2,7 @@
 #include "json.hpp"
 #include "DescriptionFactory.h"
 
+
 #include <vector>
 #include <memory>
 #include <map>
@@ -17,8 +18,8 @@ class AttributeDescriptionsContainer {
         DescFactory* descFactory_;
     public:
         AttributeDescriptionsContainer();
-        bool addDescriptions(AttributeType type,nlohmann::ordered_json &json, std::string &outputMessage);
-        bool addDescriptions(std::string attributeName,AttributeType type, std::string &outputMessage);
+        bool addDescriptions(AttributeType type,nlohmann::ordered_json &json, std::vector<Message>& messagesHistory);
+        bool addDescriptions(std::string attributeName,AttributeType type, std::vector<Message>& messagesHistory);
         AttributeDescription* getDescription(std::string name);
         inline AttributeDescription* getDescription(int i) { return attributeDescs_.at(i).get();}
         inline int getSize() { return attributeDescs_.size();}
@@ -32,4 +33,5 @@ class AttributeDescriptionsContainer {
         inline int getNumberOfDescriptions() { return attributeDescs_.size();}
         bool deleteDescription(AttributeDescription *description);
         inline std::vector<AttributeTypeC> getRegisteredDescriptionsTypes() { return descFactory_->getRegisteredDescriptionsTypes();}
+        bool deleteLastDescription(std::vector<Message>& messagesHistory);
 };

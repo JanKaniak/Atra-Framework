@@ -34,7 +34,7 @@ public:
         }
     }
     TypeT getValue() { return value_; }
-    bool saveToJson(nlohmann::ordered_json &json, std::string &outputMessage) override;
+    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
 };
 
 template <typename AttributeTypeClass, AttributeType EnumTypeT>
@@ -127,7 +127,7 @@ public:
             value_ = false;
         }
     }
-    bool saveToJson(nlohmann::ordered_json &json, std::string &outputMessage) override;
+    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
 
     bool setValue(bool value)
     {

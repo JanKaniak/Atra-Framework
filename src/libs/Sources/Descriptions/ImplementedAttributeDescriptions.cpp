@@ -4,45 +4,45 @@
 
 // INTEGER NUMBERS -------------------------------------------
 template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::string &outputMessage)
+bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message>& messagesHistory)
 {
     if (minimum < maximum)
     {
         min_ = minimum;
         max_ = maximum;
-        outputMessage = "Bounds were successfully changed!";
+        messagesHistory.emplace_back(Message("Bounds were successfully changed!"));
         return true;
     }
-    outputMessage = "Minimum must be lower value than maximum!";
+    messagesHistory.emplace_back(Message("Minimum must be lower value than maximum!"));
     return false;
 }
 
 template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::string &outputMessage)
+bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory)
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
     {
-        outputMessage = "Incorrect json format!";
+        messagesHistory.emplace_back(Message("Incorrect json format!"));
         return false;
     }
     if (!json["Minimum"].is_number_integer() || !json["Maximum"].is_number_integer())
     {
-        outputMessage = std::format("{} Bounds must be number value!", json["Attribute name"].get<std::string>());
+        messagesHistory.emplace_back(Message(std::format("{} Bounds must be number value!", json["Attribute name"].get<std::string>())));
         return false;
     }
 
     if (!json["Attribute name"].is_string())
     {
-        outputMessage = "Name must be string type!";
+        messagesHistory.emplace_back(Message("Name must be string type!"));
         return false;
     }
 
     setName(json["Attribute name"].get<std::string>());
-    return setLimit(json["Minimum"].get<TypeT>(), json["Maximum"].get<TypeT>(), outputMessage);
+    return setLimit(json["Minimum"].get<TypeT>(), json["Maximum"].get<TypeT>(), messagesHistory);
 }
 
 template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-void IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::string &outputMessage)
+void IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message>& messagesHistory)
 {
     static auto tmpMin = 0;
     static auto tmpMax = 0;
@@ -59,7 +59,7 @@ void IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChang
 
     if (minChange && maxChange)
     {
-        setLimit(tmpMin, tmpMax, outputMessage);
+        setLimit(tmpMin, tmpMax, messagesHistory);
         minChange = false;
         maxChange = false;
     }
@@ -69,47 +69,47 @@ void IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChang
 
 // DECIMAL NUMBERS -----------------------------------------------------
 template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::string &outputMessage)
+bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message>& messagesHistory)
 {
 
     if (minimum < maximum)
     {
         min_ = minimum;
         max_ = maximum;
-        outputMessage = "Bounds were successfully changed!";
+        messagesHistory.emplace_back(Message("Bounds were successfully changed!"));
         return true;
     }
-    outputMessage = "Minimum must be lower value than maximum!";
+    messagesHistory.emplace_back(Message("Minimum must be lower value than maximum!"));
     return false;
 }
 
 template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::string &outputMessage)
+bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory)
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
     {
-        outputMessage = "Incorrect json format!";
+        messagesHistory.emplace_back(Message("Incorrect json format!"));
         return false;
     }
 
     if (!json["Attribute name"].is_string())
     {
-        outputMessage = "Name must be string type!";
+        messagesHistory.emplace_back(Message("Name must be string type!"));
         return false;
     }
 
     if ((!json["Minimum"].is_number_float() && json["Minimum"].type() != TypeEnumT) || (!json["Minimum"].is_number_float() && json["Maximum"].type() != TypeEnumT))
     {
-        outputMessage = "Bounds must be number value!";
+        messagesHistory.emplace_back(Message("Bounds must be number value!"));
         return false;
     }
 
     setName(json["Attribute name"].get<std::string>());
-    return setLimit(json["Minimum"].get<TypeT>(), json["Maximum"].get<TypeT>(), outputMessage);
+    return setLimit(json["Minimum"].get<TypeT>(), json["Maximum"].get<TypeT>(), messagesHistory);
 }
 
 template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-void DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::string &outputMessage)
+void DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message>& messagesHistory)
 {
     static auto tmpMin = 0;
     static auto tmpMax = 0;
@@ -126,7 +126,7 @@ void DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChang
 
     if (minChange && maxChange)
     {
-        setLimit(tmpMin, tmpMax, outputMessage);
+        setLimit(tmpMin, tmpMax, messagesHistory);
         minChange = false;
         maxChange = false;
     }
@@ -137,16 +137,16 @@ void DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChang
 
 //BOOL --------------------------------------------------------
 
-bool AttributeDescription_bool::jsonParse(nlohmann::ordered_json &json, std::string &outputMessage) {
+bool AttributeDescription_bool::jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) {
     if (json.find("Attribute name") == json.end())
     {
-        outputMessage = "Incorrect json format!";
+        messagesHistory.emplace_back(Message("Incorrect json format!"));
         return false;
     }
 
     if (!json["Attribute name"].is_string())
     {
-        outputMessage = "Name must be string type!";
+        messagesHistory.emplace_back(Message("Name must be string type!"));
         return false;
     }
 

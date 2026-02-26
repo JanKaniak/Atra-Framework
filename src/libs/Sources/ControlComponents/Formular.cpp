@@ -14,11 +14,11 @@ Formular::Formular()
     showSettingWindow_ = false;
 }
 
-bool Formular::addControlType(std::string attributeName, std::string editType, std::string &outputMessage)
+bool Formular::addControlType(std::string attributeName, std::string editType)
 {
     if (!attributes_->contains(attributeName))
     {
-        outputMessage = std::format("Attribute with name %s does not exist!", attributeName);
+        messageHistory_.emplace_back(Message(std::format("Attribute with name %s does not exist!", attributeName)));
         return false;
     }
 
@@ -27,7 +27,7 @@ bool Formular::addControlType(std::string attributeName, std::string editType, s
         Factory *factory = config->getFactory(attributes_->giveAttributeByName(attributeName)->getType());
         if (factory == nullptr)
         {
-            outputMessage = std::format("Controls for {}  attribute type does not exist!", AttributeTypeConverter::EnumToString(attributes_->giveAttributeByName(attributeName)->getType()));
+            messageHistory_.emplace_back(Message(std::format("Controls for {}  attribute type does not exist!", AttributeTypeConverter::EnumToString(attributes_->giveAttributeByName(attributeName)->getType()))));
             return false;
         }
         if (components_.empty())
@@ -39,7 +39,7 @@ bool Formular::addControlType(std::string attributeName, std::string editType, s
         int position = attributes_->getPosition(attributeName);
         if (position < 0)
         {
-            outputMessage = "Attribute with this name does not exists!";
+            messageHistory_.emplace_back(Message("Attribute with this name does not exists!"));
             return false;
         }
 
@@ -55,18 +55,18 @@ bool Formular::addControlType(std::string attributeName, std::string editType, s
     }
     else
     {
-        outputMessage = "Control for this attribute already exists!";
+        messageHistory_.emplace_back(Message("Control for this attribute already exists!"));
         return false;
     }
     return true;
 }
 
-bool Formular::addControlType(Attribute *attribute, std::string &outputMessage)
+bool Formular::addControlType(Attribute *attribute)
 {
     Factory *factory = config->getFactory(attribute->getType());
     if (factory == nullptr)
     {
-        outputMessage = "Attribute type does not exist!";
+        messageHistory_.emplace_back(Message("Attribute type does not exist!"));
         return false;
     }
     if (components_.empty())
@@ -78,7 +78,7 @@ bool Formular::addControlType(Attribute *attribute, std::string &outputMessage)
     int position = attributes_->getPosition(attribute->getName());
     if (position < 0)
     {
-        outputMessage = "Attribute with this name does not exists!";
+        messageHistory_.emplace_back(Message("Attribute with this name does not exists!"));
         return false;
     }
 
@@ -95,11 +95,11 @@ bool Formular::addControlType(Attribute *attribute, std::string &outputMessage)
     return true;
 }
 
-bool Formular::addOrReplaceControlTypeByVector(std::vector<std::string> controlTypesVector, std::string &outputMessage)
+bool Formular::addOrReplaceControlTypeByVector(std::vector<std::string> controlTypesVector)
 {
     if (controlTypesVector.size() != attributes_->getSize())
     {
-        outputMessage = "Temporary vector for storing control types of attributes must be the same size as vector of attributes!";
+        messageHistory_.emplace_back(Message("Temporary vector for storing control types of attributes must be the same size as vector of attributes!"));
         return false;
     }
     for (int i = 0; i < controlTypesVector.size(); ++i)
@@ -139,7 +139,7 @@ bool Formular::addOrReplaceControlTypeByVector(std::vector<std::string> controlT
             int position = positionOfComponentByAttributeName(attributes_->giveAttribute(i)->getName());
             if (position < 0)
             {
-                outputMessage = "Control type does not exist for this attribtue!";
+                messageHistory_.emplace_back(Message("Control type does not exist for this attribtue!"));
                 return false;
             }
 
@@ -150,19 +150,19 @@ bool Formular::addOrReplaceControlTypeByVector(std::vector<std::string> controlT
     return true;
 }
 
-bool Formular::replaceControlType(Attribute *attribute, std::string controlType, std::string &outputMessage)
+bool Formular::replaceControlType(Attribute *attribute, std::string controlType)
 {
     Factory *factory = config->getFactory(attribute->getType());
     if (factory == nullptr)
     {
-        outputMessage = "Attribute type does not exist!";
+        messageHistory_.emplace_back(Message("Attribute type does not exist!"));
         return false;
     }
 
     int position = attributes_->getPosition(attribute->getName());
     if (position < 0)
     {
-        outputMessage = "Attribute with this name does not exists!";
+        messageHistory_.emplace_back(Message("Attribute with this name does not exists!"));
         return false;
     }
 
@@ -206,7 +206,7 @@ void Formular::showControls()
 
         if (ImGui::Button("Load Attribute description", ImVec2(0, 30)))
         {
-            numberOfLoadedAtributes = readFileDescriptions(infoMessage);
+            numberOfLoadedAtributes = readFileDescriptions();
         }
 
         if (ImGui::Button("Add description", ImVec2(0, 30)))
@@ -217,20 +217,16 @@ void Formular::showControls()
         ImGui::BeginDisabled(attributes_->getNumberOfDescriptions() == 0);
         if (ImGui::Button("Generate attributes from descriptions", ImVec2(0, 30)))
         {
-            time_t now = time(NULL);
-            struct tm *t = localtime(&now);
-            char buffer[100];
-            strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-            if (attributes_->createAttributes(infoMessage))
+            int size = messageHistory_.size();
+            if (attributes_->createAttributes(messageHistory_))
             {
-
-                infoMessage = std::format("{}  Attributes were successfuly generated from descriptions!", buffer);
+                messageHistory_.emplace_back(Message("Attributes were successfuly generated from descriptions!"));
             }
             else
             {
-                if (infoMessage.empty())
+                if (size == messageHistory_.size())
                 {
-                    infoMessage = std::format("{}  All attributes with actual descriptions are generated!", buffer);
+                    messageHistory_.emplace_back(Message("All attributes with actual descriptions are generated!"));
                 }
             }
         }
@@ -253,7 +249,7 @@ void Formular::showControls()
 
         if (ImGui::Button("Save", ImVec2(0, 30)))
         {
-            saveToFile(infoMessage);
+            saveToFile();
         }
 
         ImGui::EndDisabled();
@@ -312,34 +308,30 @@ void Formular::showSettings()
 
 void Formular::showLogger()
 {
-    static std::vector<std::string> messageHistory;
     float width = ImGui::GetContentRegionAvail().x;
-
-    if (!infoMessage.empty())
-    {
-        messageHistory.emplace_back(infoMessage);
-        infoMessage = "";
-    }
-
-    if (ImGui::BeginChild("Logger", ImVec2(width * 0.999999f, 300), ImGuiChildFlags_Border, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar))
+    if (ImGui::BeginChild("Logger", ImVec2(width * 0.999999f, 300), ImGuiChildFlags_Borders, ImGuiWindowFlags_HorizontalScrollbar | ImGuiWindowFlags_AlwaysVerticalScrollbar))
     {
 
-        for (int i = 0; i < messageHistory.size(); ++i)
+        for (int i = 0; i < messageHistory_.size(); ++i)
         {
-            ImGui::TextWrapped("%s", messageHistory.at(i).c_str());
+            ImGui::Text("%s", messageHistory_.at(i).getTime().c_str());
+            ImGui::SameLine();
+            ImGui::Bullet();
+            ImGui::SameLine();
+            ImGui::TextWrapped("%s", messageHistory_.at(i).getMessage().c_str());
         }
 
-        if (messageHistory.size() > 1000)
+        if (messageHistory_.size() > 1000)
         {
-            messageHistory.erase(messageHistory.begin());
+            messageHistory_.erase(messageHistory_.begin());
         }
         ImGui::EndChild();
     }
 
-    ImGui::BeginDisabled(messageHistory.size() == 0);
+    ImGui::BeginDisabled(messageHistory_.size() == 0);
     if (ImGui::Button("Clear logger", ImVec2(0, 30)))
     {
-        messageHistory.clear();
+        messageHistory_.clear();
     }
     ImGui::EndDisabled();
 }
@@ -355,16 +347,19 @@ void Formular::showAddDescriptionWindow()
 
     if (ImGui::BeginPopupModal("Edtiacne okno", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
+        ImGui::BeginDisabled(addedAndCorrect);
         if (ImGui::RadioButton("Numeric", selected == 0))
         {
             selected = 0;
             category = "NUMERIC";
+            chosenType = "";
         }
         ImGui::SameLine();
         if (ImGui::RadioButton("Text", selected == 1))
         {
             selected = 1;
             category = "TEXT";
+            chosenType = "";
         }
 
         ImGui::SameLine();
@@ -372,7 +367,10 @@ void Formular::showAddDescriptionWindow()
         {
             selected = 2;
             category = "LOGIC";
+            chosenType = "";
         }
+        ImGui::EndDisabled();
+        
 
         ImGui::InputText("Názov atribútut", buffer, sizeof(buffer));
         if (nameExists)
@@ -380,60 +378,65 @@ void Formular::showAddDescriptionWindow()
             ImGui::Text("Meno atributu už existuje!");
         }
 
-        switch (selected)
+        if (!addedAndCorrect)
         {
-
-        case 0:
-            if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
+            switch (selected)
             {
-                for (int i = 0; i < attributes_->getRegisteredDescriptionsTypes().size(); ++i)
+
+            case 0:
+                if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
                 {
-                    if (attributes_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
+                    for (int i = 0; i < attributes_->getRegisteredDescriptionsTypes().size(); ++i)
                     {
-                        continue;
+                        if (attributes_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
+                        {
+                            continue;
+                        }
+                        bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
+                        if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
+                        {
+                            chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
+                        }
+                        if (selected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
                     }
-                    bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
-                    if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
+
+                    ImGui::EndCombo();
+                }
+                break;
+
+            case 1:
+                break;
+            case 2:
+                if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
+                {
+                    for (int i = 0; i < attributes_->getRegisteredDescriptionsTypes().size(); ++i)
                     {
-                        chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
+                        if (attributes_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
+                        {
+                            continue;
+                        }
+                        bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
+                        if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
+                        {
+                            chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
+                        }
+                        if (selected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
                     }
-                    if (selected)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
+
+                    ImGui::EndCombo();
                 }
 
-                ImGui::EndCombo();
+            default:
+                break;
             }
-            break;
-
-        case 1:
-            break;
-        case 2:
-            if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
-            {
-                for (int i = 0; i < attributes_->getRegisteredDescriptionsTypes().size(); ++i)
-                {
-                    if (attributes_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
-                    {
-                        continue;
-                    }
-                    bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
-                    if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
-                    {
-                        chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
-                    }
-                    if (selected)
-                    {
-                        ImGui::SetItemDefaultFocus();
-                    }
-                }
-
-                ImGui::EndCombo();
-            }
-
-        default:
-            break;
+        } else {
+            ImGui::Text("%s",attributes_->getDescription(attributes_->getNumberOfDescriptions()-1)->getTypeString().data());
         }
 
         if (!addedAndCorrect)
@@ -444,14 +447,14 @@ void Formular::showAddDescriptionWindow()
                 nameExists = sameName(buffer);
                 if (!nameExists)
                 {
-                    attributes_->addDescriptions(std::string(buffer), AttributeTypeConverter::StringToEnum(chosenType), infoMessage);
+                    attributes_->addDescriptions(std::string(buffer), AttributeTypeConverter::StringToEnum(chosenType), messageHistory_);
                     addedAndCorrect = true;
                 }
             }
         }
         else
         {
-            attributes_->getDescription(attributes_->getNumberOfDescriptions() - 1)->drawInputForChangingLimits(infoMessage);
+            attributes_->getDescription(attributes_->getNumberOfDescriptions() - 1)->drawInputForChangingLimits(messageHistory_);
             if (ImGui::Button("Save"))
             {
                 addedAndCorrect = false;
@@ -461,6 +464,8 @@ void Formular::showAddDescriptionWindow()
         if (ImGui::Button("Close"))
         {
             ImGui::CloseCurrentPopup();
+            addedAndCorrect = false;
+            attributes_->deleteLastDescription(messageHistory_);
         }
         ImGui::EndPopup();
     }
@@ -548,7 +553,7 @@ void Formular::showModifyControlTypesWindow()
         }
         if (ImGui::Button("Save", ImVec2(0, 30)))
         {
-            addOrReplaceControlTypeByVector(chosenTypeVector, infoMessage);
+            addOrReplaceControlTypeByVector(chosenTypeVector);
         }
 
         if (ImGui::Button("Close", ImVec2(0, 30)))
@@ -601,7 +606,7 @@ void Formular::showAttributes()
                 ImGui::TableNextColumn();
                 if (ImGui::Button("Delete", ImVec2(0, 30)))
                 {
-                    deleteAttribute(component->getAttribute(), infoMessage);
+                    deleteAttribute(component->getAttribute());
                 }
                 ImGui::EndTable();
             }
@@ -653,7 +658,7 @@ void Formular::showAttributes()
     ImGui::End();
 }
 
-void Formular::editAttribute(Attribute *attribute, std::string &outputMessage)
+void Formular::editAttribute(Attribute *attribute)
 {
     if (chosenAttribute == nullptr)
     {
@@ -661,7 +666,7 @@ void Formular::editAttribute(Attribute *attribute, std::string &outputMessage)
     }
 }
 
-void Formular::deleteAttribute(Attribute *attribute, std::string &outputMessage)
+void Formular::deleteAttribute(Attribute *attribute)
 {
     for (auto it = components_.begin(); it < components_.end(); it++)
     {
@@ -673,12 +678,11 @@ void Formular::deleteAttribute(Attribute *attribute, std::string &outputMessage)
     }
     if (!attributes_->deleteAttribute(attribute))
     {
-        outputMessage = "Attribute does not exist!";
+        messageHistory_.emplace_back(Message("Attribute does not exist!"));
     }
     else
     {
-
-        outputMessage = "Attribute was deleted!";
+        messageHistory_.emplace_back(Message("Attribute was deleted!"));
     }
 }
 
@@ -689,21 +693,17 @@ bool Formular::loadDescriptions(nlohmann::ordered_json json)
 
         for (auto &descriptionsOfTheSameType : descriptions.items())
         {
-            if (!attributes_->addDescriptions(AttributeTypeConverter::StringToEnum(descriptionsOfTheSameType.key()), descriptionsOfTheSameType.value(), infoMessage))
+            if (!attributes_->addDescriptions(AttributeTypeConverter::StringToEnum(descriptionsOfTheSameType.key()), descriptionsOfTheSameType.value(), messageHistory_))
             {
                 return false;
             }
         }
     }
-    time_t now = time(NULL);
-    struct tm *t = localtime(&now);
-    char buffer[100];
-    strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-    infoMessage = std::format("{}  Successfully loaded {} attributes descriptions!", buffer, attributes_->getNumberOfDescriptions());
+    messageHistory_.emplace_back(Message(std::format("Successfully loaded {} attributes descriptions!", attributes_->getNumberOfDescriptions())));
     return true;
 }
 
-int Formular::readFileDescriptions(std::string &outputMessage)
+int Formular::readFileDescriptions()
 {
     std::filesystem::path outputPath_;
     NFD_Init();
@@ -723,7 +723,7 @@ int Formular::readFileDescriptions(std::string &outputMessage)
     }
     else
     {
-        outputMessage = std::format("Error: %s\n", NFD_GetError());
+        messageHistory_.emplace_back(Message(std::format("Error: {}", NFD_GetError())));
         return -1;
     }
 
@@ -735,7 +735,7 @@ int Formular::readFileDescriptions(std::string &outputMessage)
     std::ifstream file(outputPath_);
     if (!file.is_open())
     {
-        outputMessage = "File does not exist!";
+        messageHistory_.emplace_back(Message("File does not exist!"));
         return -1;
     }
     nlohmann::ordered_json jsonFile = nlohmann::ordered_json::parse(file);
@@ -749,9 +749,6 @@ int Formular::readFileDescriptions(std::string &outputMessage)
 
 int Formular::readFileControlTypes()
 {
-    time_t now = time(NULL);
-    struct tm *t = localtime(&now);
-    char buffer[100];
     std::filesystem::path outputPath_;
     NFD_Init();
     nfdu8char_t *outputPath;
@@ -772,8 +769,7 @@ int Formular::readFileControlTypes()
     }
     else
     {
-        strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-        infoMessage = std::format("{}  Error: {}, ", buffer, NFD_GetError());
+        messageHistory_.emplace_back(Message(std::format("Error: {}, ", NFD_GetError())));
         return -1;
     }
 
@@ -784,30 +780,23 @@ int Formular::readFileControlTypes()
     }
     std::ifstream file(outputPath_);
 
-    strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
     if (!file.is_open())
     {
-        infoMessage = std::format("{}  File does not exist!", buffer);
+        messageHistory_.emplace_back(Message("File does not exist!"));
         return -1;
     }
 
     nlohmann::json jsonFile = nlohmann::json::parse(file);
     file.close();
-    strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
     return loadControlTypes(jsonFile);
 }
 int Formular::loadControlTypes(nlohmann::json json)
 {
-    time_t now = time(NULL);
-    struct tm *t = localtime(&now);
-    char buffer[100];
-    strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-
     int tmpNumberOfLoadedControls = 0;
     int tmpOverWrittedControls = 0;
     if (attributes_->getSize() == 0)
     {
-        infoMessage = std::format("{}  Before creating control types attributes must exist!", buffer);
+        messageHistory_.emplace_back(Message("Before creating control types attributes must exist!"));
         return -1;
     }
     for (int i = 0; i < attributes_->getSize(); i++)
@@ -825,7 +814,7 @@ int Formular::loadControlTypes(nlohmann::json json)
                 continue;
             }
 
-            if (!addControlType(attributes_->giveAttribute(i), infoMessage))
+            if (!addControlType(attributes_->giveAttribute(i)))
             {
                 return -1;
             }
@@ -835,7 +824,7 @@ int Formular::loadControlTypes(nlohmann::json json)
         if (!editType.value().is_string())
         {
             components_.clear();
-            infoMessage = "Control type name must be a string!";
+            messageHistory_.emplace_back(Message("Control type name must be a string!"));
             return -1;
         }
 
@@ -846,7 +835,7 @@ int Formular::loadControlTypes(nlohmann::json json)
                 continue;
             }
 
-            if (!replaceControlType(attributes_->giveAttributeByName(editType.key()), editType.value(), infoMessage))
+            if (!replaceControlType(attributes_->giveAttributeByName(editType.key()), editType.value()))
             {
                 return -1;
             }
@@ -854,31 +843,29 @@ int Formular::loadControlTypes(nlohmann::json json)
             continue;
         }
 
-        if (!addControlType(attributes_->giveAttribute(i)->getName(), editType.value(), infoMessage))
+        if (!addControlType(attributes_->giveAttribute(i)->getName(), editType.value()))
         {
             return -1;
         }
         tmpNumberOfLoadedControls++;
     }
-    strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
     if (tmpOverWrittedControls > 0)
     {
-        infoMessage = std::format("{}  {} controls were successfuly overwritten!", buffer, tmpOverWrittedControls);
+        messageHistory_.emplace_back(Message(std::format("{} controls were successfuly overwritten!", tmpOverWrittedControls)));
         return tmpOverWrittedControls;
     }
     if (tmpNumberOfLoadedControls == 0)
     {
-        infoMessage = std::format("{}  Either control types in file have incorrect names or you're trying to overwrite existing control types, check you file or enable overwritting.", buffer);
+        messageHistory_.emplace_back(Message("Either control types in file have incorrect names or you're trying to overwrite existing control types, check you file or enable overwritting."));
         return -1;
     }
     if (tmpNumberOfLoadedControls < components_.size())
     {
-        infoMessage = std::format("{}  Successfully loaded {} controls and some attributes were given default control types because they were missing in a file!", buffer, tmpNumberOfLoadedControls);
+        messageHistory_.emplace_back(Message(std::format("Successfully loaded {} controls and some attributes were given default control types because they were missing in a file!", tmpNumberOfLoadedControls)));
     }
     else if (tmpNumberOfLoadedControls == components_.size())
     {
-
-        infoMessage = std::format("{}  Successfully loaded {} control!s", buffer, tmpNumberOfLoadedControls);
+        messageHistory_.emplace_back(Message(std::format("Successfully loaded {} control!s", tmpNumberOfLoadedControls)));
     }
     return tmpNumberOfLoadedControls;
 }
@@ -908,29 +895,31 @@ nlohmann::ordered_json Formular::saveOutput()
             auto attributeType = tempJson[positionInArray].find(AttributeTypeConverter::EnumToFileString(attributes_->giveAttribute(j)->getType()));
             if (tempJson[positionInArray].end() == attributeType)
             {
-                infoMessage = "Attribute type does not exist in this file yet!";
+                messageHistory_.emplace_back(Message("Attribute type does not exist in this file yet!"));
                 return false;
             }
             attributeType.value().push_back(nlohmann::ordered_json::object());
-            attributes_->giveAttribute(j)->saveToJson(attributeType.value()[attributeType.value().size() - 1], infoMessage);
+            attributes_->giveAttribute(j)->saveToJson(attributeType.value()[attributeType.value().size() - 1], messageHistory_);
         }
     }
 
     return tempJson;
 }
 
-bool Formular::saveToFile(std::string &outputMessage)
+bool Formular::saveToFile()
 {
-    std::ofstream file("output.json");
+    std::filesystem::path path = std::filesystem::current_path() / "jsonFiles" / "output.json";
+    std::ofstream file(path);
     nlohmann::ordered_json json = saveOutput();
-    if (json.empty()) {
-        outputMessage = "Nothing to be saved!";
+    if (json.empty())
+    {
+        messageHistory_.emplace_back(Message("Nothing to be saved!"));
         file.close();
         return false;
     }
-    file << json;
+    file << json.dump(4);
     file.close();
-    outputMessage = "Attributes were successfully saved in the file!";
+    messageHistory_.emplace_back(Message(std::format("Attributes were successfully saved in the file, located in {}!", path.string())));
     return true;
 }
 

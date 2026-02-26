@@ -18,6 +18,6 @@ public:
     virtual ~Attribute() {};
     virtual std::unique_ptr<Attribute> clone() = 0;
     virtual void setDescription(AttributeDescription *desc) = 0;
-    virtual bool saveToJson(nlohmann::ordered_json &json, std::string &outputMessage) = 0;
+    virtual bool saveToJson(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) = 0;
 };
 
