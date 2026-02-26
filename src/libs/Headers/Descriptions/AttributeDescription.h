@@ -22,42 +22,49 @@ struct Int
 {
     static constexpr std::string_view typeString = "INT";
     static constexpr AttributeType typeEnum = AttributeType::INT;
+    static constexpr std::string_view typeInFile = "int";
 };
 
 struct Double
 {
     static constexpr std::string_view typeString = "DOUBLE";
     static constexpr AttributeType typeEnum = AttributeType::DOUBLE;
+    static constexpr std::string_view typeInFile = "double";
 };
 
 struct Float
 {
     static constexpr std::string_view typeString = "FLOAT";
     static constexpr AttributeType typeEnum = AttributeType::FLOAT;
+    static constexpr std::string_view typeInFile = "float";
 };
 
 struct Char
 {
     static constexpr std::string_view typeString = "CHAR";
     static constexpr AttributeType typeEnum = AttributeType::CHAR;
+    static constexpr std::string_view typeInFile = "char";
 };
 
 struct Long
 {
     static constexpr std::string_view typeString = "LONG";
     static constexpr AttributeType typeEnum = AttributeType::LONG;
+    static constexpr std::string_view typeInFile = "long";
 };
 
 struct Uint
 {
     static constexpr std::string_view typeString = "UINT";
     static constexpr AttributeType typeEnum = AttributeType::UINT;
+    static constexpr std::string_view typeInFile = "uint32_t";
 };
 
 struct Bool
 {
     static constexpr std::string_view typeString = "BOOL";
     static constexpr AttributeType typeEnum = AttributeType::BOOL;
+    static constexpr std::string_view typeInFile = "bool";
 };
 
 using AttributeTypes = std::tuple<Int, Double, Float, Char, Long, Uint, Bool>;
@@ -92,6 +99,15 @@ struct AttributeTypeConverter
                                                     {
             AttributeType type = AttributeType::NOTATYPE;
             ((AttributeTypesParameter::typeString == attributeType ? type = AttributeTypesParameter::typeEnum : AttributeType::NOTATYPE), ...);
+            return type; });
+    }
+
+    static constexpr std::string_view EnumToFileString(AttributeType attributeType)
+    {
+        return StructUnpack<AttributeTypes>::unpack([&]<typename... AttributeTypesParameter>()
+                                                    {
+            std::string_view type = "";
+            ((AttributeTypesParameter::typeEnum == attributeType ? type = AttributeTypesParameter::typeInFile : ""), ...);
             return type; });
     }
 };

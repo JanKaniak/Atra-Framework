@@ -892,7 +892,7 @@ nlohmann::ordered_json Formular::saveOutput()
     {
         Attribute *attribute = attributes_->giveAttribute(i);
         tempJson.push_back(nlohmann::ordered_json::object());
-        tempJson[positionInArray][AttributeTypeConverter::EnumToString(attribute->getType())] = nlohmann::ordered_json::array();
+        tempJson[positionInArray][AttributeTypeConverter::EnumToFileString(attribute->getType())] = nlohmann::ordered_json::array();
         if (tempJson.empty())
         {
             return false;
@@ -905,7 +905,7 @@ nlohmann::ordered_json Formular::saveOutput()
                 positionInArray++;
                 break;
             }
-            auto attributeType = tempJson[positionInArray].find(AttributeTypeConverter::EnumToString(attributes_->giveAttribute(j)->getType()));
+            auto attributeType = tempJson[positionInArray].find(AttributeTypeConverter::EnumToFileString(attributes_->giveAttribute(j)->getType()));
             if (tempJson[positionInArray].end() == attributeType)
             {
                 infoMessage = "Attribute type does not exist in this file yet!";
@@ -922,7 +922,13 @@ nlohmann::ordered_json Formular::saveOutput()
 bool Formular::saveToFile(std::string &outputMessage)
 {
     std::ofstream file("output.json");
-    file << saveOutput();
+    nlohmann::ordered_json json = saveOutput();
+    if (json.empty()) {
+        outputMessage = "Nothing to be saved!";
+        file.close();
+        return false;
+    }
+    file << json;
     file.close();
     outputMessage = "Attributes were successfully saved in the file!";
     return true;

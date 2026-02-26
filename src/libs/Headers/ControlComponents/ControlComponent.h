@@ -245,6 +245,7 @@ public:
         {
             attributebool_ = dynamic_cast<AttributeBool *>(attribute);
             value_ = attributebool_->getValue();
+            
         }
     }
     std::string getName() override { return attributebool_->getName(); };
