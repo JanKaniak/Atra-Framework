@@ -31,6 +31,7 @@ private:
     bool drawed = false;
     bool decision = false;
     bool showSettingWindow_;
+    bool saveWindow_;
 
 private:
     ImVec2 showAttributesWindowSize_;
@@ -84,7 +85,7 @@ private:
     inline int getNumberOfComponents() { return components_.size(); }
     int readFileDescriptions();
     int readFileControlTypes();
-    bool saveToFile();
+    void saveToFile();
     bool sameName(std::string name);
     bool showWarning(std::string message);
     bool isEmpty() { return components_.empty(); };

@@ -12,6 +12,7 @@ Formular::Formular()
     showAttributesWindowSize_ = ImVec2(600, 800);
 
     showSettingWindow_ = false;
+    saveWindow_ = false;
 }
 
 bool Formular::addControlType(std::string attributeName, std::string editType)
@@ -249,7 +250,7 @@ void Formular::showControls()
 
         if (ImGui::Button("Save", ImVec2(0, 30)))
         {
-            saveToFile();
+            saveWindow_ = true;
         }
 
         ImGui::EndDisabled();
@@ -268,6 +269,7 @@ void Formular::showControls()
         showAddDescriptionWindow();
         showModifyControlTypesWindow();
         showSettings();
+        saveToFile();
         ImGui::End();
     }
 }
@@ -370,7 +372,6 @@ void Formular::showAddDescriptionWindow()
             chosenType = "";
         }
         ImGui::EndDisabled();
-        
 
         ImGui::InputText("Názov atribútut", buffer, sizeof(buffer));
         if (nameExists)
@@ -435,8 +436,10 @@ void Formular::showAddDescriptionWindow()
             default:
                 break;
             }
-        } else {
-            ImGui::Text("%s",attributes_->getDescription(attributes_->getNumberOfDescriptions()-1)->getTypeString().data());
+        }
+        else
+        {
+            ImGui::Text("%s", attributes_->getDescription(attributes_->getNumberOfDescriptions() - 1)->getTypeString().data());
         }
 
         if (!addedAndCorrect)
@@ -906,21 +909,113 @@ nlohmann::ordered_json Formular::saveOutput()
     return tempJson;
 }
 
-bool Formular::saveToFile()
+void Formular::saveToFile()
 {
-    std::filesystem::path path = std::filesystem::current_path() / "jsonFiles" / "output.json";
-    std::ofstream file(path);
-    nlohmann::ordered_json json = saveOutput();
-    if (json.empty())
+    if (!saveWindow_)
     {
-        messageHistory_.emplace_back(Message("Nothing to be saved!"));
-        file.close();
-        return false;
+        return;
     }
-    file << json.dump(4);
-    file.close();
-    messageHistory_.emplace_back(Message(std::format("Attributes were successfully saved in the file, located in {}!", path.string())));
-    return true;
+
+    static std::filesystem::path outputPath_;
+    static bool chosen = false;
+    if (outputPath_.empty())
+    {
+        NFD_Init();
+        nfdu8char_t *outputPath;
+        nfdresult_t result = NFD_PickFolder(&outputPath, nullptr);
+        if (result == NFD_OKAY)
+        {
+            outputPath_ = outputPath;
+            NFD_FreePathU8(outputPath);
+            ImGui::OpenPopup("File name window", ImGuiPopupFlags_NoReopen);
+        }
+        else if (result == NFD_CANCEL)
+        {
+            saveWindow_ = false;
+            outputPath_.clear();
+            return;
+        }
+        else
+        {
+            messageHistory_.emplace_back(Message(std::format("Error: {}", NFD_GetError())));
+            saveWindow_ = false;
+            return;
+        }
+
+        NFD_Quit();
+    }
+
+    if (ImGui::BeginPopup("File name window", ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        static char buffer[40];
+        ImGui::InputText("File name", buffer, sizeof(buffer));
+        if (ImGui::Button("OK"))
+        {
+            outputPath_ = outputPath_ / std::string(buffer).append(".json");
+            char *begin = &buffer[0];
+            char *end = begin + sizeof(buffer);
+            std::fill(begin, end, 0);
+            if (std::filesystem::exists(outputPath_))
+            {
+                ImGui::OpenPopup("File overwrite");
+                
+            } else {
+                chosen = true;
+                ImGui::CloseCurrentPopup();
+            }
+        }
+        if (ImGui::Button("Cancel"))
+        {
+            saveWindow_ = false;
+            outputPath_.clear();
+            ImGui::CloseCurrentPopup();
+            return;
+        }
+
+        if (ImGui::BeginPopup("File overwrite", ImGuiWindowFlags_AlwaysAutoResize))
+        {
+            ImGui::Text("Do you wish to overwrite existing file? Path and name of the file is: %s", outputPath_.string().c_str());
+            if (ImGui::Button("Yes"))
+            {
+                chosen = true;
+                ImGui::CloseCurrentPopup();
+            }
+            if (ImGui::Button("No"))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("File name window"))
+    {
+        std::cout << ImGui::IsPopupOpen("File name window") << std::endl;
+
+        saveWindow_ = false;
+        outputPath_.clear();
+        return;
+    }
+
+    if (chosen)
+    {
+        std::ofstream file(outputPath_);
+        nlohmann::ordered_json json = saveOutput();
+        if (json.empty())
+        {
+            messageHistory_.emplace_back(Message("Nothing to be saved!"));
+            file.close();
+            return;
+        }
+        file << json.dump(4);
+        file.close();
+        messageHistory_.emplace_back(Message(std::format("Attributes were successfully saved in the file, located in {}!", outputPath_.string())));
+        chosen = false;
+        saveWindow_ = false;
+        outputPath_.clear();
+    }
 }
 
 bool Formular::showWarning(std::string message)
