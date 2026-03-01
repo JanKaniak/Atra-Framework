@@ -918,6 +918,7 @@ void Formular::saveToFile()
 
     static std::filesystem::path outputPath_;
     static bool chosen = false;
+    static char buffer[40] = "output";
     if (outputPath_.empty())
     {
         NFD_Init();
@@ -943,41 +944,47 @@ void Formular::saveToFile()
         }
 
         NFD_Quit();
+        strcpy(buffer, "output");
     }
-
+    
     if (ImGui::BeginPopup("File name window", ImGuiWindowFlags_AlwaysAutoResize))
     {
-        static char buffer[40];
+        
+        static std::filesystem::path completedPath;
         ImGui::InputText("File name", buffer, sizeof(buffer));
         if (ImGui::Button("OK"))
         {
-            outputPath_ = outputPath_ / std::string(buffer).append(".json");
-            char *begin = &buffer[0];
-            char *end = begin + sizeof(buffer);
-            std::fill(begin, end, 0);
-            if (std::filesystem::exists(outputPath_))
+            
+            completedPath = outputPath_ / std::string(buffer).append(".json");
+            
+            if (std::filesystem::exists(completedPath))
             {
                 ImGui::OpenPopup("File overwrite");
                 
             } else {
+                std::fill(&buffer[0], &buffer[0] + sizeof(buffer), 0);
+                outputPath_ = completedPath;
                 chosen = true;
                 ImGui::CloseCurrentPopup();
             }
         }
         if (ImGui::Button("Cancel"))
         {
+            std::fill(&buffer[0], &buffer[0] + sizeof(buffer), 0);
             saveWindow_ = false;
             outputPath_.clear();
             ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
             return;
         }
 
         if (ImGui::BeginPopup("File overwrite", ImGuiWindowFlags_AlwaysAutoResize))
         {
-            ImGui::Text("Do you wish to overwrite existing file? Path and name of the file is: %s", outputPath_.string().c_str());
+            ImGui::Text("Do you wish to overwrite existing file? Path and name of the file is: %s", completedPath.string().c_str());
             if (ImGui::Button("Yes"))
             {
                 chosen = true;
+                outputPath_ = completedPath;
                 ImGui::CloseCurrentPopup();
             }
             if (ImGui::Button("No"))
@@ -993,7 +1000,7 @@ void Formular::saveToFile()
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("File name window"))
     {
         std::cout << ImGui::IsPopupOpen("File name window") << std::endl;
-
+        std::fill(&buffer[0], &buffer[0] + sizeof(buffer), 0);
         saveWindow_ = false;
         outputPath_.clear();
         return;

@@ -76,7 +76,6 @@ bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT mi
     {
         min_ = minimum;
         max_ = maximum;
-        messagesHistory.emplace_back(Message("Bounds were successfully changed!"));
         return true;
     }
     messagesHistory.emplace_back(Message("Minimum must be lower value than maximum!"));
