@@ -10,7 +10,6 @@ bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT mi
     {
         min_ = minimum;
         max_ = maximum;
-        messagesHistory.emplace_back(Message("Bounds were successfully changed!"));
         return true;
     }
     messagesHistory.emplace_back(Message("Minimum must be lower value than maximum!"));
@@ -25,7 +24,7 @@ bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohman
         messagesHistory.emplace_back(Message("Incorrect json format!"));
         return false;
     }
-    if (!json["Minimum"].is_number_integer() || !json["Maximum"].is_number_integer())
+    if ((!json["Minimum"].is_number_integer() && json["Minimum"].type() != TypeEnumT) || (!json["Maximum"].is_number_integer() && json["Maximum"].type() != TypeEnumT))
     {
         messagesHistory.emplace_back(Message(std::format("{} Bounds must be number value!", json["Attribute name"].get<std::string>())));
         return false;

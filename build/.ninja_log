@@ -38,3 +38,9 @@
 8	12267	1772360516486657533	CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o	a812a5d3777774a0
 12269	12676	1772360516884467640	libmyLib.a	67b8b440f5e20973
 12676	13604	1772360517832681973	GraphicEditor	5ec67f7e90a647fe
+9	5962	1772360893974924429	CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp.o	3c2b5ae040c425d
+5962	6360	1772360894372459142	libmyLib.a	67b8b440f5e20973
+6360	7169	1772360895171596394	GraphicEditor	5ec67f7e90a647fe
+10	5630	1772361076950956828	CMakeFiles/myLib.dir/src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp.o	3c2b5ae040c425d
+5630	5924	1772361077236538083	libmyLib.a	67b8b440f5e20973
+5924	6458	1772361077776103480	GraphicEditor	5ec67f7e90a647fe
