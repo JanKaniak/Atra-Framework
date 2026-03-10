@@ -2,6 +2,7 @@
 
 #include "json.hpp"
 #include "DescriptionFactory.h"
+#include "AttributeDescriptionsContainer.h"
 
 
 #include <string>
@@ -28,7 +29,7 @@ public:
     constexpr TypeT getMaximum() { return max_; }
     bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message>& messagesHistory);
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
-    void drawInputForChangingLimits(std::vector<Message>& messagesHistory) override;
+    bool drawInputForChangingLimits(std::vector<Message>& messagesHistory) override;
 };
 
 template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
@@ -49,7 +50,7 @@ public:
     constexpr TypeT getMaximum() { return max_; }
     bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message>& messagesHistory);
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
-    void drawInputForChangingLimits(std::vector<Message>& messagesHistory) override;
+    bool drawInputForChangingLimits(std::vector<Message>& messagesHistory) override;
 };
 
 template <typename AttributeDescriptionType>
@@ -154,10 +155,53 @@ class AttributeDescription_bool : public AttributeDescription {
         std::unique_ptr<AttributeDescription> clone() override;
 
     private:
-        void drawInputForChangingLimits(std::vector<Message>& messagesHistory) override {}
+        bool drawInputForChangingLimits(std::vector<Message>& messagesHistory) override {return false;}
 };
 
 struct AutoRegisterBoolDescription : public AutoRegisterDescription<AttributeDescription_bool>
+{
+    inline static bool registerDescription = []()
+    {
+        AutoRegisterDescription::autoRegister; };
+};
+
+
+class AttributeDescriptionCluster : public AttributeDescription {
+    private:
+    int min_;
+    int max_;
+    std::unique_ptr<AttributeDescriptionsContainer> descriptions_;
+
+public:
+AttributeDescriptionCluster() : AttributeDescription(AttributeType::CLUSTER) {
+    descriptions_ = std::make_unique<AttributeDescriptionsContainer>();
+    category_ = "OTHER";
+}
+
+AttributeDescriptionCluster(const AttributeDescriptionCluster& descriptionCluster) : AttributeDescription(AttributeType::CLUSTER) {
+    descriptions_ = std::make_unique<AttributeDescriptionsContainer>();
+    category_ = descriptionCluster.category_;
+}
+
+
+int getMinimum() { return min_;}
+int getMaximum() { return max_;}
+AttributeDescriptionsContainer* getDescription() {
+    if (descriptions_ == nullptr) {
+        descriptions_ = std::make_unique<AttributeDescriptionsContainer>();
+    } 
+    return descriptions_.get();
+}
+
+public:
+std::unique_ptr<AttributeDescription> clone() override;
+bool jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
+bool drawInputForChangingLimits(std::vector<Message>& messagesHistory) override;
+
+};
+
+
+struct AutoRegisterClusterDescription : public AutoRegisterDescription<AttributeDescriptionCluster>
 {
     inline static bool registerDescription = []()
     {

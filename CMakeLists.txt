@@ -5,11 +5,10 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-# Nájdenie SDL2
 find_package(SDL2 REQUIRED)
 include_directories(${SDL2_INCLUDE_DIRS})
 
-# Nájdenie OpenGL
+
 find_package(OpenGL REQUIRED)
 
 
@@ -39,8 +38,9 @@ add_library(myLib
     src/libs/Sources/ControlComponents/NumericInput.cpp
     src/libs/Sources/ControlComponents/Formular.cpp
     src/libs/Sources/ControlComponents/Factory.cpp
-    src/libs/Sources/ControlComponents/ControlComponents.cpp
     src/libs/Sources/Attributes/AttributeFactory.cpp
+    src/libs/Sources/ControlComponents/ControlComponentsContainer.cpp
+    src/libs/Sources/ControlComponents/ControlComponentsCluster.cpp
 )
 
 add_subdirectory(src/nativefiledialog-extended)
@@ -55,12 +55,11 @@ target_include_directories(myLib PUBLIC src/nlohmannJson)
 add_executable(GraphicEditor 
     src/main.cpp)
 
-# Prepojenie knižníc
+
 target_link_libraries(GraphicEditor PRIVATE imgui imgui_backends SDL2 OpenGL myLib)
 target_link_libraries(myLib PRIVATE imgui nfd)
 
 
-# Nastavenie verzie balíka pre CPack
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})
 set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

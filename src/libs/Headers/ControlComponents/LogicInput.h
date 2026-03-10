@@ -36,10 +36,12 @@ public:
             color = {1,0,0,1};
         }
         
-        if (ImGui::ColorButton(std::format("##{}",getName()).c_str(),color)) {
+        ImGui::PushStyleColor(ImGuiCol_Button,color);
+        if (ImGui::Button(std::format("##{}",getName()).c_str(),ImVec2(50,30))) {
             value_ = !value_;
             attributebool_->setValue(value_);
         }
+        ImGui::PopStyleColor();
     }
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<LogicButton>(*this); };
 };

@@ -163,6 +163,39 @@ inline void LogicEditFactory::registerPrototype()
 }
 
 
+//-------------------------------------------------------------------------------------------------------
+
+// CLUSTER
+
+// BOOL
+
+ClusterEditFactory *ClusterEditFactory::instance = nullptr;
+
+ClusterEditFactory::ClusterEditFactory() : Factory(AttributeType::CLUSTER)
+{
+    this->registerPrototype();
+}
+
+ClusterEditFactory *ClusterEditFactory::getInstance()
+{
+    if (instance == nullptr)
+    {
+        instance = new ClusterEditFactory();
+    }
+
+    return instance;
+}
+
+inline void ClusterEditFactory::registerPrototype()
+{
+    if (!findInVector(nameOfControlTypesVector_, "DEFAULT"))
+    {
+        nameOfControlTypesVector_.emplace_back("DEFAULT");
+    }
+    prototypes_[EditTypeCluster::DEFAULT] = std::move(std::make_unique<ControlComponentCluster>());
+}
+
+
 
 //-------------------------------------------------------------------------------------------------------
 

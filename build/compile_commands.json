@@ -85,15 +85,21 @@
 },
 {
   "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
-  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Basic -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/ControlComponents.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/ControlComponents.cpp",
-  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/ControlComponents.cpp",
-  "output": "CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/ControlComponents.cpp.o"
-},
-{
-  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
   "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Basic -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/Attributes/AttributeFactory.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/AttributeFactory.cpp",
   "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/Attributes/AttributeFactory.cpp",
   "output": "CMakeFiles/myLib.dir/src/libs/Sources/Attributes/AttributeFactory.cpp.o"
+},
+{
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Basic -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/ControlComponentsContainer.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/ControlComponentsContainer.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/ControlComponentsContainer.cpp",
+  "output": "CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/ControlComponentsContainer.cpp.o"
+},
+{
+  "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+  "command": "/usr/bin/c++ -I/usr/include/SDL2 -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Descriptions -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Attributes -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/ControlComponents -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Headers/Basic -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nlohmannJson -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/imgui -I/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/nativefiledialog-extended/src/include -g -std=gnu++20 -o CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/ControlComponentsCluster.cpp.o -c /home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/ControlComponentsCluster.cpp",
+  "file": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/src/libs/Sources/ControlComponents/ControlComponentsCluster.cpp",
+  "output": "CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/ControlComponentsCluster.cpp.o"
 },
 {
   "directory": "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",

@@ -1,6 +1,9 @@
 #pragma once
 #include "AttributeFactory.h"
 
+
+#include <format>
+
 template <typename TypeT, typename AttributeDescriptionT>
 class IntegerNumberBaseAttributeClass : public Attribute
 {
@@ -25,7 +28,7 @@ public:
         return false;
     }
 
-    void setDescription(AttributeDescription *desc) override
+    void setDescription(AttributeDescription *desc, std::vector<Message>& messagesHistory) override
     {
         if (dynamic_cast<AttributeDescriptionT *>(desc))
         {
@@ -35,6 +38,8 @@ public:
     }
     TypeT getValue() { return value_; }
     bool saveToJson(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
+
+    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message>& messagesHistory) override;
 };
 
 template <typename AttributeTypeClass, AttributeType EnumTypeT>
@@ -119,7 +124,7 @@ public:
     AttributeType getType() override { return desc_->getType(); }
     AttributeDescription *getDescription() override { return desc_; }
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeBool>(*this); }
-    void setDescription(AttributeDescription *desc) override
+    void setDescription(AttributeDescription *desc, std::vector<Message>& messagesHistory) override
     {
         if (dynamic_cast<AttributeDescription_bool *>(desc))
         {
@@ -135,6 +140,8 @@ public:
         return true;
     }
     bool getValue() { return value_; }
+    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message>& messagesHistory) override;
+
 };
 
 struct AutoRegisterBoolAttribute : public AutoRegisterAttribute<AttributeBool, AttributeType::BOOL>
@@ -144,3 +151,29 @@ struct AutoRegisterBoolAttribute : public AutoRegisterAttribute<AttributeBool, A
         AutoRegisterAttribute::autoRegisterAttribute;
     };
 };
+
+class AttributesContainer;
+
+class AttributeCluster : public Attribute {
+private:
+    std::unique_ptr<AttributesContainer> value_;
+    AttributeDescriptionCluster *desc_;
+
+
+public:
+AttributeCluster();
+AttributeCluster(const AttributeCluster& attributeCluster);
+AttributesContainer* getAttributeContainer() { return value_.get();}
+
+public:
+    
+    std::string getName() override { return desc_->getName(); }
+    AttributeType getType() override { return desc_->getType(); }
+    AttributeDescription *getDescription() override { return desc_; }
+    std::unique_ptr<Attribute> clone() override;
+    void setDescription(AttributeDescription *desc, std::vector<Message>& messagesHistory) override;
+    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
+    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message>& messagesHistory) override;
+};
+
+struct AutoRegisterClusterAttribute;

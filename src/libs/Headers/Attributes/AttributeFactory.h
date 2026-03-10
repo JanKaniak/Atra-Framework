@@ -1,5 +1,4 @@
 #pragma once
-#include "AttributeDescriptionsContainer.h"
 #include "Attribute.h"
 
 using AttributeUptr = std::unique_ptr<Attribute>;

@@ -34,4 +34,14 @@ class AttributeDescriptionsContainer {
         bool deleteDescription(AttributeDescription *description);
         inline std::vector<AttributeTypeC> getRegisteredDescriptionsTypes() { return descFactory_->getRegisteredDescriptionsTypes();}
         bool deleteLastDescription(std::vector<Message>& messagesHistory);
+        bool existsDescription(std::string_view name) {
+            for (int i = 0; i < attributeDescs_.size(); ++i)
+            {
+                if (attributeDescs_.at(i)->getName().compare(name) == 0) {
+                    return true;
+                }
+            }
+            return false;
+            
+        }
 };

@@ -2,6 +2,9 @@
 #include "json.hpp"
 #include "Factory.h"
 #include "AttributesContainer.h"
+#include "ControlComponentsContainer.h"
+
+
 #include <iostream>
 #include <map>
 #include <memory>
@@ -56,8 +59,8 @@ private:
 
 private:
 private:
-    std::unique_ptr<Attributes> attributes_;
-    std::vector<std::unique_ptr<ControlComponent>> components_;
+    std::unique_ptr<AttributesContainer> attributes_;
+    std::unique_ptr<ControlComponentsContainer> components_;
     std::vector<Message> messageHistory_;
 
 public:
@@ -82,16 +85,11 @@ private:
     void showModifyControlTypesWindow();
     void draw();
     inline int getNumberOfAttributes() { return attributes_->getSize(); }
-    inline int getNumberOfComponents() { return components_.size(); }
     int readFileDescriptions();
     int readFileControlTypes();
     void saveToFile();
-    bool sameName(std::string name);
     bool showWarning(std::string message);
-    bool isEmpty() { return components_.empty(); };
-    bool existControlType(std::string attributeName);
-    std::string getControlTypeByAttributeName(std::string attributeName);
-    int positionOfComponentByAttributeName(std::string attributeName);
+    
     
 
     // ==========

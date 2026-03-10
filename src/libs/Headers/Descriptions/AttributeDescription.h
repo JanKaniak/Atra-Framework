@@ -17,7 +17,8 @@ enum class AttributeType
     CHAR,
     LONG,
     UINT,
-    BOOL
+    BOOL,
+    CLUSTER
 };
 
 struct Int
@@ -69,7 +70,14 @@ struct Bool
     static constexpr std::string_view typeInFile = "bool";
 };
 
-using AttributeTypes = std::tuple<Int, Double, Float, Char, Long, Uint, Bool>;
+struct Cluster
+{
+    static constexpr std::string_view typeString = "CLUSTER";
+    static constexpr AttributeType typeEnum = AttributeType::CLUSTER;
+    static constexpr std::string_view typeInFile = "cluster";
+};
+
+using AttributeTypes = std::tuple<Int, Double, Float, Char, Long, Uint, Bool, Cluster>;
 
 template <typename Tuple>
 struct StructUnpack;
@@ -139,5 +147,5 @@ public:
     virtual ~AttributeDescription() = default;
     virtual std::unique_ptr<AttributeDescription> clone() = 0;
     virtual bool jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) = 0;
-    virtual void drawInputForChangingLimits(std::vector<Message>& messagesHistory) = 0;
+    virtual bool drawInputForChangingLimits(std::vector<Message>& messagesHistory) = 0;
 };

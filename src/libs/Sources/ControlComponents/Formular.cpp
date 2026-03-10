@@ -7,12 +7,20 @@
 // Class Formular
 Formular::Formular()
 {
-    attributes_ = std::make_unique<Attributes>();
+    attributes_ = std::make_unique<AttributesContainer>();
     config = Config::getInstance();
+    components_ = std::make_unique<ControlComponentsContainer>();
     showAttributesWindowSize_ = ImVec2(600, 800);
 
     showSettingWindow_ = false;
     saveWindow_ = false;
+
+    attributes_->addDescriptions("Address", AttributeType::CLUSTER, messageHistory_);
+    AttributeDescriptionCluster *tmp = dynamic_cast<AttributeDescriptionCluster *>(attributes_->getDescription(0));
+    tmp->getDescription()->addDescriptions("City Name", AttributeType::INT, messageHistory_);
+    tmp->getDescription()->addDescriptions("hora7plast", AttributeType::FLOAT, messageHistory_);
+
+    attributes_->addDescriptions("TRUTH", AttributeType::INT, messageHistory_);
 }
 
 bool Formular::addControlType(std::string attributeName, std::string editType)
@@ -23,7 +31,7 @@ bool Formular::addControlType(std::string attributeName, std::string editType)
         return false;
     }
 
-    if (!sameName(attributeName))
+    if (!components_->existControlType(attributeName))
     {
         Factory *factory = config->getFactory(attributes_->giveAttributeByName(attributeName)->getType());
         if (factory == nullptr)
@@ -31,10 +39,10 @@ bool Formular::addControlType(std::string attributeName, std::string editType)
             messageHistory_.emplace_back(Message(std::format("Controls for {}  attribute type does not exist!", AttributeTypeConverter::EnumToString(attributes_->giveAttributeByName(attributeName)->getType()))));
             return false;
         }
-        if (components_.empty())
+        if (components_->isEmpty())
         {
-            components_.push_back(factory->createEdit(editType));
-            components_.at(components_.size() - 1)->setAttribute(attributes_->giveAttributeByName(attributeName));
+            components_->addControl(factory->createEdit(editType), attributes_->giveAttributeByName(attributeName));
+
             return true;
         }
         int position = attributes_->getPosition(attributeName);
@@ -44,15 +52,14 @@ bool Formular::addControlType(std::string attributeName, std::string editType)
             return false;
         }
 
-        if (position >= components_.size())
+        if (position >= components_->getSize())
         {
-            components_.push_back(factory->createEdit(editType));
-            components_.at(components_.size() - 1)->setAttribute(attributes_->giveAttributeByName(attributeName));
+            components_->addControl(factory->createEdit(editType), attributes_->giveAttributeByName(attributeName));
+
             return true;
         }
 
-        components_.emplace(components_.begin() + position, factory->createEdit(editType));
-        components_.at(position)->setAttribute(attributes_->giveAttributeByName(attributeName));
+        components_->addControl(position, factory->createEdit(editType), attributes_->giveAttributeByName(attributeName));
     }
     else
     {
@@ -70,10 +77,9 @@ bool Formular::addControlType(Attribute *attribute)
         messageHistory_.emplace_back(Message("Attribute type does not exist!"));
         return false;
     }
-    if (components_.empty())
+    if (components_->isEmpty())
     {
-        components_.push_back(factory->createDefaultEdit());
-        components_.at(components_.size() - 1)->setAttribute(attributes_->giveAttributeByName(attribute->getName()));
+        components_->addControl(factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
         return true;
     }
     int position = attributes_->getPosition(attribute->getName());
@@ -83,15 +89,13 @@ bool Formular::addControlType(Attribute *attribute)
         return false;
     }
 
-    if (position >= components_.size())
+    if (position >= components_->getSize())
     {
-        components_.push_back(factory->createDefaultEdit());
-        components_.at(components_.size() - 1)->setAttribute(attributes_->giveAttributeByName(attribute->getName()));
+        components_->addControl(factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
         return true;
     }
 
-    components_.emplace(components_.begin() + position, factory->createDefaultEdit());
-    components_.at(position)->setAttribute(attributes_->giveAttributeByName(attribute->getName()));
+    components_->addControl(position, factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
 
     return true;
 }
@@ -110,42 +114,38 @@ bool Formular::addOrReplaceControlTypeByVector(std::vector<std::string> controlT
             continue;
         }
         Factory *factory = config->getFactory(attributes_->giveAttribute(i)->getType());
-        if (!existControlType(attributes_->giveAttribute(i)->getName()))
+        if (!components_->existControlType(attributes_->giveAttribute(i)->getName()))
         {
-            if (components_.empty())
+            if (components_->isEmpty())
             {
-                components_.push_back(factory->createEdit(controlTypesVector.at(i)));
-                components_.at(components_.size() - 1)->setAttribute(attributes_->giveAttribute(i));
+                components_->addControl(factory->createEdit(controlTypesVector.at(i)), attributes_->giveAttribute(i));
                 continue;
             }
 
-            if (i >= components_.size())
+            if (i >= components_->getSize())
             {
-                components_.push_back(factory->createEdit(controlTypesVector.at(i)));
-                components_.at(components_.size() - 1)->setAttribute(attributes_->giveAttribute(i));
+                components_->addControl(factory->createEdit(controlTypesVector.at(i)), attributes_->giveAttribute(i));
                 continue;
             }
 
-            components_.emplace(components_.begin() + i, factory->createEdit(controlTypesVector.at(i)));
-            components_.at(i)->setAttribute(attributes_->giveAttribute(i));
+            components_->addControl(i, factory->createEdit(controlTypesVector.at(i)), attributes_->giveAttribute(i));
         }
         else
         {
-            std::string type = getControlTypeByAttributeName(attributes_->giveAttribute(i)->getName());
+            std::string type = components_->getControlTypeByAttributeName(attributes_->giveAttribute(i)->getName());
             if (type.compare(controlTypesVector.at(i)) == 0)
             {
                 continue;
             }
 
-            int position = positionOfComponentByAttributeName(attributes_->giveAttribute(i)->getName());
+            int position = components_->positionOfComponentByAttributeName(attributes_->giveAttribute(i)->getName());
             if (position < 0)
             {
                 messageHistory_.emplace_back(Message("Control type does not exist for this attribtue!"));
                 return false;
             }
 
-            components_.at(i) = factory->createEdit(controlTypesVector.at(i));
-            components_.at(i)->setAttribute(attributes_->giveAttribute(i));
+            components_->swapControlComponent(i, factory->createEdit(controlTypesVector.at(i)), attributes_->giveAttribute(i));
         }
     }
     return true;
@@ -168,26 +168,23 @@ bool Formular::replaceControlType(Attribute *attribute, std::string controlType)
     }
 
     std::unique_ptr<ControlComponent> tmpControl = factory->createEdit(controlType);
-    if (controlType.compare(tmpControl->getType()) == 0)
+    if (controlType.compare(tmpControl->getType(attribute->getName())) == 0)
     {
         return false;
     }
-    if (components_.empty())
+    if (components_->isEmpty())
     {
-        components_.push_back(std::move(tmpControl));
-        components_.at(components_.size() - 1)->setAttribute(attributes_->giveAttributeByName(attribute->getName()));
+        components_->addControl(std::move(tmpControl), attributes_->giveAttributeByName(attribute->getName()));
         return true;
     }
 
-    if (position >= components_.size())
+    if (position >= components_->getSize())
     {
-        components_.push_back(std::move(tmpControl));
-        components_.at(components_.size() - 1)->setAttribute(attributes_->giveAttributeByName(attribute->getName()));
+        components_->addControl(std::move(tmpControl), attributes_->giveAttributeByName(attribute->getName()));
         return true;
     }
 
-    components_.at(position) = std::move(tmpControl);
-    components_.at(position)->setAttribute(attributes_->giveAttributeByName(attribute->getName()));
+    components_->swapControlComponent(position, std::move(tmpControl), attributes_->giveAttributeByName(attribute->getName()));
 
     return true;
 }
@@ -197,7 +194,7 @@ void Formular::showControls()
     static float f = 0.0f;
     static int counter = 0;
 
-    int minHeight = (getNumberOfComponents() * 30) + 100;
+    int minHeight = (components_->getSize() * 30) + 100;
     static ImVec2 size = ImGui::GetMainViewport()->Size;
 
     ImGui::SetNextWindowSize(ImVec2(0 / 3, size.y));
@@ -212,7 +209,7 @@ void Formular::showControls()
 
         if (ImGui::Button("Add description", ImVec2(0, 30)))
         {
-            ImGui::OpenPopup("Edtiacne okno", ImGuiPopupFlags_NoOpenOverExistingPopup | ImGuiPopupFlags_NoReopen);
+            ImGui::OpenPopup("Edit window", ImGuiPopupFlags_NoOpenOverExistingPopup | ImGuiPopupFlags_NoReopen);
         }
 
         ImGui::BeginDisabled(attributes_->getNumberOfDescriptions() == 0);
@@ -347,7 +344,7 @@ void Formular::showAddDescriptionWindow()
     static std::string category = "NUMERIC";
     static bool addedAndCorrect = false;
 
-    if (ImGui::BeginPopupModal("Edtiacne okno", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    if (ImGui::BeginPopupModal("Edit window", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
         ImGui::BeginDisabled(addedAndCorrect);
         if (ImGui::RadioButton("Numeric", selected == 0))
@@ -371,12 +368,19 @@ void Formular::showAddDescriptionWindow()
             category = "LOGIC";
             chosenType = "";
         }
+        ImGui::SameLine();
+        if (ImGui::RadioButton("Other", selected == 3))
+        {
+            selected = 3;
+            category = "OTHER";
+            chosenType = "";
+        }
         ImGui::EndDisabled();
 
-        ImGui::InputText("Názov atribútut", buffer, sizeof(buffer));
+        ImGui::InputText("Attribute name", buffer, sizeof(buffer));
         if (nameExists)
         {
-            ImGui::Text("Meno atributu už existuje!");
+            ImGui::Text("Attribute with this name already exists!");
         }
 
         if (!addedAndCorrect)
@@ -432,6 +436,30 @@ void Formular::showAddDescriptionWindow()
 
                     ImGui::EndCombo();
                 }
+                break;
+            case 3:
+                if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
+                {
+                    for (int i = 0; i < attributes_->getRegisteredDescriptionsTypes().size(); ++i)
+                    {
+                        if (attributes_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
+                        {
+                            continue;
+                        }
+                        bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
+                        if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
+                        {
+                            chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
+                        }
+                        if (selected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+
+                    ImGui::EndCombo();
+                }
+                break;
 
             default:
                 break;
@@ -447,7 +475,7 @@ void Formular::showAddDescriptionWindow()
             if (ImGui::Button("Add description"))
             {
 
-                nameExists = sameName(buffer);
+                nameExists = attributes_->existDescription(buffer);
                 if (!nameExists)
                 {
                     attributes_->addDescriptions(std::string(buffer), AttributeTypeConverter::StringToEnum(chosenType), messageHistory_);
@@ -457,7 +485,7 @@ void Formular::showAddDescriptionWindow()
         }
         else
         {
-            attributes_->getDescription(attributes_->getNumberOfDescriptions() - 1)->drawInputForChangingLimits(messageHistory_);
+            addedAndCorrect = attributes_->getDescription(attributes_->getNumberOfDescriptions() - 1)->drawInputForChangingLimits(messageHistory_);
             if (ImGui::Button("Save"))
             {
                 addedAndCorrect = false;
@@ -468,7 +496,6 @@ void Formular::showAddDescriptionWindow()
         {
             ImGui::CloseCurrentPopup();
             addedAndCorrect = false;
-            attributes_->deleteLastDescription(messageHistory_);
         }
         ImGui::EndPopup();
     }
@@ -476,92 +503,12 @@ void Formular::showAddDescriptionWindow()
 
 void Formular::showModifyControlTypesWindow()
 {
-    static std::vector<std::string> chosenTypeVector;
-    static bool overWrite;
-    if (attributes_->getSize() == 0)
-    {
-        return;
-    }
-    if (chosenTypeVector.size() < attributes_->getSize())
-    {
-        chosenTypeVector.resize(attributes_->getSize());
-        overWrite = true;
-    }
-
-    if (numberOfLoadedControls > 0 && numberOfLoadedControls < INT_MAX)
-    {
-        overWrite = true;
-        numberOfLoadedControls = INT_MAX;
-    }
-
-    if (overWrite)
-    {
-        for (int i = 0; i < attributes_->getSize(); ++i)
-        {
-            std::string type = getControlTypeByAttributeName(attributes_->giveAttribute(i)->getName());
-            if (!type.empty())
-            {
-                chosenTypeVector.at(i) = type;
-            }
-        }
-        overWrite = false;
-    }
     if (ImGui::BeginPopupModal("Modify control types window", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        for (int i = 0; i < attributes_->getSize(); ++i)
-        {
-            bool empty = false;
-            ImGuiChildFlags flags;
-            if (chosenTypeVector[i].empty())
-            {
-                ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1, 0, 0, 1));
-                empty = true;
-                flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
-            }
-            else
-            {
-                flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
-            }
-            if (ImGui::BeginChild(std::format("Border##{}", attributes_->giveAttribute(i)->getName()).c_str(), ImVec2(0, 0), flags))
-            {
-                ImGui::Text("%s", attributes_->giveAttribute(i)->getName().c_str());
-                ImGui::SameLine();
-                ImGui::Text("%s", AttributeTypeConverter::EnumToString(attributes_->giveAttribute(i)->getType()).data());
-                ImGui::SameLine();
-                Factory *factory = config->getFactory(attributes_->giveAttribute(i)->getType());
-                if (ImGui::BeginCombo(std::format("Control Type##{}", attributes_->giveAttribute(i)->getName()).c_str(), chosenTypeVector.at(i).c_str()))
-                {
-                    for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
-                    {
-                        bool selected = (chosenTypeVector.at(i).compare(factory->getNameOfControlTypesVector().at(j)) == 0);
-                        if (ImGui::Selectable(factory->getNameOfControlTypesVector().at(j).c_str(), selected))
-                        {
-                            chosenTypeVector.at(i) = factory->getNameOfControlTypesVector().at(j);
-                        }
-                        if (selected)
-                        {
-                            ImGui::SetItemDefaultFocus();
-                        }
-                    }
-
-                    ImGui::EndCombo();
-                }
-                ImGui::EndChild();
-            }
-            if (empty)
-            {
-                ImGui::PopStyleColor();
-            }
-            ImGui::Dummy(ImVec2(30, 30));
-        }
-        if (ImGui::Button("Save", ImVec2(0, 30)))
-        {
-            addOrReplaceControlTypeByVector(chosenTypeVector);
-        }
+        attributes_->setControlTypes(components_.get(), config, messageHistory_);
 
         if (ImGui::Button("Close", ImVec2(0, 30)))
         {
-            overWrite = true;
             ImGui::CloseCurrentPopup();
         }
 
@@ -571,7 +518,7 @@ void Formular::showModifyControlTypesWindow()
 
 void Formular::showAttributes()
 {
-    if (components_.size() == 0)
+    if (components_->getSize() == 0)
     {
         return;
     }
@@ -579,9 +526,9 @@ void Formular::showAttributes()
     if (ImGui::Begin("Atributes", nullptr, ImGuiWindowFlags_NoCollapse))
     {
         bool tableCreated = false;
-        for (auto &component : components_)
+        for (int i = 0; i < components_->getSize(); ++i)
         {
-            if (component == nullptr)
+            if (components_->getComponent(i) == nullptr)
             {
                 continue;
             }
@@ -595,21 +542,21 @@ void Formular::showAttributes()
                 ImGui::TableSetupColumn("DeleteButton", ImGuiTableColumnFlags_WidthFixed);
                 ImGui::TableHeadersRow();
                 ImGui::TableNextColumn();
-                ImGui::Text("%s", component->getName().c_str());
+                ImGui::Text("%s", components_->getComponent(i)->getName().c_str());
                 ImGui::TableNextColumn();
-                component->draw();
+                components_->getComponent(i)->draw();
                 ImGui::TableNextColumn();
-                ImGui::Text("%s", AttributeTypeConverter::EnumToString(component->getAttribute()->getType()).data());
+                ImGui::Text("%s", AttributeTypeConverter::EnumToString(components_->getComponent(i)->getAttribute(components_->getComponent(i)->getName())->getType()).data());
                 ImGui::TableNextColumn();
                 if (ImGui::Button("Edit", ImVec2(0, 30)))
                 {
                     drawed = true;
-                    chosenAttribute = component.get()->getAttribute();
+                    chosenAttribute = components_->getComponent(i)->getAttribute(components_->getComponent(i)->getName());
                 }
                 ImGui::TableNextColumn();
                 if (ImGui::Button("Delete", ImVec2(0, 30)))
                 {
-                    deleteAttribute(component->getAttribute());
+                    deleteAttribute(components_->getComponent(i)->getAttribute(components_->getComponent(i)->getName()));
                 }
                 ImGui::EndTable();
             }
@@ -622,10 +569,16 @@ void Formular::showAttributes()
         drawed = false;
     }
 
+    static ControlComponent *component;
+    static char editBuffer[40] = "";
     if (ImGui::BeginPopup("Edit window"))
     {
         static bool exist;
-        static char editBuffer[40] = "";
+        static bool changingLimits = false;
+        if (component == nullptr)
+        {
+            component = components_->getControlComponentByAttribute(chosenAttribute);
+        }
         if (editBuffer[0] == '\0')
         {
             strcpy(editBuffer, chosenAttribute->getName().c_str());
@@ -639,9 +592,20 @@ void Formular::showAttributes()
 
         if (ImGui::Button("Save", ImVec2(0, 30)))
         {
+            if (attributes_->giveAttributeByName(chosenAttribute->getName()) == chosenAttribute)
+            {
+                exist = false;
+            }
+            else
+            {
+                exist = (attributes_->giveAttributeByName(editBuffer) == nullptr) ? false : true;
+            }
+
             if (!exist)
             {
                 exist = false;
+                attributes_->giveAttributeByName(chosenAttribute->getName())->getDescription()->setName(editBuffer);
+                component = nullptr;
                 ImGui::CloseCurrentPopup();
             }
             else
@@ -649,13 +613,36 @@ void Formular::showAttributes()
                 exist = true;
             }
         }
-
+        ImGui::SameLine();
+        if (ImGui::Button("Edit description"))
+        {
+            changingLimits = true;
+        }
+        ImGui::SameLine();
+        if (changingLimits)
+        {
+            changingLimits = chosenAttribute->getDescription()->drawInputForChangingLimits(messageHistory_);
+        }
         if (ImGui::Button("Close", ImVec2(0, 30)))
         {
+            component = nullptr;
             ImGui::CloseCurrentPopup();
             std::memset(editBuffer, 0, sizeof(editBuffer[0]));
         }
+        else
+        {
+            if (component != nullptr)
+            {
+                component->updateLimitValues();
+            }
+        }
         ImGui::EndPopup();
+    }
+
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit window"))
+    {
+        component = nullptr;
+        std::memset(editBuffer, 0, sizeof(editBuffer[0]));
     }
 
     ImGui::End();
@@ -671,14 +658,7 @@ void Formular::editAttribute(Attribute *attribute)
 
 void Formular::deleteAttribute(Attribute *attribute)
 {
-    for (auto it = components_.begin(); it < components_.end(); it++)
-    {
-        if (attribute->getName().compare(it->get()->getName()) == 0)
-        {
-            components_.erase(it);
-            break;
-        }
-    }
+    components_->deleteControlComponent(attribute);
     if (!attributes_->deleteAttribute(attribute))
     {
         messageHistory_.emplace_back(Message("Attribute does not exist!"));
@@ -812,7 +792,7 @@ int Formular::loadControlTypes(nlohmann::json json)
                 continue;
             }
 
-            if (existControlType(attributes_->giveAttribute(i)->getName()))
+            if (components_->existControlType(attributes_->giveAttribute(i)->getName()))
             {
                 continue;
             }
@@ -826,12 +806,12 @@ int Formular::loadControlTypes(nlohmann::json json)
 
         if (!editType.value().is_string())
         {
-            components_.clear();
+            components_->clear();
             messageHistory_.emplace_back(Message("Control type name must be a string!"));
             return -1;
         }
 
-        if (existControlType(editType.key()))
+        if (components_->existControlType(editType.key()))
         {
             if (!overWriteExistingControls)
             {
@@ -862,11 +842,11 @@ int Formular::loadControlTypes(nlohmann::json json)
         messageHistory_.emplace_back(Message("Either control types in file have incorrect names or you're trying to overwrite existing control types, check you file or enable overwritting."));
         return -1;
     }
-    if (tmpNumberOfLoadedControls < components_.size())
+    if (tmpNumberOfLoadedControls < components_->getSize())
     {
         messageHistory_.emplace_back(Message(std::format("Successfully loaded {} controls and some attributes were given default control types because they were missing in a file!", tmpNumberOfLoadedControls)));
     }
-    else if (tmpNumberOfLoadedControls == components_.size())
+    else if (tmpNumberOfLoadedControls == components_->getSize())
     {
         messageHistory_.emplace_back(Message(std::format("Successfully loaded {} control!s", tmpNumberOfLoadedControls)));
     }
@@ -946,22 +926,23 @@ void Formular::saveToFile()
         NFD_Quit();
         strcpy(buffer, "output");
     }
-    
+
     if (ImGui::BeginPopup("File name window", ImGuiWindowFlags_AlwaysAutoResize))
     {
-        
+
         static std::filesystem::path completedPath;
         ImGui::InputText("File name", buffer, sizeof(buffer));
         if (ImGui::Button("OK"))
         {
-            
+
             completedPath = outputPath_ / std::string(buffer).append(".json");
-            
+
             if (std::filesystem::exists(completedPath))
             {
                 ImGui::OpenPopup("File overwrite");
-                
-            } else {
+            }
+            else
+            {
                 std::fill(&buffer[0], &buffer[0] + sizeof(buffer), 0);
                 outputPath_ = completedPath;
                 chosen = true;
@@ -1040,56 +1021,3 @@ bool Formular::showWarning(std::string message)
     return false;
 }
 
-bool Formular::sameName(std::string name)
-{
-    for (auto &component : components_)
-    {
-        if (component->getName().compare(name) == 0)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-std::string Formular::getControlTypeByAttributeName(std::string attributeName)
-{
-    for (auto &component : components_)
-    {
-        if (component->getAttribute()->getName().compare(attributeName) == 0)
-        {
-            return component->getType();
-        }
-    }
-    return "";
-}
-
-bool Formular::existControlType(std::string attributeName)
-{
-    for (auto &component : components_)
-    {
-        if (component->getAttribute()->getName().compare(attributeName) == 0)
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-int Formular::positionOfComponentByAttributeName(std::string attributeName)
-{
-    for (int i = 0; i < components_.size(); ++i)
-    {
-        if (components_.at(i)->getAttribute()->getName().compare(attributeName) == 0)
-        {
-            return i;
-        }
-    }
-    return -1;
-}
-
-// save + load virtualna metoda
-// dependency injection
-// rozdelit pridavanie descriptions a attributovy
-
-// bug pri nacitani control typov druhykrat s overwritom tak vznikaju duplikaty

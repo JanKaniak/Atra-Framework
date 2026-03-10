@@ -217,6 +217,37 @@ public:
 
 //---------------------------------------------------
 
+using ClusterEditUptr = std::unique_ptr<ControlComponent>;
+class ClusterEditFactory : public Factory
+{
+private:
+    static ClusterEditFactory *instance;
+
+private:
+    std::map<EditTypeCluster, ClusterEditUptr> prototypes_;
+
+private:
+    ClusterEditFactory();
+
+    void registerPrototype();
+
+public:
+    static ClusterEditFactory *getInstance();
+    const AttributeType type_ = AttributeType::CLUSTER;
+    std::unique_ptr<ControlComponent> createEdit(std::string editType)
+    {
+        return createDefaultEdit();
+    }
+    std::unique_ptr<ControlComponent> createDefaultEdit()  {
+        if (prototypes_.size() == 0) {
+            return nullptr;
+        }
+        return prototypes_[EditTypeCluster::DEFAULT]->clone();
+    }
+};
+
+//---------------------------------------------------
+
 
 class Config
 {
@@ -241,7 +272,7 @@ public:
     FactoryR(Double, DoubleEditFactory) \
     FactoryR(Float, FloatEditFactory) \
     FactoryR(Char, CharEditFactory) \
-    FactoryR(Logic, LogicEditFactory)
+    FactoryR(Logic, LogicEditFactory) 
 
 #define FactoryR(type,factory) \
 struct AutoRegister##type##Factory { \
@@ -253,14 +284,14 @@ struct AutoRegister##type##Factory { \
 Factory_register
 #undef FactoryR
 
-/*struct AutoRegisterDoubleFactory {
+struct AutoRegisterClusterFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(DoubleEditFactory::getInstance());
+        Config::getInstance()->registerFactory(ClusterEditFactory::getInstance());
         return true;
     } ();
 };
-
+/*
 struct AutoRegisterFloatFactory {
     inline static bool autoRegister = [] () {
         

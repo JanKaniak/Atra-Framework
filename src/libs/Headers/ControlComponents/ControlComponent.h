@@ -23,6 +23,11 @@ enum class EditTypeLogic
     BUTTON
 };
 
+enum class EditTypeCluster
+{
+    DEFAULT
+};
+
 struct NUMBERSLIDER
 {
     static constexpr EditTypeNumber typeEnum = EditTypeNumber::SLIDER;
@@ -59,10 +64,9 @@ struct Button
     static constexpr std::string_view typeString = "BUTTON";
 };
 
-
 using NumberEditTypes = std::tuple<NUMBERSLIDER, NUMBERVSLIDER, NUMBERDRAG>;
 using CharEditTypes = std::tuple<CHARTEXT>;
-using LogicEditTypes = std::tuple<CHECKBOX,Button>;
+using LogicEditTypes = std::tuple<CHECKBOX, Button>;
 
 struct EditTypeNumberConverter
 {
@@ -111,7 +115,7 @@ struct EditTypeLogicConverter
     static constexpr std::string_view EnumToString(EditTypeLogic logicEditTypes)
     {
         return StructUnpack<LogicEditTypes>::unpack([&]<typename... EditTypeLogicParameter>()
-                                                   {
+                                                    {
             std::string_view type = "";
             ((EditTypeLogicParameter::typeEnum == logicEditTypes ? type = EditTypeLogicParameter::typeString : ""), ...);
             return type; });
@@ -120,23 +124,12 @@ struct EditTypeLogicConverter
     static constexpr EditTypeLogic StringToEnum(std::string_view logicEditTypes)
     {
         return StructUnpack<LogicEditTypes>::unpack([&]<typename... EditTypeLogicParameter>()
-                                                   {
+                                                    {
             EditTypeLogic type = EditTypeLogic::NOTACONTROL;
             ((EditTypeLogicParameter::typeString == logicEditTypes ? type = EditTypeLogicParameter::typeEnum : EditTypeLogic::NOTACONTROL), ...);
             return type; });
     }
 };
-
-class ConfigControlTypes {
-private:
-    std::map<AttributeType,EditTypeNumber> numberConfigControls_;
-    std::map<AttributeType,EditTypeChar> textConfigControls_;
-
-};
-
-
-
-
 
 class ControlComponent
 {
@@ -144,15 +137,15 @@ protected:
     // std::string controlType_;
 
 public:
-    virtual std::string getType() = 0;
-
-public:
     virtual void draw() = 0;
     virtual std::string getName() = 0;
     virtual ~ControlComponent() = default;
     virtual void setAttribute(Attribute *attribute) = 0;
     virtual std::unique_ptr<ControlComponent> clone() = 0;
-    virtual Attribute *getAttribute() = 0;
+    virtual Attribute *getAttribute(std::string_view name) = 0;
+    virtual bool sameName(std::string name) = 0;
+    virtual std::string getType(std::string_view name) = 0;
+    virtual void updateLimitValues() = 0;
 };
 
 template <EditTypeNumber TYPE, typename TypeT, typename AttributeT>
@@ -179,8 +172,14 @@ public:
         }
     }
     std::string getName() override { return attribute_->getName(); };
-    Attribute *getAttribute() override { return attribute_; };
-    std::string getType() override { return EditTypeNumberConverter::EnumToString(type_).data(); }
+    Attribute *getAttribute(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? attribute_ : nullptr; };
+    std::string getType(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? EditTypeNumberConverter::EnumToString(type_).data() : ""; }
+    bool sameName(std::string name) { return (attribute_->getName().compare(name) == 0) ? true : false; }
+    void updateLimitValues()
+    {
+        minimum_ = attribute_->getMinimum();
+        maximum_ = attribute_->getMaximum();
+    }
 };
 template <EditTypeNumber TYPE>
 class ControlComponentInt : public NumberBaseControlComponent<TYPE, int, AttributeInt>
@@ -225,8 +224,14 @@ public:
         }
     }
     std::string getName() override { return attributechar_->getName(); };
-    Attribute *getAttribute() override { return attributechar_; };
-    std::string getType() override { return EditTypeCharConverter::EnumToString(type_).data(); }
+    Attribute *getAttribute(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? attributechar_ : nullptr; };
+    std::string getType(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? EditTypeCharConverter::EnumToString(type_).data() : ""; }
+    bool sameName(std::string name) { return (attributechar_->getName().compare(name) == 0) ? true : false; }
+    void updateLimitValues()
+    {
+        minimum_ = attributechar_->getMinimum();
+        maximum_ = attributechar_->getMaximum();
+    }
 };
 
 template <EditTypeLogic TYPE>
@@ -245,10 +250,46 @@ public:
         {
             attributebool_ = dynamic_cast<AttributeBool *>(attribute);
             value_ = attributebool_->getValue();
-            
         }
     }
     std::string getName() override { return attributebool_->getName(); };
-    Attribute *getAttribute() override { return attributebool_; };
-    std::string getType() override { return EditTypeLogicConverter::EnumToString(type_).data(); }
+    Attribute *getAttribute(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? attributebool_ : nullptr; };
+    std::string getType(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? EditTypeLogicConverter::EnumToString(type_).data() : nullptr; }
+    bool sameName(std::string name) { return (attributebool_->getName().compare(name) == 0) ? true : false; }
+    void updateLimitValues() { }
+};
+
+class ControlComponentsContainer;
+
+class ControlComponentCluster : public ControlComponent
+{
+private:
+    AttributeCluster *attributecluster_;
+    ControlComponentsContainer *components_;
+    ImVec2 showAttributesWindowSize_;
+    bool drawed = false;
+
+public:
+    ControlComponentCluster()
+    {
+        showAttributesWindowSize_ = ImVec2(600, 800);
+    }
+    static constexpr EditTypeCluster type_ = EditTypeCluster::DEFAULT;
+    void draw() override;
+    std::string getName() override { return attributecluster_->getName(); }
+    void setAttribute(Attribute *attribute);
+    std::unique_ptr<ControlComponent> clone() { return std::make_unique<ControlComponentCluster>(*this); }
+    Attribute *getAttribute(std::string_view name) override
+    {
+        if (!name.empty() && sameName(name.data()))
+        {
+            return attributecluster_;
+        }
+        return nullptr;
+    };
+    std::string getType(std::string_view name) override;
+    ControlComponentsContainer *getContainer() { return components_; }
+    bool sameName(std::string name);
+    void updateLimitValues();
+    
 };
