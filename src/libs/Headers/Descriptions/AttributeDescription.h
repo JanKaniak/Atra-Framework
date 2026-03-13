@@ -122,6 +122,8 @@ struct AttributeTypeConverter
     }
 };
 
+class AttributeDescriptionsContainer;
+
 class AttributeDescription
 {
 protected:
@@ -142,10 +144,13 @@ public:
     inline ImGuiDataType getDataType() { return dataType_; }
     inline void setAssigned(bool assigned) { assigned_ = assigned;}
     inline bool isAssigned() {return assigned_;}
+    
 
 public:
-    virtual ~AttributeDescription() = default;
+    virtual ~AttributeDescription() = 0;
     virtual std::unique_ptr<AttributeDescription> clone() = 0;
     virtual bool jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) = 0;
     virtual bool drawInputForChangingLimits(std::vector<Message>& messagesHistory) = 0;
+    virtual void addItselfToVectorByCondition(std::vector<AttributeDescription*>& vector,AttributeType type)= 0;
+    virtual AttributeDescriptionsContainer* getContainer(std::string_view descriptionName) = 0;
 };

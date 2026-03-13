@@ -40,6 +40,7 @@ public:
     bool saveToJson(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
 
     void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message>& messagesHistory) override;
+    ~IntegerNumberBaseAttributeClass() override = default;
 };
 
 template <typename AttributeTypeClass, AttributeType EnumTypeT>
@@ -141,6 +142,8 @@ public:
     }
     bool getValue() { return value_; }
     void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message>& messagesHistory) override;
+    ~AttributeBool() override = default;
+    
 
 };
 
@@ -159,11 +162,11 @@ private:
     std::unique_ptr<AttributesContainer> value_;
     AttributeDescriptionCluster *desc_;
 
-
 public:
 AttributeCluster();
 AttributeCluster(const AttributeCluster& attributeCluster);
 AttributesContainer* getAttributeContainer() { return value_.get();}
+~AttributeCluster() override;
 
 public:
     

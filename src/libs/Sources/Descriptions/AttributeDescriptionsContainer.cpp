@@ -95,3 +95,9 @@ bool AttributeDescriptionsContainer::deleteLastDescription(std::vector<Message>&
 
     
 }
+
+void AttributeDescriptionsContainer::findDescriptionsByType(std::vector<AttributeDescription*>& vector,AttributeType type) {
+    for (auto it = attributeDescs_.begin(); it != attributeDescs_.end(); ++it) {
+        it->get()->addItselfToVectorByCondition(vector,type);
+    }
+}

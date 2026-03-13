@@ -13,7 +13,7 @@ enum class EditTypeNumber
 enum class EditTypeChar
 {
     NOTACONTROL,
-    TEXT,
+    TEXT
 };
 
 enum class EditTypeLogic
@@ -25,7 +25,9 @@ enum class EditTypeLogic
 
 enum class EditTypeCluster
 {
-    DEFAULT
+    NOTACONTROL,
+    TREE,
+    WINDOW
 };
 
 struct NUMBERSLIDER
@@ -64,77 +66,57 @@ struct Button
     static constexpr std::string_view typeString = "BUTTON";
 };
 
+struct ClusterTree
+{
+    static constexpr EditTypeCluster typeEnum = EditTypeCluster::TREE;
+    static constexpr std::string_view typeString = "TREE";
+};
+
+struct ClusterWindow
+{
+    static constexpr EditTypeCluster typeEnum = EditTypeCluster::WINDOW;
+    static constexpr std::string_view typeString = "WINDOW";
+};
+
 using NumberEditTypes = std::tuple<NUMBERSLIDER, NUMBERVSLIDER, NUMBERDRAG>;
 using CharEditTypes = std::tuple<CHARTEXT>;
 using LogicEditTypes = std::tuple<CHECKBOX, Button>;
+using ClusterEditTypes = std::tuple<ClusterTree,ClusterWindow>;
 
-struct EditTypeNumberConverter
+
+
+template <typename EditTypeEnumT, typename TupleT>
+struct EditTypeTemplate
 {
-    static constexpr std::string_view EnumToString(EditTypeNumber editTypeNumber)
+    static constexpr std::string_view EnumToString(EditTypeEnumT editType)
     {
-        return StructUnpack<NumberEditTypes>::unpack([&]<typename... EditTypeNumberParameter>()
+        return StructUnpack<TupleT>::unpack([&]<typename... EditTypeParameter>()
                                                      {
             std::string_view type = "";
-            ((EditTypeNumberParameter::typeEnum == editTypeNumber ? type = EditTypeNumberParameter::typeString : ""), ...);
+            ((EditTypeParameter::typeEnum == editType ? type = EditTypeParameter::typeString : ""), ...);
             return type; });
     }
 
-    static constexpr EditTypeNumber StringToEnum(std::string_view editTypeNumber)
+    static constexpr EditTypeEnumT StringToEnum(std::string_view editType)
     {
-        return StructUnpack<NumberEditTypes>::unpack([&]<typename... EditTypeNumberParameter>()
+        return StructUnpack<TupleT>::unpack([&]<typename... EditTypeParameter>()
                                                      {
-            EditTypeNumber type = EditTypeNumber::SLIDER;
-            ((EditTypeNumberParameter::typeString == editTypeNumber ? type = EditTypeNumberParameter::typeEnum : EditTypeNumber::NOTACONTROL), ...);
+            EditTypeEnumT type = static_cast<EditTypeEnumT>(1);
+            ((EditTypeParameter::typeString == editType ? type = EditTypeParameter::typeEnum : EditTypeEnumT::NOTACONTROL), ...);
             return type; });
     }
 };
 
-struct EditTypeCharConverter
-{
-    static constexpr std::string_view EnumToString(EditTypeChar charEditTypes)
-    {
-        return StructUnpack<CharEditTypes>::unpack([&]<typename... EditTypeCharParameter>()
-                                                   {
-            std::string_view type = "";
-            ((EditTypeCharParameter::typeEnum == charEditTypes ? type = EditTypeCharParameter::typeString : ""), ...);
-            return type; });
-    }
+struct EditTypeNumberConverter : public EditTypeTemplate<EditTypeNumber, NumberEditTypes>{};
+struct EditTypeCharConverter : public EditTypeTemplate<EditTypeChar, CharEditTypes>{};
+struct EditTypeLogicConverter : public EditTypeTemplate<EditTypeLogic, LogicEditTypes>{};
+struct EditTypeClusterConverter : public EditTypeTemplate<EditTypeCluster, ClusterEditTypes>{};
 
-    static constexpr EditTypeChar StringToEnum(std::string_view charEditTypes)
-    {
-        return StructUnpack<CharEditTypes>::unpack([&]<typename... EditTypeCharParameter>()
-                                                   {
-            EditTypeChar type = EditTypeChar::NOTACONTROL;
-            ((EditTypeCharParameter::typeString == charEditTypes ? type = EditTypeCharParameter::typeEnum : EditTypeChar::NOTACONTROL), ...);
-            return type; });
-    }
-};
 
-struct EditTypeLogicConverter
-{
-    static constexpr std::string_view EnumToString(EditTypeLogic logicEditTypes)
-    {
-        return StructUnpack<LogicEditTypes>::unpack([&]<typename... EditTypeLogicParameter>()
-                                                    {
-            std::string_view type = "";
-            ((EditTypeLogicParameter::typeEnum == logicEditTypes ? type = EditTypeLogicParameter::typeString : ""), ...);
-            return type; });
-    }
-
-    static constexpr EditTypeLogic StringToEnum(std::string_view logicEditTypes)
-    {
-        return StructUnpack<LogicEditTypes>::unpack([&]<typename... EditTypeLogicParameter>()
-                                                    {
-            EditTypeLogic type = EditTypeLogic::NOTACONTROL;
-            ((EditTypeLogicParameter::typeString == logicEditTypes ? type = EditTypeLogicParameter::typeEnum : EditTypeLogic::NOTACONTROL), ...);
-            return type; });
-    }
-};
+class ControlComponentsContainer;
 
 class ControlComponent
 {
-protected:
-    // std::string controlType_;
 
 public:
     virtual void draw() = 0;
@@ -146,6 +128,7 @@ public:
     virtual bool sameName(std::string name) = 0;
     virtual std::string getType(std::string_view name) = 0;
     virtual void updateLimitValues() = 0;
+    virtual ControlComponentsContainer* getContainer() = 0;
 };
 
 template <EditTypeNumber TYPE, typename TypeT, typename AttributeT>
@@ -180,6 +163,9 @@ public:
         minimum_ = attribute_->getMinimum();
         maximum_ = attribute_->getMaximum();
     }
+
+    private:
+    ControlComponentsContainer* getContainer() { return nullptr;}
 };
 template <EditTypeNumber TYPE>
 class ControlComponentInt : public NumberBaseControlComponent<TYPE, int, AttributeInt>
@@ -232,6 +218,9 @@ public:
         minimum_ = attributechar_->getMinimum();
         maximum_ = attributechar_->getMaximum();
     }
+
+    private:
+    ControlComponentsContainer* getContainer() { return nullptr;}
 };
 
 template <EditTypeLogic TYPE>
@@ -257,13 +246,17 @@ public:
     std::string getType(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? EditTypeLogicConverter::EnumToString(type_).data() : nullptr; }
     bool sameName(std::string name) { return (attributebool_->getName().compare(name) == 0) ? true : false; }
     void updateLimitValues() { }
+
+    private:
+    ControlComponentsContainer* getContainer() { return nullptr;}
 };
 
-class ControlComponentsContainer;
 
+
+template <EditTypeCluster TYPE>
 class ControlComponentCluster : public ControlComponent
 {
-private:
+protected:
     AttributeCluster *attributecluster_;
     ControlComponentsContainer *components_;
     ImVec2 showAttributesWindowSize_;
@@ -274,11 +267,9 @@ public:
     {
         showAttributesWindowSize_ = ImVec2(600, 800);
     }
-    static constexpr EditTypeCluster type_ = EditTypeCluster::DEFAULT;
-    void draw() override;
+    static constexpr EditTypeCluster type_ = TYPE;
     std::string getName() override { return attributecluster_->getName(); }
     void setAttribute(Attribute *attribute);
-    std::unique_ptr<ControlComponent> clone() { return std::make_unique<ControlComponentCluster>(*this); }
     Attribute *getAttribute(std::string_view name) override
     {
         if (!name.empty() && sameName(name.data()))
@@ -289,7 +280,9 @@ public:
     };
     std::string getType(std::string_view name) override;
     ControlComponentsContainer *getContainer() { return components_; }
-    bool sameName(std::string name);
     void updateLimitValues();
+    bool sameName(std::string name);
+
+
     
 };

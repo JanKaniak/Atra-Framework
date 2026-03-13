@@ -15,12 +15,12 @@ Formular::Formular()
     showSettingWindow_ = false;
     saveWindow_ = false;
 
-    attributes_->addDescriptions("Address", AttributeType::CLUSTER, messageHistory_);
+    /*attributes_->addDescriptions("Address", AttributeType::CLUSTER, messageHistory_);
     AttributeDescriptionCluster *tmp = dynamic_cast<AttributeDescriptionCluster *>(attributes_->getDescription(0));
     tmp->getDescription()->addDescriptions("City Name", AttributeType::INT, messageHistory_);
     tmp->getDescription()->addDescriptions("hora7plast", AttributeType::FLOAT, messageHistory_);
 
-    attributes_->addDescriptions("TRUTH", AttributeType::INT, messageHistory_);
+    attributes_->addDescriptions("TRUTH", AttributeType::INT, messageHistory_);*/
 }
 
 bool Formular::addControlType(std::string attributeName, std::string editType)
@@ -215,18 +215,8 @@ void Formular::showControls()
         ImGui::BeginDisabled(attributes_->getNumberOfDescriptions() == 0);
         if (ImGui::Button("Generate attributes from descriptions", ImVec2(0, 30)))
         {
-            int size = messageHistory_.size();
-            if (attributes_->createAttributes(messageHistory_))
-            {
-                messageHistory_.emplace_back(Message("Attributes were successfuly generated from descriptions!"));
-            }
-            else
-            {
-                if (size == messageHistory_.size())
-                {
-                    messageHistory_.emplace_back(Message("All attributes with actual descriptions are generated!"));
-                }
-            }
+            attributes_->createAttributes(messageHistory_);
+            messageHistory_.emplace_back(Message("All attributes with actual descriptions are generated!"));
         }
         ImGui::EndDisabled();
 
@@ -341,8 +331,18 @@ void Formular::showAddDescriptionWindow()
     static char buffer[40] = "Attribute";
     static int selected;
     static std::string chosenType;
+    static std::string chosenLevel;
     static std::string category = "NUMERIC";
     static bool addedAndCorrect = false;
+    static std::vector<AttributeDescription *> clusterDescriptions;
+    static AttributeDescriptionsContainer *descriptionContainer;
+
+    if (clusterDescriptions.empty())
+    {
+        clusterDescriptions.push_back(nullptr);
+        attributes_->findDescriptionsByType(clusterDescriptions, AttributeType::CLUSTER);
+        chosenLevel = "NULL";
+    }
 
     if (ImGui::BeginPopupModal("Edit window", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
@@ -351,14 +351,14 @@ void Formular::showAddDescriptionWindow()
         {
             selected = 0;
             category = "NUMERIC";
-            chosenType = "";
+            chosenType.clear();
         }
         ImGui::SameLine();
         if (ImGui::RadioButton("Text", selected == 1))
         {
             selected = 1;
             category = "TEXT";
-            chosenType = "";
+            chosenType.clear();
         }
 
         ImGui::SameLine();
@@ -366,14 +366,14 @@ void Formular::showAddDescriptionWindow()
         {
             selected = 2;
             category = "LOGIC";
-            chosenType = "";
+            chosenType.clear();
         }
         ImGui::SameLine();
         if (ImGui::RadioButton("Other", selected == 3))
         {
             selected = 3;
             category = "OTHER";
-            chosenType = "";
+            chosenType.clear();
         }
         ImGui::EndDisabled();
 
@@ -383,112 +383,93 @@ void Formular::showAddDescriptionWindow()
             ImGui::Text("Attribute with this name already exists!");
         }
 
+        if (ImGui::BeginCombo("Attribute level", chosenLevel.c_str()))
+        {
+            for (auto descrption : clusterDescriptions)
+            {
+                if (descrption == nullptr)
+                {
+                    bool selected = (chosenLevel == "NULL");
+                    if (ImGui::Selectable("NULL", selected))
+                    {
+                        chosenLevel = "NULL";
+                    }
+                    if (selected)
+                    {
+                        ImGui::SetItemDefaultFocus();
+                    }
+                    continue;
+                }
+                bool selected = (chosenLevel == descrption->getName());
+                if (ImGui::Selectable(descrption->getName().c_str(), selected))
+                {
+                    chosenLevel = descrption->getName();
+                }
+                if (selected)
+                {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+
         if (!addedAndCorrect)
         {
-            switch (selected)
+            if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
             {
-
-            case 0:
-                if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
+                for (int i = 0; i < attributes_->getRegisteredDescriptionsTypes().size(); ++i)
                 {
-                    for (int i = 0; i < attributes_->getRegisteredDescriptionsTypes().size(); ++i)
+                    if (attributes_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
                     {
-                        if (attributes_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
-                        {
-                            continue;
-                        }
-                        bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
-                        if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
-                        {
-                            chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
-                        }
-                        if (selected)
-                        {
-                            ImGui::SetItemDefaultFocus();
-                        }
+                        continue;
                     }
-
-                    ImGui::EndCombo();
-                }
-                break;
-
-            case 1:
-                break;
-            case 2:
-                if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
-                {
-                    for (int i = 0; i < attributes_->getRegisteredDescriptionsTypes().size(); ++i)
+                    bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
+                    if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
                     {
-                        if (attributes_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
-                        {
-                            continue;
-                        }
-                        bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
-                        if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
-                        {
-                            chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
-                        }
-                        if (selected)
-                        {
-                            ImGui::SetItemDefaultFocus();
-                        }
+                        chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
                     }
-
-                    ImGui::EndCombo();
-                }
-                break;
-            case 3:
-                if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
-                {
-                    for (int i = 0; i < attributes_->getRegisteredDescriptionsTypes().size(); ++i)
+                    if (selected)
                     {
-                        if (attributes_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
-                        {
-                            continue;
-                        }
-                        bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
-                        if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
-                        {
-                            chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
-                        }
-                        if (selected)
-                        {
-                            ImGui::SetItemDefaultFocus();
-                        }
+                        ImGui::SetItemDefaultFocus();
                     }
-
-                    ImGui::EndCombo();
                 }
-                break;
 
-            default:
-                break;
+                ImGui::EndCombo();
             }
         }
         else
         {
-            ImGui::Text("%s", attributes_->getDescription(attributes_->getNumberOfDescriptions() - 1)->getTypeString().data());
+            ImGui::Text("%s", descriptionContainer->getLast()->getTypeString().data());
         }
 
         if (!addedAndCorrect)
         {
+
+            ImGui::BeginDisabled(chosenType.empty());
             if (ImGui::Button("Add description"))
             {
+                if (descriptionContainer == nullptr)
+                {
+                    descriptionContainer = attributes_->getDescriptionContainer(chosenLevel);
+                }
 
-                nameExists = attributes_->existDescription(buffer);
+                nameExists = descriptionContainer->existsDescription(buffer);
                 if (!nameExists)
                 {
-                    attributes_->addDescriptions(std::string(buffer), AttributeTypeConverter::StringToEnum(chosenType), messageHistory_);
+                    descriptionContainer->addDescriptions(std::string(buffer), AttributeTypeConverter::StringToEnum(chosenType), messageHistory_);
                     addedAndCorrect = true;
                 }
             }
+            ImGui::EndDisabled();
         }
         else
         {
-            addedAndCorrect = attributes_->getDescription(attributes_->getNumberOfDescriptions() - 1)->drawInputForChangingLimits(messageHistory_);
-            if (ImGui::Button("Save"))
+            addedAndCorrect = descriptionContainer->getLast()->drawInputForChangingLimits(messageHistory_);
+            if (!addedAndCorrect)
             {
-                addedAndCorrect = false;
+                chosenLevel = "NULL";
+                descriptionContainer = nullptr;
+                clusterDescriptions.clear();
             }
         }
         ImGui::SameLine();
@@ -496,6 +477,10 @@ void Formular::showAddDescriptionWindow()
         {
             ImGui::CloseCurrentPopup();
             addedAndCorrect = false;
+            chosenType.clear();
+            chosenLevel = "NULL";
+            descriptionContainer = nullptr;
+            clusterDescriptions.clear();
         }
         ImGui::EndPopup();
     }
@@ -1020,4 +1005,3 @@ bool Formular::showWarning(std::string message)
     }
     return false;
 }
-

@@ -2,9 +2,13 @@
 
 #include <format>
 
+AttributeDescription::~AttributeDescription() = default;
+
+
+
 // INTEGER NUMBERS -------------------------------------------
-template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory)
+template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory)
 {
     if (minimum < maximum)
     {
@@ -16,8 +20,8 @@ bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT mi
     return false;
 }
 
-template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
     {
@@ -40,8 +44,8 @@ bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohman
     return setLimit(json["Minimum"].get<TypeT>(), json["Maximum"].get<TypeT>(), messagesHistory);
 }
 
-template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
+template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
 {
     if (!ImGui::IsPopupOpen("Edit limit for description"))
     {
@@ -89,11 +93,18 @@ bool IntegerNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChang
     return true;
 }
 
+template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+void IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::addItselfToVectorByCondition(std::vector<AttributeDescription*>& vector,AttributeType type) {
+    if (type == AttributeTypeEnumT) {
+        vector.emplace_back(this);
+    }
+}
+
 //------------------------------------------------------
 
 // DECIMAL NUMBERS -----------------------------------------------------
-template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory)
+template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory)
 {
 
     if (minimum < maximum)
@@ -106,8 +117,8 @@ bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT mi
     return false;
 }
 
-template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
     {
@@ -131,8 +142,8 @@ bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohman
     return setLimit(json["Minimum"].get<TypeT>(), json["Maximum"].get<TypeT>(), messagesHistory);
 }
 
-template <typename TypeT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
+template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
 {
     if (!ImGui::IsPopupOpen("Edit limit for description"))
     {
@@ -178,6 +189,13 @@ bool DecimalNumberBaseClass<TypeT, ImGuiDataTypeT, TypeEnumT>::drawInputForChang
         return false;
     }
     return true;
+}
+
+template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+void DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::addItselfToVectorByCondition(std::vector<AttributeDescription*>& vector,AttributeType type) {
+    if (type == AttributeTypeEnumT) {
+        vector.emplace_back(this);
+    }
 }
 
 //-------------------------------------------------------------
@@ -202,6 +220,12 @@ bool AttributeDescription_bool::jsonParse(nlohmann::ordered_json &json, std::vec
     return true;
 }
 
+void AttributeDescription_bool::addItselfToVectorByCondition(std::vector<AttributeDescription*>& vector,AttributeType type) {
+    if (type == type_) {
+        vector.emplace_back(this);
+    }
+}
+
 //----------------------------------------------------------------
 
 // CLUSTER --------------------------------------------------------
@@ -210,154 +234,29 @@ bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::v
 
 bool AttributeDescriptionCluster::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
 {
-
-    static char buffer[40] = "Attribute";
-    static int selected;
-    static std::string chosenType;
-    static std::string category = "NUMERIC";
-    static bool addedAndCorrect = false;
-    static bool nameExists = false;
-
-    if (!ImGui::IsPopupOpen(std::format("Edit window##{}", name_).c_str()))
-    {
-        ImGui::OpenPopup(std::format("Edit window for cluster attribute##{}", name_).c_str());
-    }
-
-    if (ImGui::BeginPopupModal(std::format("Edit window for cluster attribute##{}", name_).c_str(), nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        ImGui::BeginDisabled(addedAndCorrect);
-        if (ImGui::RadioButton("Numeric", selected == 0))
-        {
-            selected = 0;
-            category = "NUMERIC";
-            chosenType = "";
-        }
-        ImGui::SameLine();
-        if (ImGui::RadioButton("Text", selected == 1))
-        {
-            selected = 1;
-            category = "TEXT";
-            chosenType = "";
-        }
-
-        ImGui::SameLine();
-        if (ImGui::RadioButton("Logic", selected == 2))
-        {
-            selected = 2;
-            category = "LOGIC";
-            chosenType = "";
-        }
-
-        if (ImGui::RadioButton("Other", selected == 3))
-        {
-            selected = 3;
-            category = "OTHER";
-            chosenType = "";
-        }
-        ImGui::EndDisabled();
-
-        ImGui::InputText("Attribute name", buffer, sizeof(buffer));
-        if (nameExists)
-        {
-            ImGui::Text("Attribute with this name already exists!");
-        }
-
-        if (!addedAndCorrect)
-        {
-            switch (selected)
-            {
-
-            case 0:
-                if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
-                {
-                    for (int i = 0; i < descriptions_->getRegisteredDescriptionsTypes().size(); ++i)
-                    {
-                        if (descriptions_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
-                        {
-                            continue;
-                        }
-                        bool selected = (chosenType == AttributeTypeConverter::EnumToString(descriptions_->getRegisteredDescriptionsTypes().at(i).getType()));
-                        if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(descriptions_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
-                        {
-                            chosenType = AttributeTypeConverter::EnumToString(descriptions_->getRegisteredDescriptionsTypes().at(i).getType());
-                        }
-                        if (selected)
-                        {
-                            ImGui::SetItemDefaultFocus();
-                        }
-                    }
-
-                    ImGui::EndCombo();
-                }
-                break;
-
-            case 1:
-                break;
-            case 2:
-                if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
-                {
-                    for (int i = 0; i < descriptions_->getRegisteredDescriptionsTypes().size(); ++i)
-                    {
-                        if (descriptions_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
-                        {
-                            continue;
-                        }
-                        bool selected = (chosenType == AttributeTypeConverter::EnumToString(descriptions_->getRegisteredDescriptionsTypes().at(i).getType()));
-                        if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(descriptions_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
-                        {
-                            chosenType = AttributeTypeConverter::EnumToString(descriptions_->getRegisteredDescriptionsTypes().at(i).getType());
-                        }
-                        if (selected)
-                        {
-                            ImGui::SetItemDefaultFocus();
-                        }
-                    }
-
-                    ImGui::EndCombo();
-                }
-
-            default:
-                break;
-            }
-        }
-        else
-        {
-            ImGui::Text("%s", descriptions_->getDescription(descriptions_->getNumberOfDescriptions() - 1)->getTypeString().data());
-        }
-
-        if (!addedAndCorrect)
-        {
-            if (ImGui::Button("Add description"))
-            {
-
-                nameExists = (descriptions_->getDescription(buffer) != nullptr) ? true : false;
-                if (!nameExists)
-                {
-                    descriptions_->addDescriptions(std::string(buffer), AttributeTypeConverter::StringToEnum(chosenType), messagesHistory);
-                    addedAndCorrect = true;
-                }
-            }
-        }
-        else
-        {
-            addedAndCorrect = descriptions_->getDescription(descriptions_->getNumberOfDescriptions() - 1)->drawInputForChangingLimits(messagesHistory);
-            if (ImGui::Button("Save"))
-            {
-                addedAndCorrect = false;
-            }
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Close"))
-        {
-            addedAndCorrect = false;
-            ImGui::CloseCurrentPopup();
-            ImGui::EndPopup();
-            return false;
-        }
-        ImGui::EndPopup();
-    }
-    return true;
+    return false;
 }
+
+
+void AttributeDescriptionCluster::addItselfToVectorByCondition(std::vector<AttributeDescription*>& vector,AttributeType type) {
+    if (type == type_) {
+        vector.emplace_back(this);
+    }
+    descriptions_->findDescriptionsByType(vector,type);
+}
+
+AttributeDescriptionsContainer* AttributeDescriptionCluster::getContainer(std::string_view descriptionName) {
+    if (descriptionName.empty() || (descriptionName.compare(name_) == 0)) {
+        return descriptions_.get();
+    }
+    return descriptions_->findDescriptionContainer(descriptionName);
+}
+
+AttributeDescriptionCluster::~AttributeDescriptionCluster() {
+    descriptions_ = nullptr;
+}
+
+
 
 std::unique_ptr<AttributeDescription> AttributeDescription_int::clone() { return std::make_unique<AttributeDescription_int>(*this); }
 

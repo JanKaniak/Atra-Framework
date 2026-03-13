@@ -2,6 +2,7 @@
 #include "NumericInput.h"
 #include "CharacterInput.h"
 #include "LogicInput.h"
+#include "ControlComponentCluster.h"
 
 #include <map>
 
@@ -228,7 +229,7 @@ private:
 
 private:
     ClusterEditFactory();
-
+    template <typename EditTypeLogicT>
     void registerPrototype();
 
 public:
@@ -236,13 +237,18 @@ public:
     const AttributeType type_ = AttributeType::CLUSTER;
     std::unique_ptr<ControlComponent> createEdit(std::string editType)
     {
-        return createDefaultEdit();
+        EditTypeCluster edit = EditTypeClusterConverter::StringToEnum(editType);
+        if (edit == EditTypeCluster::NOTACONTROL)
+        {
+            return nullptr;
+        }
+        return prototypes_[edit]->clone();
     }
     std::unique_ptr<ControlComponent> createDefaultEdit()  {
         if (prototypes_.size() == 0) {
             return nullptr;
         }
-        return prototypes_[EditTypeCluster::DEFAULT]->clone();
+        return prototypes_[EditTypeCluster::TREE]->clone();
     }
 };
 

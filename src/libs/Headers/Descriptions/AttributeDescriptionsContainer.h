@@ -21,7 +21,7 @@ class AttributeDescriptionsContainer {
         bool addDescriptions(AttributeType type,nlohmann::ordered_json &json, std::vector<Message>& messagesHistory);
         bool addDescriptions(std::string attributeName,AttributeType type, std::vector<Message>& messagesHistory);
         AttributeDescription* getDescription(std::string name);
-        inline AttributeDescription* getDescription(int i) { return attributeDescs_.at(i).get();}
+        inline AttributeDescription* getDescription(int i) { return (i >= 0 && i < attributeDescs_.size()) ? attributeDescs_.at(i).get() : nullptr;}
         inline int getSize() { return attributeDescs_.size();}
 
         inline AttributeDescription* getLast() { 
@@ -30,7 +30,6 @@ class AttributeDescriptionsContainer {
             }
             return attributeDescs_.at(attributeDescs_.size() - 1).get(); 
         }
-        inline int getNumberOfDescriptions() { return attributeDescs_.size();}
         bool deleteDescription(AttributeDescription *description);
         inline std::vector<AttributeTypeC> getRegisteredDescriptionsTypes() { return descFactory_->getRegisteredDescriptionsTypes();}
         bool deleteLastDescription(std::vector<Message>& messagesHistory);
@@ -43,5 +42,22 @@ class AttributeDescriptionsContainer {
             }
             return false;
             
+        }
+        void findDescriptionsByType(std::vector<AttributeDescription*>& vector,AttributeType type);
+        AttributeDescriptionsContainer* findDescriptionContainer(std::string_view descriptionName) {
+            if (descriptionName.empty()) {
+                return this;
+            }
+            for (int i = 0; i < attributeDescs_.size(); ++i) {
+                AttributeDescriptionsContainer* container = attributeDescs_.at(i)->getContainer(descriptionName);
+                if (container != nullptr) {
+                    return container;
+                }
+            }
+            return this;
+        }
+        ~AttributeDescriptionsContainer() {
+            descFactory_ = nullptr;
+            attributeDescs_.clear();
         }
 };

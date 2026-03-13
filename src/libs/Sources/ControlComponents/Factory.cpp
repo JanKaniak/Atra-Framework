@@ -167,13 +167,11 @@ inline void LogicEditFactory::registerPrototype()
 
 // CLUSTER
 
-// BOOL
-
 ClusterEditFactory *ClusterEditFactory::instance = nullptr;
 
 ClusterEditFactory::ClusterEditFactory() : Factory(AttributeType::CLUSTER)
 {
-    this->registerPrototype();
+    this->registerPrototype<Tree>();
 }
 
 ClusterEditFactory *ClusterEditFactory::getInstance()
@@ -186,13 +184,14 @@ ClusterEditFactory *ClusterEditFactory::getInstance()
     return instance;
 }
 
+template <typename EditTypeClusterT>
 inline void ClusterEditFactory::registerPrototype()
 {
-    if (!findInVector(nameOfControlTypesVector_, "DEFAULT"))
+    if (!findInVector(nameOfControlTypesVector_, EditTypeClusterConverter::EnumToString(EditTypeClusterT::type_).data()))
     {
-        nameOfControlTypesVector_.emplace_back("DEFAULT");
+        nameOfControlTypesVector_.emplace_back(EditTypeClusterConverter::EnumToString(EditTypeClusterT::type_));
     }
-    prototypes_[EditTypeCluster::DEFAULT] = std::move(std::make_unique<ControlComponentCluster>());
+    prototypes_[EditTypeClusterT::type_] = std::move(std::make_unique<EditTypeClusterT>());
 }
 
 
