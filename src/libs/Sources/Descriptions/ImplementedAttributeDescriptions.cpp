@@ -245,11 +245,11 @@ void AttributeDescriptionCluster::addItselfToVectorByCondition(std::vector<Attri
     descriptions_->findDescriptionsByType(vector,type);
 }
 
-AttributeDescriptionsContainer* AttributeDescriptionCluster::getContainer(std::string_view descriptionName) {
-    if (descriptionName.empty() || (descriptionName.compare(name_) == 0)) {
+AttributeDescriptionsContainer* AttributeDescriptionCluster::getContainer(std::string_view descriptionName,uint64_t descriptionId) {
+    if (descriptionName.empty() || (descriptionName.compare(name_) == 0 && descriptionId == id_)) {
         return descriptions_.get();
     }
-    return descriptions_->findDescriptionContainer(descriptionName);
+    return descriptions_->findDescriptionContainer(descriptionName, descriptionId);
 }
 
 AttributeDescriptionCluster::~AttributeDescriptionCluster() {

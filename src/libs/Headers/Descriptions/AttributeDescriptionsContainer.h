@@ -1,6 +1,7 @@
 #pragma once
 #include "json.hpp"
 #include "DescriptionFactory.h"
+#include "GlobalLastIdOfObject.h"
 
 
 #include <vector>
@@ -16,6 +17,7 @@ class AttributeDescriptionsContainer {
     private:
         std::vector<std::unique_ptr<AttributeDescription>> attributeDescs_;
         DescFactory* descFactory_;
+        GlobalLastIdOfObject* lastId_;
     public:
         AttributeDescriptionsContainer();
         bool addDescriptions(AttributeType type,nlohmann::ordered_json &json, std::vector<Message>& messagesHistory);
@@ -44,12 +46,9 @@ class AttributeDescriptionsContainer {
             
         }
         void findDescriptionsByType(std::vector<AttributeDescription*>& vector,AttributeType type);
-        AttributeDescriptionsContainer* findDescriptionContainer(std::string_view descriptionName) {
-            if (descriptionName.empty()) {
-                return this;
-            }
+        AttributeDescriptionsContainer* findDescriptionContainer(std::string_view descriptionName,uint64_t descriptionId) {
             for (int i = 0; i < attributeDescs_.size(); ++i) {
-                AttributeDescriptionsContainer* container = attributeDescs_.at(i)->getContainer(descriptionName);
+                AttributeDescriptionsContainer* container = attributeDescs_.at(i)->getContainer(descriptionName,descriptionId);
                 if (container != nullptr) {
                     return container;
                 }

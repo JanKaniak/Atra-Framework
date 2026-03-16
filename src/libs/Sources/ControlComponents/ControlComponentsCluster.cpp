@@ -11,7 +11,6 @@ bool ControlComponentCluster<TYPE>::sameName(std::string name)
     return false;
 }
 
-
 template <EditTypeCluster TYPE>
 std::string ControlComponentCluster<TYPE>::getType(std::string_view name)
 {
@@ -29,36 +28,32 @@ void ControlComponentCluster<TYPE>::setAttribute(Attribute *attribute)
     {
         attributecluster_ = dynamic_cast<AttributeCluster *>(attribute);
         components_ = new ControlComponentsContainer();
+        components_->changeAttributesContainer(attributecluster_->getAttributeContainer());
     }
 }
 
 template <EditTypeCluster TYPE>
 void ControlComponentCluster<TYPE>::updateLimitValues()
-    {
-        for (int i = 0; i < components_->getSize();++i) {
-            components_->getComponent(i)->updateLimitValues();
-        }
-    }
-
-
-
-
-
-void Tree::draw()
 {
-    if (ImGui::TreeNode(attributecluster_->getName().c_str())) {
-        for (int i = 0; i < components_->getSize(); ++i) {
-            if (ImGui::TreeNodeEx(components_->getComponent(i)->getName().c_str(),ImGuiTreeNodeFlags_Leaf)) {
-                components_->getComponent(i)->draw();
+    for (int i = 0; i < components_->getSize(); ++i)
+    {
+        components_->getComponent(i)->updateLimitValues();
+    }
+}
+
+void Tree::draw(std::vector<Message> &messageHistory)
+{
+    static Attribute *chosenAttribute;
+    if (ImGui::TreeNode(attributecluster_->getName().c_str()))
+    {
+        for (int i = 0; i < components_->getSize(); ++i)
+        {
+            if (ImGui::TreeNodeEx(components_->getComponent(i)->getName().c_str(), ImGuiTreeNodeFlags_Leaf))
+            {
+                components_->draw(messageHistory);
                 ImGui::TreePop();
             }
         }
         ImGui::TreePop();
     }
-
-
-
-    
-    
 }
-

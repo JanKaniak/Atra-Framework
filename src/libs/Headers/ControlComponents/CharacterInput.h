@@ -13,7 +13,7 @@ class TextField : public ControlComponentChar<EditTypeChar::TEXT> {
             minimumWidth_ = 100;
         }
 
-        void draw() override {
+        void draw(std::vector<Message> &messageHistory) override {
             ImGui::InputText(attributechar_->getName().c_str(),&value_,sizeof(value_));
         }
         std::unique_ptr<ControlComponent> clone() override { return std::make_unique<TextField>(*this); };

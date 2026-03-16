@@ -55,10 +55,11 @@ private:
 private:
     AttributeType numAttributeType[2] = {AttributeType::INT, AttributeType::DOUBLE};
     AttributeType textAttributeType[1] = {AttributeType::CHAR};
-    Attribute *chosenAttribute;
+    
 
 private:
 private:
+    std::unique_ptr<AttributeDescriptionsContainer> attributeDescs_;
     std::unique_ptr<AttributesContainer> attributes_;
     std::unique_ptr<ControlComponentsContainer> components_;
     std::vector<Message> messageHistory_;

@@ -3,10 +3,15 @@
 class ControlComponentsContainer
 {
 private:
+    AttributesContainer* attributesContainer_;
     std::vector<std::unique_ptr<ControlComponent>> components_;
+    
 
 public:
     ControlComponentsContainer() = default;
+    ControlComponentsContainer(AttributesContainer* attributesContainer) {
+        attributesContainer_ = attributesContainer;
+    }
     bool existControlType(std::string attributeName);
     std::string getControlTypeByAttributeName(std::string attributeName);
     int positionOfComponentByAttributeName(std::string attributeName);
@@ -45,4 +50,7 @@ public:
         return nullptr;
         
     }
+    void deleteAttribute(Attribute *attribute, AttributesContainer* attributesContainer, std::vector<Message>& messageHistory);
+    void draw(std::vector<Message> &messageHistory);
+    void changeAttributesContainer(AttributesContainer* attributesContainer) { attributesContainer_ = attributesContainer;}
 };

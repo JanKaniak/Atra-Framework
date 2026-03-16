@@ -7,10 +7,12 @@
 // Class Formular
 Formular::Formular()
 {
-    attributes_ = std::make_unique<AttributesContainer>();
+    attributeDescs_ = std::make_unique<AttributeDescriptionsContainer>();
+    attributes_ = std::make_unique<AttributesContainer>(attributeDescs_.get());
     config = Config::getInstance();
-    components_ = std::make_unique<ControlComponentsContainer>();
+    components_ = std::make_unique<ControlComponentsContainer>(attributes_.get());
     showAttributesWindowSize_ = ImVec2(600, 800);
+    
 
     showSettingWindow_ = false;
     saveWindow_ = false;
@@ -331,21 +333,22 @@ void Formular::showAddDescriptionWindow()
     static char buffer[40] = "Attribute";
     static int selected;
     static std::string chosenType;
-    static std::string chosenLevel;
+    static std::string chosenLevelName;
+    static uint64_t chosenLevelNameId;
     static std::string category = "NUMERIC";
     static bool addedAndCorrect = false;
     static std::vector<AttributeDescription *> clusterDescriptions;
     static AttributeDescriptionsContainer *descriptionContainer;
 
-    if (clusterDescriptions.empty())
-    {
-        clusterDescriptions.push_back(nullptr);
-        attributes_->findDescriptionsByType(clusterDescriptions, AttributeType::CLUSTER);
-        chosenLevel = "NULL";
-    }
-
     if (ImGui::BeginPopupModal("Edit window", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
+        if (clusterDescriptions.empty())
+        {
+            clusterDescriptions.push_back(nullptr);
+            attributes_->findDescriptionsByType(clusterDescriptions, AttributeType::CLUSTER);
+            chosenLevelName = "NULL";
+        }
+
         ImGui::BeginDisabled(addedAndCorrect);
         if (ImGui::RadioButton("Numeric", selected == 0))
         {
@@ -383,16 +386,17 @@ void Formular::showAddDescriptionWindow()
             ImGui::Text("Attribute with this name already exists!");
         }
 
-        if (ImGui::BeginCombo("Attribute level", chosenLevel.c_str()))
+        if (ImGui::BeginCombo("Attribute level", chosenLevelName.c_str()))
         {
             for (auto descrption : clusterDescriptions)
             {
                 if (descrption == nullptr)
                 {
-                    bool selected = (chosenLevel == "NULL");
+                    bool selected = (chosenLevelName == "NULL");
                     if (ImGui::Selectable("NULL", selected))
                     {
-                        chosenLevel = "NULL";
+                        chosenLevelName = "NULL";
+                        chosenLevelNameId = 0;
                     }
                     if (selected)
                     {
@@ -400,10 +404,11 @@ void Formular::showAddDescriptionWindow()
                     }
                     continue;
                 }
-                bool selected = (chosenLevel == descrption->getName());
-                if (ImGui::Selectable(descrption->getName().c_str(), selected))
+                bool selected = (chosenLevelName == descrption->getName());
+                if (ImGui::Selectable(std::format("{}##{}", descrption->getName(), descrption->getID()).c_str(), selected))
                 {
-                    chosenLevel = descrption->getName();
+                    chosenLevelName = descrption->getName();
+                    chosenLevelNameId = descrption->getID();
                 }
                 if (selected)
                 {
@@ -450,7 +455,7 @@ void Formular::showAddDescriptionWindow()
             {
                 if (descriptionContainer == nullptr)
                 {
-                    descriptionContainer = attributes_->getDescriptionContainer(chosenLevel);
+                    descriptionContainer = attributes_->getDescriptionContainer(chosenLevelName,chosenLevelNameId);
                 }
 
                 nameExists = descriptionContainer->existsDescription(buffer);
@@ -467,7 +472,7 @@ void Formular::showAddDescriptionWindow()
             addedAndCorrect = descriptionContainer->getLast()->drawInputForChangingLimits(messageHistory_);
             if (!addedAndCorrect)
             {
-                chosenLevel = "NULL";
+                chosenLevelName = "NULL";
                 descriptionContainer = nullptr;
                 clusterDescriptions.clear();
             }
@@ -478,7 +483,7 @@ void Formular::showAddDescriptionWindow()
             ImGui::CloseCurrentPopup();
             addedAndCorrect = false;
             chosenType.clear();
-            chosenLevel = "NULL";
+            chosenLevelName = "NULL";
             descriptionContainer = nullptr;
             clusterDescriptions.clear();
         }
@@ -503,156 +508,26 @@ void Formular::showModifyControlTypesWindow()
 
 void Formular::showAttributes()
 {
+    static bool isWindowSizeSet = false;
     if (components_->getSize() == 0)
     {
+        isWindowSizeSet = false;
         return;
     }
-    ImGui::SetNextWindowSize(showAttributesWindowSize_);
+    if (!isWindowSizeSet)
+    {
+        ImGui::SetNextWindowSize(showAttributesWindowSize_);
+        isWindowSizeSet = true;
+    }
     if (ImGui::Begin("Atributes", nullptr, ImGuiWindowFlags_NoCollapse))
     {
-        bool tableCreated = false;
-        for (int i = 0; i < components_->getSize(); ++i)
-        {
-            if (components_->getComponent(i) == nullptr)
-            {
-                continue;
-            }
-            ImVec2 avaiableSpace = ImGui::GetContentRegionAvail();
-            if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_ScrollX, ImVec2(0, ImGui::GetFrameHeight() + 5 * (ImGui::GetTextLineHeight() + ImGui::GetStyle().CellPadding.y * 1.5f))))
-            {
-                ImGui::TableSetupColumn("Attribute name", ImGuiTableColumnFlags_WidthFixed);
-                ImGui::TableSetupColumn("Input", ImGuiTableColumnFlags_WidthFixed);
-                ImGui::TableSetupColumn("Attribute type", ImGuiTableColumnFlags_WidthFixed);
-                ImGui::TableSetupColumn("EditButton", ImGuiTableColumnFlags_WidthFixed);
-                ImGui::TableSetupColumn("DeleteButton", ImGuiTableColumnFlags_WidthFixed);
-                ImGui::TableHeadersRow();
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", components_->getComponent(i)->getName().c_str());
-                ImGui::TableNextColumn();
-                components_->getComponent(i)->draw();
-                ImGui::TableNextColumn();
-                ImGui::Text("%s", AttributeTypeConverter::EnumToString(components_->getComponent(i)->getAttribute(components_->getComponent(i)->getName())->getType()).data());
-                ImGui::TableNextColumn();
-                if (ImGui::Button("Edit", ImVec2(0, 30)))
-                {
-                    drawed = true;
-                    chosenAttribute = components_->getComponent(i)->getAttribute(components_->getComponent(i)->getName());
-                }
-                ImGui::TableNextColumn();
-                if (ImGui::Button("Delete", ImVec2(0, 30)))
-                {
-                    deleteAttribute(components_->getComponent(i)->getAttribute(components_->getComponent(i)->getName()));
-                }
-                ImGui::EndTable();
-            }
-        }
+        components_->draw(messageHistory_);
+        ImGui::End();
     }
-
-    if (drawed)
-    {
-        ImGui::OpenPopup("Edit window");
-        drawed = false;
-    }
-
-    static ControlComponent *component;
-    static char editBuffer[40] = "";
-    if (ImGui::BeginPopup("Edit window"))
-    {
-        static bool exist;
-        static bool changingLimits = false;
-        if (component == nullptr)
-        {
-            component = components_->getControlComponentByAttribute(chosenAttribute);
-        }
-        if (editBuffer[0] == '\0')
-        {
-            strcpy(editBuffer, chosenAttribute->getName().c_str());
-        }
-        ImGui::InputText("Attribute name", editBuffer, sizeof(editBuffer));
-        if (exist)
-        {
-            ImGui::Text("%s", "Attribute with this name already exists!");
-        }
-        ImGui::Text("Attribute type: %s", AttributeTypeConverter::EnumToString(chosenAttribute->getType()).data());
-
-        if (ImGui::Button("Save", ImVec2(0, 30)))
-        {
-            if (attributes_->giveAttributeByName(chosenAttribute->getName()) == chosenAttribute)
-            {
-                exist = false;
-            }
-            else
-            {
-                exist = (attributes_->giveAttributeByName(editBuffer) == nullptr) ? false : true;
-            }
-
-            if (!exist)
-            {
-                exist = false;
-                attributes_->giveAttributeByName(chosenAttribute->getName())->getDescription()->setName(editBuffer);
-                component = nullptr;
-                ImGui::CloseCurrentPopup();
-            }
-            else
-            {
-                exist = true;
-            }
-        }
-        ImGui::SameLine();
-        if (ImGui::Button("Edit description"))
-        {
-            changingLimits = true;
-        }
-        ImGui::SameLine();
-        if (changingLimits)
-        {
-            changingLimits = chosenAttribute->getDescription()->drawInputForChangingLimits(messageHistory_);
-        }
-        if (ImGui::Button("Close", ImVec2(0, 30)))
-        {
-            component = nullptr;
-            ImGui::CloseCurrentPopup();
-            std::memset(editBuffer, 0, sizeof(editBuffer[0]));
-        }
-        else
-        {
-            if (component != nullptr)
-            {
-                component->updateLimitValues();
-            }
-        }
-        ImGui::EndPopup();
-    }
-
-    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit window"))
-    {
-        component = nullptr;
-        std::memset(editBuffer, 0, sizeof(editBuffer[0]));
-    }
-
-    ImGui::End();
+    
+    
 }
 
-void Formular::editAttribute(Attribute *attribute)
-{
-    if (chosenAttribute == nullptr)
-    {
-        return;
-    }
-}
-
-void Formular::deleteAttribute(Attribute *attribute)
-{
-    components_->deleteControlComponent(attribute);
-    if (!attributes_->deleteAttribute(attribute))
-    {
-        messageHistory_.emplace_back(Message("Attribute does not exist!"));
-    }
-    else
-    {
-        messageHistory_.emplace_back(Message("Attribute was deleted!"));
-    }
-}
 
 bool Formular::loadDescriptions(nlohmann::ordered_json json)
 {

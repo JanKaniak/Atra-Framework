@@ -41,6 +41,7 @@ add_library(myLib
     src/libs/Sources/Attributes/AttributeFactory.cpp
     src/libs/Sources/ControlComponents/ControlComponentsContainer.cpp
     src/libs/Sources/ControlComponents/ControlComponentsCluster.cpp
+    src/libs/Sources/Basic/GlobalLastIdOfObject.cpp
 )
 
 add_subdirectory(src/nativefiledialog-extended)

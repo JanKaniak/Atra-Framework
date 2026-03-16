@@ -12,7 +12,7 @@ public:
     CheckBox() {
         minimumWidth_ = 100;
     };
-    void draw() override {
+    void draw(std::vector<Message> &messageHistory) override {
         if (ImGui::Checkbox(std::format("##{}",getName()).c_str(),&value_)) {
             attributebool_->setValue(value_);
         }
@@ -28,7 +28,7 @@ public:
     LogicButton() {
         minimumWidth_ = 100;
     };
-    void draw() override {
+    void draw(std::vector<Message> &messageHistory) override {
         ImVec4 color;
         if (value_) {
             color = {0,1,0,1};

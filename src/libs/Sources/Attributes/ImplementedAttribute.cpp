@@ -5,19 +5,6 @@
 
 Attribute::~Attribute() {}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 template <typename TypeT, typename AttributeDescriptionT>
 bool IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
@@ -27,29 +14,6 @@ bool IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::saveToJson(n
     json.push_back(nlohmann::ordered_json::object_t::value_type("Value", getValue()));
     return true;
 }
-
-/*template <typename TypeT, typename AttributeDescriptionT>
-void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::setControlType(ControlComponentsContainer *components)
-{
-    bool empty = false;
-    ImGuiChildFlags flags;
-    if (!components->existControlType(desc_->getName()))
-    {
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1, 0, 0, 1));
-        empty = true;
-        flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
-    }
-    else
-    {
-        flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
-    }
-    controlOptions(chosenTypeVector.at(i), config, flags, messageHistory_);
-    if (empty)
-    {
-        ImGui::PopStyleColor();
-    }
-    ImGui::Dummy(ImVec2(30, 30));
-}*/
 
 bool AttributeBool::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
@@ -65,11 +29,12 @@ AttributeCluster::AttributeCluster()
     value_ = std::make_unique<AttributesContainer>();
 }
 
-AttributeCluster::AttributeCluster(const AttributeCluster& attributeCluster) {
+AttributeCluster::AttributeCluster(const AttributeCluster &attributeCluster)
+{
     value_ = std::make_unique<AttributesContainer>();
 }
 
-void AttributeCluster::setDescription(AttributeDescription *desc, std::vector<Message>& messagesHistory)
+void AttributeCluster::setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory)
 {
     if (dynamic_cast<AttributeDescriptionCluster *>(desc))
     {
@@ -101,14 +66,14 @@ void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptio
         flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
     }
 
-    if (ImGui::BeginChild(std::format("Border##{}", desc_->getName()).c_str(), ImVec2(0, 0), flags))
+    if (ImGui::BeginChild(std::format("Border##{}", desc_->getID()).c_str(), ImVec2(0, 0), flags))
     {
         ImGui::Text("%s", desc_->getName().c_str());
         ImGui::SameLine();
         ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
         ImGui::SameLine();
         Factory *factory = config->getFactory(desc_->getType());
-        if (ImGui::BeginCombo(std::format("Control Type##{}", std::format("{}{}",desc_->getName(),desc_->getTypeString())).c_str(), controlType.c_str()))
+        if (ImGui::BeginCombo(std::format("Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
         {
             for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
             {
@@ -137,7 +102,7 @@ void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptio
 
 void AttributeBool::controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory)
 {
-    static std::string controlType;
+    std::string controlType;
     if (controlType.empty())
     {
         controlType = components->getControlTypeByAttributeName(desc_->getName());
@@ -156,7 +121,7 @@ void AttributeBool::controlOptions(int position, ControlComponentsContainer *com
         flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
     }
 
-    if (ImGui::BeginChild(std::format("Border##{}", desc_->getName()).c_str(), ImVec2(0, 0), flags))
+    if (ImGui::BeginChild(std::format("Border##{}", desc_->getID()).c_str(), ImVec2(0, 0), flags))
     {
         ImGui::Text("%s", desc_->getName().c_str());
         ImGui::SameLine();
@@ -211,14 +176,15 @@ void AttributeCluster::controlOptions(int position, ControlComponentsContainer *
         flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
     }
 
-    if (ImGui::BeginChild(std::format("Border##{}", desc_->getName()).c_str(), ImVec2(0, 0), flags))
+    if (ImGui::BeginChild(std::format("Border##{}", desc_->getID()).c_str(), ImVec2(0, 0), flags))
     {
+
         ImGui::Text("%s", desc_->getName().c_str());
         ImGui::SameLine();
         ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
         ImGui::SameLine();
         Factory *factory = config->getFactory(desc_->getType());
-        if (ImGui::BeginCombo(std::format("Control Type##{}", desc_->getName()).c_str(), controlType.c_str()))
+        if (ImGui::BeginCombo(std::format("Control Type##{}", desc_->getID()).c_str(), controlType.c_str()))
         {
             for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
             {
@@ -244,14 +210,14 @@ void AttributeCluster::controlOptions(int position, ControlComponentsContainer *
         ImGui::Dummy(ImVec2(30, 30));
     }
 
-    for (int i = 0; i < components->getSize();++i) {
-        if (components->getComponent(i)->getAttribute(desc_->getName()) == this) {
-            
+    for (int i = 0; i < components->getSize(); ++i)
+    {
+        if (components->getComponent(i)->getAttribute(desc_->getName()) == this)
+        {
+
             value_->setControlTypes(components->getComponent(i)->getContainer(), config, messagesHistory);
-            break;
         }
     }
-    
 }
 
 std::unique_ptr<Attribute> AttributeCluster::clone() { return std::make_unique<AttributeCluster>(*this); }
@@ -264,6 +230,12 @@ struct AutoRegisterClusterAttribute : public AutoRegisterAttribute<AttributeClus
     };
 };
 
-AttributeCluster::~AttributeCluster() {
-        value_ = nullptr;
-    }
+AttributeCluster::~AttributeCluster()
+{
+    value_ = nullptr;
+}
+
+AttributesContainer *AttributeCluster::getAttributeContainer()
+{
+    return value_.get();
+}

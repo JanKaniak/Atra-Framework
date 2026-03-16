@@ -119,7 +119,7 @@ class ControlComponent
 {
 
 public:
-    virtual void draw() = 0;
+    virtual void draw(std::vector<Message> &messageHistory) = 0;
     virtual std::string getName() = 0;
     virtual ~ControlComponent() = default;
     virtual void setAttribute(Attribute *attribute) = 0;

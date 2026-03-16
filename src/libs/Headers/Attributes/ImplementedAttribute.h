@@ -165,7 +165,7 @@ private:
 public:
 AttributeCluster();
 AttributeCluster(const AttributeCluster& attributeCluster);
-AttributesContainer* getAttributeContainer() { return value_.get();}
+AttributesContainer* getAttributeContainer();
 ~AttributeCluster() override;
 
 public:

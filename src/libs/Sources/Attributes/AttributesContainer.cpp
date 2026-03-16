@@ -1,9 +1,13 @@
 #include "AttributesContainer.h"
 
-AttributesContainer::AttributesContainer()
-{
-    attributeDescs_ = new AttributeDescriptionsContainer();
+AttributesContainer::AttributesContainer() {
     attributeFactory_ = AttributeFactory::getInstance();
+}
+
+AttributesContainer::AttributesContainer(AttributeDescriptionsContainer* attributeDesc) {
+    attributeDescs_ = attributeDesc;
+    attributeFactory_ = AttributeFactory::getInstance();
+    
 }
 
 bool AttributesContainer::createAttributes(std::vector<Message>& messagesHistory)
@@ -26,13 +30,7 @@ bool AttributesContainer::createAttributes(std::vector<Message>& messagesHistory
         }
         attributes_.push_back(std::move(tmpAttributePointer));
         attributes_.at(attributes_.size() - 1)->setDescription(desc,messagesHistory);
-        desc->setAssigned(true);
-        if (giveAttributeByName(attributeDescs_->getDescription(i)->getName())->getType() == AttributeType::CLUSTER) {
-                AttributeCluster *attribute = dynamic_cast<AttributeCluster*>(attributes_.at(attributes_.size()-1).get());
-                AttributeDescriptionCluster *gg = dynamic_cast<AttributeDescriptionCluster*>(desc);
-                std::cout << "gg\n";
-            }
-        
+        desc->setAssigned(true);     
     }
     return noChange;
 }
@@ -96,7 +94,8 @@ void AttributesContainer::setControlTypes(ControlComponentsContainer *components
 }
 
 AttributesContainer::~AttributesContainer() {
-    delete(attributeDescs_);
+    attributeDescs_ = nullptr;
+
 }
 
 

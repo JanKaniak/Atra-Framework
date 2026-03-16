@@ -23,7 +23,6 @@ class ControlComponentsContainer;
 
 class Attribute
 {
-protected:
 public:
     virtual std::string getName() = 0;
     virtual AttributeType getType() = 0;

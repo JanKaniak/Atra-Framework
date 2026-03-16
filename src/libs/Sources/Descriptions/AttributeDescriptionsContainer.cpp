@@ -4,6 +4,7 @@
 AttributeDescriptionsContainer::AttributeDescriptionsContainer()
 {
     descFactory_ = DescFactory::getInstance();
+    lastId_ = GlobalLastIdOfObject::getInstance();
 }
 
 bool AttributeDescriptionsContainer::addDescriptions(AttributeType type, nlohmann::ordered_json &json, std::vector<Message>& messagesHistory)
@@ -31,6 +32,7 @@ bool AttributeDescriptionsContainer::addDescriptions(AttributeType type, nlohman
         }
         attributeDescs_.push_back(std::move(tmpDescription));
         desc = getLast();
+        desc->setID(lastId_->getNewId());
         if (!desc->jsonParse(descIt.value(), messagesHistory))
         {
             attributeDescs_.clear();
@@ -50,6 +52,7 @@ bool AttributeDescriptionsContainer::addDescriptions(std::string attributeName, 
 
     attributeDescs_.push_back(descFactory_->createDesc(type));
     getLast()->setName(attributeName);
+    getLast()->setID(lastId_->getNewId());
     return true;
 }
 

@@ -132,9 +132,10 @@ protected:
     std::string category_;
     ImGuiDataType dataType_;
     bool assigned_;
+    uint64_t id_;
 
 public:
-    AttributeDescription(AttributeType type) : type_(type), assigned_(false) {};
+    AttributeDescription(AttributeType type) : type_(type), assigned_(false), id_(0) {};
     inline std::string getName() { return name_; };
     inline AttributeType getType() { return type_; };
     inline std::string_view getTypeString() { return AttributeTypeConverter::EnumToString(type_); }
@@ -142,15 +143,19 @@ public:
     inline void setName(std::string name) { name_ = name; };
     inline void setCategory(std::string category) { category_ = category; }
     inline ImGuiDataType getDataType() { return dataType_; }
-    inline void setAssigned(bool assigned) { assigned_ = assigned;}
-    inline bool isAssigned() {return assigned_;}
-    
+    inline void setAssigned(bool assigned) { assigned_ = assigned; }
+    inline bool isAssigned() { return assigned_; }
+    void setID(uint64_t id)
+    {
+        id_ = id;
+    }
+    uint64_t getID() { return id_; }
 
 public:
     virtual ~AttributeDescription() = 0;
     virtual std::unique_ptr<AttributeDescription> clone() = 0;
-    virtual bool jsonParse(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) = 0;
-    virtual bool drawInputForChangingLimits(std::vector<Message>& messagesHistory) = 0;
-    virtual void addItselfToVectorByCondition(std::vector<AttributeDescription*>& vector,AttributeType type)= 0;
-    virtual AttributeDescriptionsContainer* getContainer(std::string_view descriptionName) = 0;
+    virtual bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) = 0;
+    virtual bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) = 0;
+    virtual void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) = 0;
+    virtual AttributeDescriptionsContainer *getContainer(std::string_view descriptionName,uint64_t descriptionId) = 0;
 };

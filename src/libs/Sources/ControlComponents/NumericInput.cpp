@@ -1,7 +1,7 @@
 #include "NumericInput.h"
 
 // Class IntSlider
-void IntSlider::draw()
+void IntSlider::draw(std::vector<Message> &messageHistory)
 {
     if ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
@@ -18,7 +18,7 @@ void IntSlider::draw()
 //---------------------------------------------------------------------------------------
 
 // Class IntVSSlider
-void IntVSSlider::draw()
+void IntVSSlider::draw(std::vector<Message> &messageHistory)
 {
 
     if (ImGui::VSliderScalar(std::format("##{}", getName()).c_str(), ImVec2(30, 100), ImGuiDataType_S32,&value_, &minimum_ ,&maximum_))
@@ -30,7 +30,7 @@ void IntVSSlider::draw()
 //---------------------------------------------------------------------------------------
 
 // Class IntDrag
-void IntDrag::draw()
+void IntDrag::draw(std::vector<Message> &messageHistory)
 {
     if ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
@@ -52,7 +52,7 @@ void IntDrag::draw()
 //---------------------------------------------------------------------------------------
 
 // Class DoubleSlider
-void DoubleSlider::draw() { 
+void DoubleSlider::draw(std::vector<Message> &messageHistory) { 
     if ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
     } else {
@@ -69,7 +69,7 @@ void DoubleSlider::draw() {
 //---------------------------------------------------------------------------------------
 
 // Class DoubleVSSlider
-void DoubleVSSlider::draw() {
+void DoubleVSSlider::draw(std::vector<Message> &messageHistory) {
     if (ImGui::VSliderScalar(std::format("##{}", getName()).c_str(),ImVec2(30,100),ImGuiDataType_Double,&value_, &minimum_, &maximum_)) {
         attribute_->setValue(value_);
     } 
@@ -78,7 +78,7 @@ void DoubleVSSlider::draw() {
 //---------------------------------------------------------------------------------------
 
 // Class DoubleDrag
-void DoubleDrag::draw() { 
+void DoubleDrag::draw(std::vector<Message> &messageHistory) { 
     if ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
     } else {
@@ -100,7 +100,7 @@ void DoubleDrag::draw() {
 //---------------------------------------------------------------------------------------
 
 // Class FloatSlider
-void FloatSlider::draw() {
+void FloatSlider::draw(std::vector<Message> &messageHistory) {
     if ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
     } else {
@@ -117,7 +117,7 @@ void FloatSlider::draw() {
 //---------------------------------------------------------------------------------------
 
 // Class FloatVSSlider
-void FloatVSSlider::draw() { 
+void FloatVSSlider::draw(std::vector<Message> &messageHistory) { 
     if (ImGui::VSliderFloat(std::format("##{}", getName()).c_str(),ImVec2(30,100),&value_, minimum_, maximum_)) {
         attribute_->setValue(value_);
     }
@@ -126,7 +126,7 @@ void FloatVSSlider::draw() {
 //---------------------------------------------------------------------------------------
 
 // Class FloatDrag
-void FloatDrag::draw() { 
+void FloatDrag::draw(std::vector<Message> &messageHistory) { 
     if ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
     } else {

@@ -12,7 +12,7 @@ public:
     IntSlider() {
         minimumWidth_ = 100;
     };
-    void draw() override;
+    void draw(std::vector<Message> &messageHistory) override;
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<IntSlider>(*this); };
 };
 
@@ -24,7 +24,7 @@ public:
         minimumWidth_ = 100;
     };
 
-    void draw() override;
+    void draw(std::vector<Message> &messageHistory) override;
     
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<IntVSSlider>(*this); }
     
@@ -37,7 +37,7 @@ public:
         minimumWidth_ = 100;
     };
 
-    void draw() override;
+    void draw(std::vector<Message> &messageHistory) override;
     
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<IntDrag>(*this); };
 };
@@ -50,7 +50,7 @@ public:
     DoubleSlider() {
         minimumWidth_ = 100;
     };
-    void draw() override;
+    void draw(std::vector<Message> &messageHistory) override;
     
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleSlider>(*this); };
     
@@ -62,7 +62,7 @@ public:
     DoubleVSSlider() {
         minimumWidth_ = 100;
     };
-    void draw() override;
+    void draw(std::vector<Message> &messageHistory) override;
     
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleVSSlider>(*this); };
 };
@@ -75,7 +75,7 @@ public:
     DoubleDrag() {
         minimumWidth_ = 100;
     };
-    void draw() override;
+    void draw(std::vector<Message> &messageHistory) override;
     
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleDrag>(*this); };
 };
@@ -88,7 +88,7 @@ public:
     FloatSlider() {
         minimumWidth_ = 100;
     };
-    void draw() override;
+    void draw(std::vector<Message> &messageHistory) override;
    
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<FloatSlider>(*this); };
     
@@ -100,7 +100,7 @@ public:
     FloatVSSlider() {
         minimumWidth_ = 100;
     };
-    void draw() override;
+    void draw(std::vector<Message> &messageHistory) override;
 
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<FloatVSSlider>(*this); };
 
@@ -114,7 +114,7 @@ public:
     FloatDrag() {
         minimumWidth_ = 100;
     };
-    void draw() override;
+    void draw(std::vector<Message> &messageHistory) override;
 
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<FloatDrag>(*this); };
 

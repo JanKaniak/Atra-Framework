@@ -30,7 +30,7 @@ public:
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
     bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override;
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
-    AttributeDescriptionsContainer* getContainer(std::string_view descriptionName) override { return nullptr;}
+    AttributeDescriptionsContainer* getContainer(std::string_view descriptionName,uint64_t descriptionId) override { return nullptr;}
 };
 
 template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
@@ -54,7 +54,7 @@ public:
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
     bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override;
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
-    AttributeDescriptionsContainer* getContainer(std::string_view descriptionName) override { return nullptr;}
+    AttributeDescriptionsContainer* getContainer(std::string_view descriptionName,uint64_t descriptionId) override { return nullptr;}
 };
 
 template <typename AttributeDescriptionType>
@@ -160,7 +160,7 @@ public:
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
     std::unique_ptr<AttributeDescription> clone() override;
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
-    AttributeDescriptionsContainer* getContainer(std::string_view descriptionName) override { return nullptr;}
+    AttributeDescriptionsContainer* getContainer(std::string_view descriptionName,uint64_t descriptionId) override { return nullptr;}
 
 private:
     bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override { return false; }
@@ -210,7 +210,7 @@ public:
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
     bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override;
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
-    AttributeDescriptionsContainer* getContainer(std::string_view descriptionName) override;
+    AttributeDescriptionsContainer* getContainer(std::string_view descriptionName,uint64_t descriptionId) override;
     ~AttributeDescriptionCluster() override;
 };
 
