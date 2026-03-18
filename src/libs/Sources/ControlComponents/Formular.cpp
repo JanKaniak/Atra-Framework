@@ -375,9 +375,8 @@ void Formular::showAddDescriptionWindow()
         ImGui::EndDisabled();
 
         ImGui::InputText("Attribute name", buffer, sizeof(buffer));
-        if (nameExists)
-        {
-            ImGui::Text("Attribute with this name already exists!");
+        if (nameExists) {
+            ImGui::Text("%s", "Attribute with this name already exists!");
         }
 
         if (ImGui::BeginCombo("Attribute level", chosenLevelName.c_str()))
@@ -395,6 +394,7 @@ void Formular::showAddDescriptionWindow()
                     if (selected)
                     {
                         ImGui::SetItemDefaultFocus();
+                        descriptionContainer = nullptr;
                     }
                     continue;
                 }
@@ -407,6 +407,7 @@ void Formular::showAddDescriptionWindow()
                 if (selected)
                 {
                     ImGui::SetItemDefaultFocus();
+                    descriptionContainer = nullptr;
                 }
             }
             ImGui::EndCombo();
@@ -481,6 +482,11 @@ void Formular::showAddDescriptionWindow()
             descriptionContainer = nullptr;
             clusterDescriptions.clear();
         }
+
+
+
+
+
         ImGui::EndPopup();
     }
 }

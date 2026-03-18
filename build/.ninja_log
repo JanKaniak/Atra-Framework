@@ -88,3 +88,9 @@
 10	5222	1773779956542999836	CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/ControlComponentsCluster.cpp.o	df3cb0d8d683287c
 7449	7462	1773776523641586300	src/glfw/src/viewporter-client-protocol.h	7f25f4260d0ed520
 7	119	1773776762314469667	src/glfw/src/CMakeFiles/glfw.dir/null_joystick.c.o	acf651b2166c8e18
+10	10602	1773835582727426958	CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o	35d8f1911be60c5a
+10603	11094	1773835583200388087	libmyLib.a	aac056950622efb8
+11095	12058	1773835584198363545	GraphicEditor	828e07326033dc47
+6	7018	1773835784235668418	CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/Formular.cpp.o	35d8f1911be60c5a
+7018	7328	1773835784554444579	libmyLib.a	aac056950622efb8
+7328	7971	1773835785192887095	GraphicEditor	828e07326033dc47
