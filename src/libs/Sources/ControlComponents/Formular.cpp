@@ -720,7 +720,6 @@ nlohmann::ordered_json Formular::saveOutput()
     for (int i = 0; i < attributes_->getSize(); ++i)
     {
         tempJson.push_back(nlohmann::ordered_json::object());
-        std::cout << tempJson.size() << std::endl;
         tempJson[tempJson.size()-1][AttributeTypeConverter::EnumToFileString(attributes_->giveAttribute(i)->getType())] = nlohmann::ordered_json::array();
         auto attributeType = tempJson[i].find(AttributeTypeConverter::EnumToFileString(attributes_->giveAttribute(i)->getType()));
         if (tempJson[tempJson.size()-1].end() == attributeType)

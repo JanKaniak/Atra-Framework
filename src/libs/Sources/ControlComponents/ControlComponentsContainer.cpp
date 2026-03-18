@@ -106,7 +106,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
     static float secondColumnWidth = (ImGui::CalcTextSize("Input").x * 1.5f);
     static float thirdColumnWidth = ImGui::CalcTextSize("Attribute type").x;
     static float fourthColumnWidth = ImGui::CalcTextSize("Edit button").x;
-    static float fifthColumnWidth = ImGui::CalcTextSize("Delete button").x;
+    static float fifthColumnWidth = ImGui::CalcTextSize("Delete button").x * 1.5f;
     static float width = firstColumnWidth + secondColumnWidth + thirdColumnWidth + fourthColumnWidth + fifthColumnWidth;
     ImGui::Text("%f",width);
     if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(width, 0)))
@@ -148,13 +148,13 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
                 thirdColumnWidth = ImGui::CalcTextSize("Attribute type").x;
             }
             ImGui::TableNextColumn();
-            if (ImGui::Button("Edit", ImVec2(0, 30)))
+            if (ImGui::Button(std::format("Edit##{}",components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(0, 30)))
             {
                 drawed = true;
                 chosenAttribute = components_.at(i)->getAttribute(components_.at(i)->getName());
             }
             ImGui::TableNextColumn();
-            if (ImGui::Button("Delete", ImVec2(0, 30)))
+            if (ImGui::Button(std::format("Delete##{}",components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(0, 30)))
             {
                 deleteAttribute(components_.at(i)->getAttribute(components_.at(i)->getName()), attributesContainer_, messageHistory);
             }
