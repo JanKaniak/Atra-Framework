@@ -108,22 +108,22 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
     static float fourthColumnWidth = ImGui::CalcTextSize("Edit button").x;
     static float fifthColumnWidth = ImGui::CalcTextSize("Delete button").x;
     static float width = firstColumnWidth + secondColumnWidth + thirdColumnWidth + fourthColumnWidth + fifthColumnWidth;
-    for (int i = 0; i < components_.size(); ++i)
+    ImGui::Text("%f",width);
+    if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_SizingFixedFit, ImVec2(0, 0)))
     {
-        if (components_.at(i) == nullptr)
+        float inputColumnWidths[components_.size()];
+        ImGui::TableSetupColumn("Attribute name", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("Input", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("Attribute type", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("Edit button", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("Delete button", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableHeadersRow();
+        for (int i = 0; i < components_.size(); ++i)
         {
-            continue;
-        }
-        if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_SizingFixedFit, ImVec2(width, 0)))
-        {
-
-            /*ImGui::TableSetupScrollFreeze(3,0);*/
-            ImGui::TableSetupColumn("Attribute name", ImGuiTableColumnFlags_WidthFixed, firstColumnWidth);
-            ImGui::TableSetupColumn("Input", ImGuiTableColumnFlags_WidthFixed, secondColumnWidth);
-            ImGui::TableSetupColumn("Attribute type", ImGuiTableColumnFlags_WidthFixed, thirdColumnWidth);
-            ImGui::TableSetupColumn("Edit button", ImGuiTableColumnFlags_WidthFixed, fourthColumnWidth);
-            ImGui::TableSetupColumn("Delete button", ImGuiTableColumnFlags_WidthFixed, fifthColumnWidth);
-            ImGui::TableHeadersRow();
+            if (components_.at(i) == nullptr)
+            {
+                continue;
+            }
             ImGui::TableNextColumn();
             ImGui::Text("%s", components_.at(i)->getName().c_str());
             if (ImGui::CalcTextSize(components_.at(i)->getName().c_str()).x > ImGui::CalcTextSize("Attribute name").x)
@@ -136,14 +136,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
             }
             ImGui::TableNextColumn();
             components_.at(i)->draw(messageHistory);
-            if (ImGui::GetItemRectSize().x > 100)
-            {
-                secondColumnWidth = ImGui::GetItemRectSize().x;
-            }
-            else
-            {
-                secondColumnWidth = (ImGui::CalcTextSize("Input").x * 1.5f);
-            }
+            inputColumnWidths[i] = ImGui::GetItemRectSize().x;
             ImGui::TableNextColumn();
             ImGui::Text("%s", AttributeTypeConverter::EnumToString(components_.at(i)->getAttribute(components_.at(i)->getName())->getType()).data());
             if (ImGui::CalcTextSize(AttributeTypeConverter::EnumToString(components_.at(i)->getAttribute(components_.at(i)->getName())->getType()).data()).x > ImGui::CalcTextSize("Attribute type").x)
@@ -160,30 +153,15 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
                 drawed = true;
                 chosenAttribute = components_.at(i)->getAttribute(components_.at(i)->getName());
             }
-            if (ImGui::GetColumnWidth(-1) > 100)
-            {
-                fourthColumnWidth = ImGui::GetColumnWidth(-1);
-            }
-            else
-            {
-                fourthColumnWidth = ImGui::CalcTextSize("Edit button").x;
-            }
             ImGui::TableNextColumn();
             if (ImGui::Button("Delete", ImVec2(0, 30)))
             {
                 deleteAttribute(components_.at(i)->getAttribute(components_.at(i)->getName()), attributesContainer_, messageHistory);
             }
-            if (ImGui::GetColumnWidth(-1) > 100)
-            {
-                fifthColumnWidth = ImGui::GetColumnWidth(-1);
-            }
-            else
-            {
-                fifthColumnWidth = ImGui::CalcTextSize("Delete button").x;
-            }
-            width = firstColumnWidth + secondColumnWidth + thirdColumnWidth + fourthColumnWidth + fifthColumnWidth;
-            ImGui::EndTable();
         }
+        secondColumnWidth = *std::max_element(inputColumnWidths,inputColumnWidths + components_.size());
+        width = firstColumnWidth + secondColumnWidth + thirdColumnWidth + fourthColumnWidth + fifthColumnWidth;
+        ImGui::EndTable();
     }
 
     if (drawed)

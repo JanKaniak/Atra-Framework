@@ -47,6 +47,8 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
 bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
 {
+    static TypeT tmpMin = 0;
+    static TypeT tmpMax = 0;
     if (!ImGui::IsPopupOpen("Edit limit for description"))
     {
         ImGui::OpenPopup("Edit limit for description");
@@ -55,8 +57,7 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
     ImGui::SetNextWindowSize(ImVec2(400, 300));
     if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
     {
-        static TypeT tmpMin = 0;
-        static TypeT tmpMax = 0;
+        
         ImGui::InputScalar("Minimum", ImGuiDataTypeT, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
         ImGui::InputScalar("Maximum", ImGuiDataTypeT, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
 
@@ -70,6 +71,8 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
             }
             tmpMin = 0;
             tmpMax = 0;
+            ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
             return true;
         }
 
@@ -87,6 +90,8 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
     {
+        tmpMin = 0;
+        tmpMax = 0;
         ImGui::EndPopup();
         return false;
     }
@@ -145,6 +150,8 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
 bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
 {
+    static TypeT tmpMin = 0;
+    static TypeT tmpMax = 0;
     if (!ImGui::IsPopupOpen("Edit limit for description"))
     {
         ImGui::OpenPopup("Edit limit for description");
@@ -153,8 +160,7 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
     ImGui::SetNextWindowSize(ImVec2(400, 300));
     if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
     {
-        static TypeT tmpMin = 0;
-        static TypeT tmpMax = 0;
+        
         ImGui::InputScalar("Minimum", ImGuiDataTypeT, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
         ImGui::InputScalar("Maximum", ImGuiDataTypeT, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
 
@@ -185,6 +191,8 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
     {
+        tmpMin = 0;
+        tmpMax = 0;
         ImGui::EndPopup();
         return false;
     }
