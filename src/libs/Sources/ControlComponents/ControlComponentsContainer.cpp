@@ -109,7 +109,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
     static float fifthColumnWidth = ImGui::CalcTextSize("Delete button").x;
     static float width = firstColumnWidth + secondColumnWidth + thirdColumnWidth + fourthColumnWidth + fifthColumnWidth;
     ImGui::Text("%f",width);
-    if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_SizingFixedFit, ImVec2(0, 0)))
+    if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(width, 0)))
     {
         float inputColumnWidths[components_.size()];
         ImGui::TableSetupColumn("Attribute name", ImGuiTableColumnFlags_WidthFixed);

@@ -4,8 +4,6 @@
 
 AttributeDescription::~AttributeDescription() = default;
 
-
-
 // INTEGER NUMBERS -------------------------------------------
 template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
 bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory)
@@ -57,7 +55,7 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
     ImGui::SetNextWindowSize(ImVec2(400, 300));
     if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
     {
-        
+
         ImGui::InputScalar("Minimum", ImGuiDataTypeT, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
         ImGui::InputScalar("Maximum", ImGuiDataTypeT, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
 
@@ -99,8 +97,10 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 }
 
 template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-void IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::addItselfToVectorByCondition(std::vector<AttributeDescription*>& vector,AttributeType type) {
-    if (type == AttributeTypeEnumT) {
+void IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
+{
+    if (type == AttributeTypeEnumT)
+    {
         vector.emplace_back(this);
     }
 }
@@ -160,7 +160,7 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
     ImGui::SetNextWindowSize(ImVec2(400, 300));
     if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
     {
-        
+
         ImGui::InputScalar("Minimum", ImGuiDataTypeT, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
         ImGui::InputScalar("Maximum", ImGuiDataTypeT, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
 
@@ -174,6 +174,8 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
             }
             tmpMin = 0;
             tmpMax = 0;
+            ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
             return true;
         }
 
@@ -200,8 +202,10 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 }
 
 template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-void DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::addItselfToVectorByCondition(std::vector<AttributeDescription*>& vector,AttributeType type) {
-    if (type == AttributeTypeEnumT) {
+void DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
+{
+    if (type == AttributeTypeEnumT)
+    {
         vector.emplace_back(this);
     }
 }
@@ -228,8 +232,10 @@ bool AttributeDescription_bool::jsonParse(nlohmann::ordered_json &json, std::vec
     return true;
 }
 
-void AttributeDescription_bool::addItselfToVectorByCondition(std::vector<AttributeDescription*>& vector,AttributeType type) {
-    if (type == type_) {
+void AttributeDescription_bool::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
+{
+    if (type == type_)
+    {
         vector.emplace_back(this);
     }
 }
@@ -238,7 +244,8 @@ void AttributeDescription_bool::addItselfToVectorByCondition(std::vector<Attribu
 
 // CLUSTER --------------------------------------------------------
 
-bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) { 
+bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+{
     if (json.find("Attribute name") == json.end() || json.find("Attribute descriptions") == json.end())
     {
         messagesHistory.emplace_back(Message("Incorrect json format!"));
@@ -264,8 +271,6 @@ bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::v
 
         for (auto &descriptionsOfTheSameType : descriptions.items())
         {
-            std::cout << descriptionsOfTheSameType.key() << "\n\n";
-            std::cout << descriptionsOfTheSameType.value() << "\n\n\n\n\n";
             if (!descriptions_->addDescriptions(AttributeTypeConverter::StringToEnum(descriptionsOfTheSameType.key()), descriptionsOfTheSameType.value(), messagesHistory))
             {
                 return false;
@@ -273,34 +278,35 @@ bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::v
         }
     }
     return true;
-
- }
+}
 
 bool AttributeDescriptionCluster::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
 {
     return false;
 }
 
-
-void AttributeDescriptionCluster::addItselfToVectorByCondition(std::vector<AttributeDescription*>& vector,AttributeType type) {
-    if (type == type_) {
+void AttributeDescriptionCluster::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
+{
+    if (type == type_)
+    {
         vector.emplace_back(this);
     }
-    descriptions_->findDescriptionsByType(vector,type);
+    descriptions_->findDescriptionsByType(vector, type);
 }
 
-AttributeDescriptionsContainer* AttributeDescriptionCluster::getContainer(std::string_view descriptionName,uint64_t descriptionId) {
-    if (descriptionName.empty() || (descriptionName.compare(name_) == 0 && descriptionId == id_)) {
+AttributeDescriptionsContainer *AttributeDescriptionCluster::getContainer(std::string_view descriptionName, uint64_t descriptionId)
+{
+    if (descriptionName.empty() || (descriptionName.compare(name_) == 0 && descriptionId == id_))
+    {
         return descriptions_.get();
     }
     return descriptions_->findDescriptionContainer(descriptionName, descriptionId);
 }
 
-AttributeDescriptionCluster::~AttributeDescriptionCluster() {
+AttributeDescriptionCluster::~AttributeDescriptionCluster()
+{
     descriptions_ = nullptr;
 }
-
-
 
 std::unique_ptr<AttributeDescription> AttributeDescription_int::clone() { return std::make_unique<AttributeDescription_int>(*this); }
 

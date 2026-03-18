@@ -16,9 +16,15 @@ Formular::Formular()
     showSettingWindow_ = false;
     saveWindow_ = false;
 
-    attributes_->addDescriptions("Address", AttributeType::INT, messageHistory_);
+    attributes_->addDescriptions("x", AttributeType::FLOAT, messageHistory_);
+    attributes_->addDescriptions("y", AttributeType::FLOAT, messageHistory_);
+    attributes_->addDescriptions("velX", AttributeType::FLOAT, messageHistory_);
+    attributes_->addDescriptions("velY", AttributeType::FLOAT, messageHistory_);
     attributes_->createAttributes(messageHistory_);
-    components_->addControl(config->getFactory(AttributeType::INT)->createDefaultEdit(), attributes_->getLast());
+    components_->addControl(config->getFactory(AttributeType::FLOAT)->createDefaultEdit(), attributes_->giveAttribute(0));
+    components_->addControl(config->getFactory(AttributeType::FLOAT)->createDefaultEdit(), attributes_->giveAttribute(1));
+    components_->addControl(config->getFactory(AttributeType::FLOAT)->createDefaultEdit(), attributes_->giveAttribute(2));
+    components_->addControl(config->getFactory(AttributeType::FLOAT)->createDefaultEdit(), attributes_->giveAttribute(3));
 }
 
 bool Formular::addControlType(std::string attributeName, std::string editType)
@@ -375,7 +381,8 @@ void Formular::showAddDescriptionWindow()
         ImGui::EndDisabled();
 
         ImGui::InputText("Attribute name", buffer, sizeof(buffer));
-        if (nameExists) {
+        if (nameExists)
+        {
             ImGui::Text("%s", "Attribute with this name already exists!");
         }
 
@@ -482,10 +489,6 @@ void Formular::showAddDescriptionWindow()
             descriptionContainer = nullptr;
             clusterDescriptions.clear();
         }
-
-
-
-
 
         ImGui::EndPopup();
     }
@@ -716,30 +719,18 @@ nlohmann::ordered_json Formular::saveOutput()
     int positionInArray = 0;
     for (int i = 0; i < attributes_->getSize(); ++i)
     {
-        Attribute *attribute = attributes_->giveAttribute(i);
         tempJson.push_back(nlohmann::ordered_json::object());
-        tempJson[positionInArray][AttributeTypeConverter::EnumToFileString(attribute->getType())] = nlohmann::ordered_json::array();
-        if (tempJson.empty())
+        std::cout << tempJson.size() << std::endl;
+        tempJson[tempJson.size()-1][AttributeTypeConverter::EnumToFileString(attributes_->giveAttribute(i)->getType())] = nlohmann::ordered_json::array();
+        auto attributeType = tempJson[i].find(AttributeTypeConverter::EnumToFileString(attributes_->giveAttribute(i)->getType()));
+        if (tempJson[tempJson.size()-1].end() == attributeType)
         {
-            return false;
+            messageHistory_.emplace_back(Message("Attribute type does not exist in this file yet!"));
+            return nullptr;
         }
-        for (int j = i; j < attributes_->getSize(); ++j)
-        {
-            if (attributes_->giveAttribute(j)->getType() != attribute->getType())
-            {
-                i = j - 1;
-                positionInArray++;
-                break;
-            }
-            auto attributeType = tempJson[positionInArray].find(AttributeTypeConverter::EnumToFileString(attributes_->giveAttribute(j)->getType()));
-            if (tempJson[positionInArray].end() == attributeType)
-            {
-                messageHistory_.emplace_back(Message("Attribute type does not exist in this file yet!"));
-                return false;
-            }
-            attributeType.value().push_back(nlohmann::ordered_json::object());
-            attributes_->giveAttribute(j)->saveToJson(attributeType.value()[attributeType.value().size() - 1], messageHistory_);
-        }
+        attributeType.value().push_back(nlohmann::ordered_json::object());
+        attributes_->giveAttribute(i)->saveToJson(attributeType.value()[attributeType.value().size() - 1], messageHistory_);
+        
     }
 
     return tempJson;
