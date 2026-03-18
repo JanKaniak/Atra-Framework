@@ -102,39 +102,86 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
 
     static bool drawed = false;
     static Attribute *chosenAttribute;
-
+    static float firstColumnWidth = ImGui::CalcTextSize("Attribute name").x;
+    static float secondColumnWidth = (ImGui::CalcTextSize("Input").x * 1.5f);
+    static float thirdColumnWidth = ImGui::CalcTextSize("Attribute type").x;
+    static float fourthColumnWidth = ImGui::CalcTextSize("Edit button").x;
+    static float fifthColumnWidth = ImGui::CalcTextSize("Delete button").x;
+    static float width = firstColumnWidth + secondColumnWidth + thirdColumnWidth + fourthColumnWidth + fifthColumnWidth;
     for (int i = 0; i < components_.size(); ++i)
     {
         if (components_.at(i) == nullptr)
         {
             continue;
         }
-        ImVec2 avaiableSpace = ImGui::GetContentRegionAvail();
-        if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_ScrollX))
+        if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_SizingFixedFit, ImVec2(width, 0)))
         {
-            ImGui::TableSetupColumn("Attribute name", ImGuiTableColumnFlags_WidthStretch,3);
-            ImGui::TableSetupColumn("Input", ImGuiTableColumnFlags_WidthStretch , ImGui::GetContentRegionAvail().x);
-            ImGui::TableSetupColumn("Attribute type", ImGuiTableColumnFlags_WidthStretch,3);
-            ImGui::TableSetupColumn("EditButton", ImGuiTableColumnFlags_WidthStretch,3);
-            ImGui::TableSetupColumn("DeleteButton", ImGuiTableColumnFlags_WidthStretch,3);
+
+            /*ImGui::TableSetupScrollFreeze(3,0);*/
+            ImGui::TableSetupColumn("Attribute name", ImGuiTableColumnFlags_WidthFixed, firstColumnWidth);
+            ImGui::TableSetupColumn("Input", ImGuiTableColumnFlags_WidthFixed, secondColumnWidth);
+            ImGui::TableSetupColumn("Attribute type", ImGuiTableColumnFlags_WidthFixed, thirdColumnWidth);
+            ImGui::TableSetupColumn("Edit button", ImGuiTableColumnFlags_WidthFixed, fourthColumnWidth);
+            ImGui::TableSetupColumn("Delete button", ImGuiTableColumnFlags_WidthFixed, fifthColumnWidth);
             ImGui::TableHeadersRow();
             ImGui::TableNextColumn();
             ImGui::Text("%s", components_.at(i)->getName().c_str());
+            if (ImGui::CalcTextSize(components_.at(i)->getName().c_str()).x > ImGui::CalcTextSize("Attribute name").x)
+            {
+                firstColumnWidth = ImGui::CalcTextSize(components_.at(i)->getName().c_str()).x;
+            }
+            else
+            {
+                firstColumnWidth = ImGui::CalcTextSize("Attribute name").x;
+            }
             ImGui::TableNextColumn();
             components_.at(i)->draw(messageHistory);
+            if (ImGui::GetItemRectSize().x > 100)
+            {
+                secondColumnWidth = ImGui::GetItemRectSize().x;
+            }
+            else
+            {
+                secondColumnWidth = (ImGui::CalcTextSize("Input").x * 1.5f);
+            }
             ImGui::TableNextColumn();
             ImGui::Text("%s", AttributeTypeConverter::EnumToString(components_.at(i)->getAttribute(components_.at(i)->getName())->getType()).data());
+            if (ImGui::CalcTextSize(AttributeTypeConverter::EnumToString(components_.at(i)->getAttribute(components_.at(i)->getName())->getType()).data()).x > ImGui::CalcTextSize("Attribute type").x)
+            {
+                thirdColumnWidth = ImGui::CalcTextSize(AttributeTypeConverter::EnumToString(components_.at(i)->getAttribute(components_.at(i)->getName())->getType()).data()).x;
+            }
+            else
+            {
+                thirdColumnWidth = ImGui::CalcTextSize("Attribute type").x;
+            }
             ImGui::TableNextColumn();
             if (ImGui::Button("Edit", ImVec2(0, 30)))
             {
                 drawed = true;
                 chosenAttribute = components_.at(i)->getAttribute(components_.at(i)->getName());
             }
+            if (ImGui::GetColumnWidth(-1) > 100)
+            {
+                fourthColumnWidth = ImGui::GetColumnWidth(-1);
+            }
+            else
+            {
+                fourthColumnWidth = ImGui::CalcTextSize("Edit button").x;
+            }
             ImGui::TableNextColumn();
             if (ImGui::Button("Delete", ImVec2(0, 30)))
             {
                 deleteAttribute(components_.at(i)->getAttribute(components_.at(i)->getName()), attributesContainer_, messageHistory);
             }
+            if (ImGui::GetColumnWidth(-1) > 100)
+            {
+                fifthColumnWidth = ImGui::GetColumnWidth(-1);
+            }
+            else
+            {
+                fifthColumnWidth = ImGui::CalcTextSize("Delete button").x;
+            }
+            width = firstColumnWidth + secondColumnWidth + thirdColumnWidth + fourthColumnWidth + fifthColumnWidth;
             ImGui::EndTable();
         }
     }

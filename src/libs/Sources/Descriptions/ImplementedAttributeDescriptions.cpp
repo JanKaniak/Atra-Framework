@@ -230,7 +230,43 @@ void AttributeDescription_bool::addItselfToVectorByCondition(std::vector<Attribu
 
 // CLUSTER --------------------------------------------------------
 
-bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) { return false; }
+bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) { 
+    if (json.find("Attribute name") == json.end() || json.find("Attribute descriptions") == json.end())
+    {
+        messagesHistory.emplace_back(Message("Incorrect json format!"));
+        return false;
+    }
+
+    if (!json["Attribute name"].is_string())
+    {
+        messagesHistory.emplace_back(Message("Name must be string type!"));
+        return false;
+    }
+
+    if (!json["Attribute descriptions"].is_array())
+    {
+        messagesHistory.emplace_back(Message("Attribute descriptions must be in array!"));
+        return false;
+    }
+
+    setName(json["Attribute name"].get<std::string>());
+    nlohmann::ordered_json theJson = json.find("Attribute descriptions").value();
+    for (auto &descriptions : theJson) // attributeDescriptions = list of attributes, attributeTypeKey = attribute type
+    {
+
+        for (auto &descriptionsOfTheSameType : descriptions.items())
+        {
+            std::cout << descriptionsOfTheSameType.key() << "\n\n";
+            std::cout << descriptionsOfTheSameType.value() << "\n\n\n\n\n";
+            if (!descriptions_->addDescriptions(AttributeTypeConverter::StringToEnum(descriptionsOfTheSameType.key()), descriptionsOfTheSameType.value(), messagesHistory))
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+
+ }
 
 bool AttributeDescriptionCluster::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
 {

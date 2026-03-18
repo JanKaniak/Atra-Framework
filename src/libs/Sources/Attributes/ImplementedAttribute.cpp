@@ -58,16 +58,17 @@ void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptio
     {
         empty = true;
         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1, 0, 0, 1));
-        flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
+        flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
     }
     else
     {
         empty = false;
-        flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
+        flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
     }
 
     if (ImGui::BeginChild(std::format("Border##{}", desc_->getID()).c_str(), ImVec2(0, 0), flags))
     {
+        ImGui::SameLine();
         ImGui::Text("%s", desc_->getName().c_str());
         ImGui::SameLine();
         ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
@@ -95,8 +96,11 @@ void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptio
         if (empty)
         {
             ImGui::PopStyleColor();
+            ImGui::Dummy(ImVec2(100, 30));
+        } else {
+            ImGui::Dummy(ImVec2(100, 35));
         }
-        ImGui::Dummy(ImVec2(30, 30));
+        
     }
 }
 
@@ -112,17 +116,18 @@ void AttributeBool::controlOptions(int position, ControlComponentsContainer *com
     if (!components->existControlType(desc_->getName()))
     {
         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1, 0, 0, 1));
-        flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
+        flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
         empty = true;
     }
     else
     {
         empty = false;
-        flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
+        flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
     }
 
     if (ImGui::BeginChild(std::format("Border##{}", desc_->getID()).c_str(), ImVec2(0, 0), flags))
     {
+        ImGui::SameLine();
         ImGui::Text("%s", desc_->getName().c_str());
         ImGui::SameLine();
         ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
@@ -168,17 +173,17 @@ void AttributeCluster::controlOptions(int position, ControlComponentsContainer *
     {
         empty = true;
         ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1, 0, 0, 1));
-        flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
+        flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
     }
     else
     {
         empty = false;
-        flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY;
+        flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
     }
 
     if (ImGui::BeginChild(std::format("Border##{}", desc_->getID()).c_str(), ImVec2(0, 0), flags))
     {
-
+        ImGui::SameLine();
         ImGui::Text("%s", desc_->getName().c_str());
         ImGui::SameLine();
         ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
@@ -216,6 +221,7 @@ void AttributeCluster::controlOptions(int position, ControlComponentsContainer *
         {
 
             value_->setControlTypes(components->getComponent(i)->getContainer(), config, messagesHistory);
+            break;
         }
     }
 }

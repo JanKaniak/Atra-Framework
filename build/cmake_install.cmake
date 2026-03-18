@@ -45,6 +45,7 @@ endif()
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
   include("/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/nativefiledialog-extended/cmake_install.cmake")
+  include("/home/jecko192/Desktop/Bakalarka/GraphicEditor/build/src/glfw/cmake_install.cmake")
 
 endif()
 

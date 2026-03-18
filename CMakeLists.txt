@@ -5,10 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 
-find_package(SDL2 REQUIRED)
-include_directories(${SDL2_INCLUDE_DIRS})
-
-
 find_package(OpenGL REQUIRED)
 
 
@@ -20,15 +16,17 @@ add_library(imgui
     src/imgui/imgui_stdlib.cpp
 )
 
-target_include_directories(imgui PUBLIC src/imgui)
+
 
 
 add_library(imgui_backends
-    src/imgui/imgui_impl_sdl2.cpp
+    src/imgui/imgui_impl_glfw.cpp
     src/imgui/imgui_impl_opengl3.cpp
 )
 
-target_include_directories(imgui_backends PUBLIC src/imgui)
+
+
+
 
 add_library(myLib
     src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp
@@ -45,20 +43,27 @@ add_library(myLib
 )
 
 add_subdirectory(src/nativefiledialog-extended)
+add_subdirectory(src/glfw)
+
+target_include_directories(imgui_backends PUBLIC src/imgui  src/glfw/include/GLFW)
+
+
 
 target_include_directories(myLib PUBLIC src/libs/Headers/Descriptions)
 target_include_directories(myLib PUBLIC src/libs/Headers/Attributes)
 target_include_directories(myLib PUBLIC src/libs/Headers/ControlComponents)
 target_include_directories(myLib PUBLIC src/libs/Headers/Basic)
 target_include_directories(myLib PUBLIC src/nlohmannJson)
+target_include_directories(myLib PUBLIC src/imgui)
 
 
 add_executable(GraphicEditor 
-    src/main.cpp)
+src/main.cpp)
 
-
-target_link_libraries(GraphicEditor PRIVATE imgui imgui_backends SDL2 OpenGL myLib)
+target_link_libraries(imgui_backends PRIVATE glfw)
 target_link_libraries(myLib PRIVATE imgui nfd)
+target_link_libraries(GraphicEditor PRIVATE imgui OpenGL imgui_backends myLib)
+
 
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

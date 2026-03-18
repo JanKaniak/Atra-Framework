@@ -44,16 +44,10 @@ void ControlComponentCluster<TYPE>::updateLimitValues()
 void Tree::draw(std::vector<Message> &messageHistory)
 {
     static Attribute *chosenAttribute;
-    if (ImGui::TreeNode(attributecluster_->getName().c_str()))
+    if (ImGui::TreeNodeEx(std::format("##{}", getName()).c_str()))
     {
-        for (int i = 0; i < components_->getSize(); ++i)
-        {
-            if (ImGui::TreeNodeEx(components_->getComponent(i)->getName().c_str(), ImGuiTreeNodeFlags_Leaf))
-            {
-                components_->draw(messageHistory);
-                ImGui::TreePop();
-            }
-        }
+        components_->draw(messageHistory);
         ImGui::TreePop();
     }
+    ImGui::Dummy(ImVec2((ImGui::GetItemRectSize().x * 0.5f), (ImGui::GetItemRectSize().y * 0.5f)));
 }

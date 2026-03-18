@@ -1,0 +1,221 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						3
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5.0"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						2,
+						3,
+						4
+					]
+				},
+				{
+					"build" : "src/nativefiledialog-extended",
+					"childIndexes" : 
+					[
+						2
+					],
+					"jsonFile" : "directory-src.nativefiledialog-extended-Debug-25519ff1c745998bc16c.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "src/nativefiledialog-extended"
+				},
+				{
+					"build" : "src/nativefiledialog-extended/src",
+					"jsonFile" : "directory-src.nativefiledialog-extended.src-Debug-fb2973066f34f567a9c8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.10"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "src/nativefiledialog-extended/src",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "src/glfw",
+					"childIndexes" : 
+					[
+						4
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-src.glfw-Debug-9065e5aa2aab9e467dbd.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "src/glfw",
+					"targetIndexes" : 
+					[
+						6
+					]
+				},
+				{
+					"build" : "src/glfw/src",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-src.glfw.src-Debug-a64ae5e2254926edb36b.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"parentIndex" : 3,
+					"projectIndex" : 2,
+					"source" : "src/glfw/src",
+					"targetIndexes" : 
+					[
+						1,
+						7
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "GraphicEditor",
+					"targetIndexes" : 
+					[
+						0,
+						2,
+						3,
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1,
+						2
+					],
+					"name" : "nativefiledialog-extended",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3,
+						4
+					],
+					"name" : "GLFW",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						1,
+						6,
+						7
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "GraphicEditor::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-GraphicEditor-Debug-871f133994ac9af1cd9d.json",
+					"name" : "GraphicEditor",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "glfw::@d52d6adad5a670cd1786",
+					"jsonFile" : "target-glfw-Debug-e2e3d22f5f0c3bfc9c94.json",
+					"name" : "glfw",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "imgui::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-imgui-Debug-ab7d826cc3321d816279.json",
+					"name" : "imgui",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "imgui_backends::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-imgui_backends-Debug-49dedc470b781ae6ed90.json",
+					"name" : "imgui_backends",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "myLib::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-myLib-Debug-54b41b6e11c421e859a9.json",
+					"name" : "myLib",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "nfd::@76bbc1004cace93c6c6b",
+					"jsonFile" : "target-nfd-Debug-6875d51c8e9b23dc9049.json",
+					"name" : "nfd",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "uninstall::@6240570372b81b062b8f",
+					"jsonFile" : "target-uninstall-Debug-42791e217d153255f422.json",
+					"name" : "uninstall",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 4,
+					"id" : "update_mappings::@d52d6adad5a670cd1786",
+					"jsonFile" : "target-update_mappings-Debug-215ba1410d2a6c0dfe56.json",
+					"name" : "update_mappings",
+					"projectIndex" : 2
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/jecko192/Desktop/Bakalarka/GraphicEditor/build",
+		"source" : "/home/jecko192/Desktop/Bakalarka/GraphicEditor"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 6
+	}
+}

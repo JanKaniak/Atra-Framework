@@ -12,17 +12,13 @@ Formular::Formular()
     config = Config::getInstance();
     components_ = std::make_unique<ControlComponentsContainer>(attributes_.get());
     showAttributesWindowSize_ = ImVec2(600, 800);
-    
 
     showSettingWindow_ = false;
     saveWindow_ = false;
 
-    /*attributes_->addDescriptions("Address", AttributeType::CLUSTER, messageHistory_);
-    AttributeDescriptionCluster *tmp = dynamic_cast<AttributeDescriptionCluster *>(attributes_->getDescription(0));
-    tmp->getDescription()->addDescriptions("City Name", AttributeType::INT, messageHistory_);
-    tmp->getDescription()->addDescriptions("hora7plast", AttributeType::FLOAT, messageHistory_);
-
-    attributes_->addDescriptions("TRUTH", AttributeType::INT, messageHistory_);*/
+    attributes_->addDescriptions("Address", AttributeType::INT, messageHistory_);
+    attributes_->createAttributes(messageHistory_);
+    components_->addControl(config->getFactory(AttributeType::INT)->createDefaultEdit(), attributes_->getLast());
 }
 
 bool Formular::addControlType(std::string attributeName, std::string editType)
@@ -204,18 +200,35 @@ void Formular::showControls()
     {
         showLogger();
 
-        if (ImGui::Button("Load Attribute description", ImVec2(0, 30)))
+        if (ImGui::BeginChild("First button group", ImVec2(0, 0), ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_Borders))
         {
-            numberOfLoadedAtributes = readFileDescriptions();
+            if (ImGui::Button("Load Attribute description", ImVec2(190, 30)))
+            {
+                numberOfLoadedAtributes = readFileDescriptions();
+            }
+
+            ImGui::BeginDisabled(attributes_->getSize() == 0);
+            if (ImGui::Button("Load Control types", ImVec2(190, 30)))
+            {
+                numberOfLoadedControls = readFileControlTypes();
+            }
+            ImGui::SameLine();
+            ImGui::Checkbox("Use default controls", &useDefaultControls);
+            ImGui::SameLine();
+            ImGui::Checkbox("Overwrite existing controls", &overWriteExistingControls);
+            ImGui::EndDisabled();
+
+            ImGui::EndChild();
+            ImGui::Dummy(ImVec2(190, 30));
         }
 
-        if (ImGui::Button("Add description", ImVec2(0, 30)))
+        if (ImGui::Button("Add description", ImVec2(190, 30)))
         {
             ImGui::OpenPopup("Edit window", ImGuiPopupFlags_NoOpenOverExistingPopup | ImGuiPopupFlags_NoReopen);
         }
 
         ImGui::BeginDisabled(attributes_->getNumberOfDescriptions() == 0);
-        if (ImGui::Button("Generate attributes from descriptions", ImVec2(0, 30)))
+        if (ImGui::Button("Generate attributes", ImVec2(190, 30)))
         {
             attributes_->createAttributes(messageHistory_);
             messageHistory_.emplace_back(Message("All attributes with actual descriptions are generated!"));
@@ -223,37 +236,17 @@ void Formular::showControls()
         ImGui::EndDisabled();
 
         ImGui::BeginDisabled(attributes_->getSize() == 0);
-        if (ImGui::Button("Load Control types", ImVec2(0, 30)))
-        {
-            numberOfLoadedControls = readFileControlTypes();
-        }
-        ImGui::SameLine();
-        ImGui::Checkbox("Use default controls", &useDefaultControls);
-        ImGui::SameLine();
-        ImGui::Checkbox("Overwrite existing controls", &overWriteExistingControls);
-
-        if (ImGui::Button("Modify control types", ImVec2(0, 30)))
+        if (ImGui::Button("Modify control types", ImVec2(190, 30)))
         {
             ImGui::OpenPopup("Modify control types window", ImGuiPopupFlags_NoOpenOverExistingPopup | ImGuiPopupFlags_NoReopen);
         }
 
-        if (ImGui::Button("Save", ImVec2(0, 30)))
+        if (ImGui::Button("Save", ImVec2(190, 30)))
         {
             saveWindow_ = true;
         }
 
         ImGui::EndDisabled();
-
-        ImVec2 windowSize = ImGui::GetWindowSize();
-        ImGui::SetCursorPos(ImVec2(20, windowSize.y - 20));
-        if (getNumberOfAttributes() < 500000)
-        {
-            ImGui::Text("Current number of atributes: %d", getNumberOfAttributes());
-        }
-        else
-        {
-            ImGui::Text("Current number of atributes: 500000+");
-        }
 
         showAddDescriptionWindow();
         showModifyControlTypesWindow();
@@ -320,10 +313,11 @@ void Formular::showLogger()
     }
 
     ImGui::BeginDisabled(messageHistory_.size() == 0);
-    if (ImGui::Button("Clear logger", ImVec2(0, 30)))
+    if (ImGui::Button("Clear logger", ImVec2(190, 30)))
     {
         messageHistory_.clear();
     }
+    ImGui::Dummy(ImVec2(190, 30));
     ImGui::EndDisabled();
 }
 
@@ -455,7 +449,7 @@ void Formular::showAddDescriptionWindow()
             {
                 if (descriptionContainer == nullptr)
                 {
-                    descriptionContainer = attributes_->getDescriptionContainer(chosenLevelName,chosenLevelNameId);
+                    descriptionContainer = attributes_->getDescriptionContainer(chosenLevelName, chosenLevelNameId);
                 }
 
                 nameExists = descriptionContainer->existsDescription(buffer);
@@ -496,8 +490,7 @@ void Formular::showModifyControlTypesWindow()
     if (ImGui::BeginPopupModal("Modify control types window", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
         attributes_->setControlTypes(components_.get(), config, messageHistory_);
-
-        if (ImGui::Button("Close", ImVec2(0, 30)))
+        if (ImGui::Button("Close", ImVec2(190, 30)))
         {
             ImGui::CloseCurrentPopup();
         }
@@ -519,15 +512,12 @@ void Formular::showAttributes()
         ImGui::SetNextWindowSize(showAttributesWindowSize_);
         isWindowSizeSet = true;
     }
-    if (ImGui::Begin("Atributes", nullptr, ImGuiWindowFlags_NoCollapse))
+    if (ImGui::Begin("Atributes", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_HorizontalScrollbar))
     {
         components_->draw(messageHistory_);
         ImGui::End();
     }
-    
-    
 }
-
 
 bool Formular::loadDescriptions(nlohmann::ordered_json json)
 {

@@ -1,8 +1,8 @@
 #pragma once
 
 #include "json.hpp"
-#include "imgui.h"
 #include "Messages.h"
+#include "imgui.h"
 
 #include <string>
 #include <variant>
