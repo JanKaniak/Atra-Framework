@@ -22,7 +22,22 @@ bool AttributeBool::saveToJson(nlohmann::ordered_json &json, std::vector<Message
     return true;
 }
 
-bool AttributeCluster::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) { return false; }
+bool AttributeCluster::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) { 
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute descriptions", nlohmann::ordered_json::array()));
+    if (json.find("Attribute descriptions") == json.end()) {
+        messagesHistory.emplace_back("There has been an error while saving attribute to file!");
+        return false;
+    }
+    for (int i = 0; i < value_->getSize(); ++i) {
+        json.find("Attribute descriptions").value().push_back(nlohmann::ordered_json::object());
+        json.find("Attribute descriptions").value().at(json.find("Attribute descriptions").value().size()-1)[AttributeTypeConverter::EnumToFileString(value_->giveAttribute(i)->getType())] = nlohmann::ordered_json::array();
+        auto jsonObject = json.find("Attribute descriptions").value().at(json.find("Attribute descriptions").value().size()-1).find(AttributeTypeConverter::EnumToFileString(value_->giveAttribute(i)->getType()));
+        jsonObject.value().push_back(nlohmann::ordered_json::object());
+        value_->giveAttribute(i)->saveToJson(jsonObject.value()[jsonObject.value().size()-1],messagesHistory);
+    }
+    return true;
+ }
 
 AttributeCluster::AttributeCluster()
 {

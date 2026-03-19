@@ -84,7 +84,7 @@ private:
     void deleteAttribute(Attribute *attribute);
     void showAddDescriptionWindow();
     void showModifyControlTypesWindow();
-    void draw();
+    void showCreateTemplateAttribute();
     inline int getNumberOfAttributes() { return attributes_->getSize(); }
     int readFileDescriptions();
     int readFileControlTypes();

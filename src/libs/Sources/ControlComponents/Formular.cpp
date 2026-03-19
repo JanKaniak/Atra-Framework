@@ -508,6 +508,14 @@ void Formular::showModifyControlTypesWindow()
     }
 }
 
+void Formular::showCreateTemplateAttribute() {
+    if (ImGui::BeginPopupModal("Template edit window")) {
+        ImGui::EndPopup();
+    }
+}
+
+
+
 void Formular::showAttributes()
 {
     static bool isWindowSizeSet = false;

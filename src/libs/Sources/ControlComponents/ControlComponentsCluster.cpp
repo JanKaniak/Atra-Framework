@@ -43,11 +43,25 @@ void ControlComponentCluster<TYPE>::updateLimitValues()
 
 void Tree::draw(std::vector<Message> &messageHistory)
 {
-    static Attribute *chosenAttribute;
+    static float width;
+    static bool toggled = false;
+    ImGui::Text("%f", width);
+    ImGui::Text("%s", ((toggled) ? "Toggled" : "Off"));
     if (ImGui::TreeNodeEx(std::format("##{}", getName()).c_str()))
     {
-        components_->draw(messageHistory);
+        if (ImGui::is())
+        {
+            components_->draw(messageHistory);
+            width = ImGui::GetItemRectSize().x;
+            toggled = true;
+        }
+        else
+        {
+            width = 0;
+            toggled = false;
+        }
         ImGui::TreePop();
     }
-    ImGui::Dummy(ImVec2((ImGui::GetItemRectSize().x * 0.5f), (ImGui::GetItemRectSize().y * 0.5f)));
+
+    ImGui::Dummy(ImVec2(0, width));
 }

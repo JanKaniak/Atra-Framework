@@ -109,14 +109,19 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
     static float fifthColumnWidth = ImGui::CalcTextSize("Delete button").x * 1.5f;
     static float width = firstColumnWidth + secondColumnWidth + thirdColumnWidth + fourthColumnWidth + fifthColumnWidth;
     ImGui::Text("%f",width);
-    if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoHostExtendX, ImVec2(width, 0)))
+    ImGui::Text("%f",firstColumnWidth);
+    ImGui::Text("%f",secondColumnWidth);
+    ImGui::Text("%f",thirdColumnWidth);
+    ImGui::Text("%f",fourthColumnWidth);
+    ImGui::Text("%f",fifthColumnWidth);
+    if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoKeepColumnsVisible, ImVec2(width, 0)))
     {
         float inputColumnWidths[components_.size()];
         ImGui::TableSetupColumn("Attribute name", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableSetupColumn("Input", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableSetupColumn("Attribute type", ImGuiTableColumnFlags_WidthFixed);
-        ImGui::TableSetupColumn("Edit button", ImGuiTableColumnFlags_WidthFixed);
-        ImGui::TableSetupColumn("Delete button", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("Edit button", ImGuiTableColumnFlags_WidthFixed,fourthColumnWidth);
+        ImGui::TableSetupColumn("Delete button", ImGuiTableColumnFlags_WidthFixed,fifthColumnWidth);
         ImGui::TableHeadersRow();
         for (int i = 0; i < components_.size(); ++i)
         {
@@ -159,7 +164,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
                 deleteAttribute(components_.at(i)->getAttribute(components_.at(i)->getName()), attributesContainer_, messageHistory);
             }
         }
-        secondColumnWidth = *std::max_element(inputColumnWidths,inputColumnWidths + components_.size());
+        secondColumnWidth = *std::max_element(inputColumnWidths,inputColumnWidths + sizeof(inputColumnWidths)/sizeof(inputColumnWidths[0]));
         width = firstColumnWidth + secondColumnWidth + thirdColumnWidth + fourthColumnWidth + fifthColumnWidth;
         ImGui::EndTable();
     }
