@@ -42,6 +42,7 @@ void ControlComponentsContainer::addControl(std::unique_ptr<ControlComponent> co
     if (control != nullptr)
     {
         components_.push_back(std::move(control));
+        updatedTable_ = true;
     }
 
     if (attribute != nullptr)
@@ -51,7 +52,7 @@ void ControlComponentsContainer::addControl(std::unique_ptr<ControlComponent> co
 }
 void ControlComponentsContainer::addControl(int position, std::unique_ptr<ControlComponent> control, Attribute *attribute)
 {
-    if (position < 0)
+    if (position < 0 || control != nullptr)
     {
         return;
     }
@@ -63,7 +64,7 @@ void ControlComponentsContainer::addControl(int position, std::unique_ptr<Contro
     {
         components_.emplace_back(std::move(control));
     }
-
+    updatedTable_ = true;
     if (attribute != nullptr)
     {
         components_.at(components_.size() - 1)->setAttribute(attribute);
@@ -77,6 +78,7 @@ bool ControlComponentsContainer::deleteControlComponent(Attribute *attribute)
         if (it->get()->getAttribute(attribute->getName()) != nullptr)
         {
             components_.erase(it);
+            updatedTable_ = true;
             return true;
         }
     }
@@ -94,6 +96,7 @@ void ControlComponentsContainer::deleteAttribute(Attribute *attribute, Attribute
     {
 
         messageHistory.emplace_back(Message("Attribute was deleted!"));
+        updatedTable_ = true;
     }
 }
 
@@ -102,26 +105,27 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
 
     static bool drawed = false;
     static Attribute *chosenAttribute;
-    static float firstColumnWidth = ImGui::CalcTextSize("Attribute name").x;
-    static float secondColumnWidth = (ImGui::CalcTextSize("Input").x * 1.5f);
-    static float thirdColumnWidth = ImGui::CalcTextSize("Attribute type").x;
-    static float fourthColumnWidth = ImGui::CalcTextSize("Edit button").x;
-    static float fifthColumnWidth = ImGui::CalcTextSize("Delete button").x * 1.5f;
-    static float width = firstColumnWidth + secondColumnWidth + thirdColumnWidth + fourthColumnWidth + fifthColumnWidth;
-    ImGui::Text("%f",width);
-    ImGui::Text("%f",firstColumnWidth);
-    ImGui::Text("%f",secondColumnWidth);
-    ImGui::Text("%f",thirdColumnWidth);
-    ImGui::Text("%f",fourthColumnWidth);
-    ImGui::Text("%f",fifthColumnWidth);
-    if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoKeepColumnsVisible, ImVec2(width, 0)))
+    static ImVec2 firstColumn = ImGui::CalcTextSize("Attribute name");
+    static ImVec2 secondColumn = ImVec2((ImGui::CalcTextSize("Input").x * 1.5f),0);
+    static ImVec2 thirdColumn = ImGui::CalcTextSize("Attribute type");
+    static ImVec2 fourthColumn = ImGui::CalcTextSize("Edit button");
+    static ImVec2 fifthColumn = ImVec2(ImGui::CalcTextSize("Delete button").x * 1.5f,0);
+
+    ImGui::Text("%f", secondColumn.x);
+    if (dimensions_.x < 0 && dimensions_.y < 0)
     {
-        float inputColumnWidths[components_.size()];
+        dimensions_.x = firstColumn.x + secondColumn.x + thirdColumn.x + fourthColumn.x + fifthColumn.x;
+        dimensions_.y = firstColumn.y + secondColumn.y + thirdColumn.y + fourthColumn.y + fifthColumn.y;
+    }
+    if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersH | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoKeepColumnsVisible | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY, dimensions_))
+    {
+        float inputColumnsWidth[components_.size()];
+        float columnHeight[components_.size()];
         ImGui::TableSetupColumn("Attribute name", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableSetupColumn("Input", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableSetupColumn("Attribute type", ImGuiTableColumnFlags_WidthFixed);
-        ImGui::TableSetupColumn("Edit button", ImGuiTableColumnFlags_WidthFixed,fourthColumnWidth);
-        ImGui::TableSetupColumn("Delete button", ImGuiTableColumnFlags_WidthFixed,fifthColumnWidth);
+        ImGui::TableSetupColumn("Edit button", ImGuiTableColumnFlags_WidthFixed);
+        ImGui::TableSetupColumn("Delete button", ImGuiTableColumnFlags_WidthFixed);
         ImGui::TableHeadersRow();
         for (int i = 0; i < components_.size(); ++i)
         {
@@ -133,39 +137,51 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
             ImGui::Text("%s", components_.at(i)->getName().c_str());
             if (ImGui::CalcTextSize(components_.at(i)->getName().c_str()).x > ImGui::CalcTextSize("Attribute name").x)
             {
-                firstColumnWidth = ImGui::CalcTextSize(components_.at(i)->getName().c_str()).x;
+                firstColumn = ImVec2((ImGui::CalcTextSize(components_.at(i)->getName().c_str()).x * 1.5f),0);
             }
             else
             {
-                firstColumnWidth = ImGui::CalcTextSize("Attribute name").x;
+                firstColumn = ImGui::CalcTextSize("Attribute name");
             }
             ImGui::TableNextColumn();
             components_.at(i)->draw(messageHistory);
-            inputColumnWidths[i] = ImGui::GetItemRectSize().x;
+            inputColumnsWidth[i] = components_.at(i)->getDimensions().x;
+            columnHeight[i] = components_.at(i)->getDimensions().y;
             ImGui::TableNextColumn();
             ImGui::Text("%s", AttributeTypeConverter::EnumToString(components_.at(i)->getAttribute(components_.at(i)->getName())->getType()).data());
             if (ImGui::CalcTextSize(AttributeTypeConverter::EnumToString(components_.at(i)->getAttribute(components_.at(i)->getName())->getType()).data()).x > ImGui::CalcTextSize("Attribute type").x)
             {
-                thirdColumnWidth = ImGui::CalcTextSize(AttributeTypeConverter::EnumToString(components_.at(i)->getAttribute(components_.at(i)->getName())->getType()).data()).x;
+                thirdColumn = ImGui::CalcTextSize(AttributeTypeConverter::EnumToString(components_.at(i)->getAttribute(components_.at(i)->getName())->getType()).data());
             }
             else
             {
-                thirdColumnWidth = ImGui::CalcTextSize("Attribute type").x;
+                thirdColumn = ImGui::CalcTextSize("Attribute type");
             }
             ImGui::TableNextColumn();
-            if (ImGui::Button(std::format("Edit##{}",components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(0, 30)))
+            if (ImGui::Button(std::format("Edit##{}", components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(0, 30)))
             {
                 drawed = true;
                 chosenAttribute = components_.at(i)->getAttribute(components_.at(i)->getName());
             }
+            
+            if (columnHeight[i] < ImGui::GetItemRectSize().y) {
+                columnHeight[i] = ImGui::GetItemRectSize().y;
+            }
             ImGui::TableNextColumn();
-            if (ImGui::Button(std::format("Delete##{}",components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(0, 30)))
+            if (ImGui::Button(std::format("Delete##{}", components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(0, 30)))
             {
                 deleteAttribute(components_.at(i)->getAttribute(components_.at(i)->getName()), attributesContainer_, messageHistory);
             }
         }
-        secondColumnWidth = *std::max_element(inputColumnWidths,inputColumnWidths + sizeof(inputColumnWidths)/sizeof(inputColumnWidths[0]));
-        width = firstColumnWidth + secondColumnWidth + thirdColumnWidth + fourthColumnWidth + fifthColumnWidth;
+        auto dimensionsX = *std::max_element(inputColumnsWidth, inputColumnsWidth + sizeof(inputColumnsWidth) / sizeof(inputColumnsWidth[0]));
+        auto dimensionsY = *std::max_element(columnHeight, columnHeight + sizeof(columnHeight) / sizeof(columnHeight[0]));
+        secondColumn = ImVec2(dimensionsX,dimensionsY);
+        dimensions_.x = firstColumn.x + secondColumn.x + thirdColumn.x + fourthColumn.x + fifthColumn.x;
+        dimensions_.y = firstColumn.y;
+        for (int i = 0; i < components_.size(); ++i) {
+            dimensions_.y += columnHeight[i];
+        }
+        dimensions_.y = dimensions_.y * 1.2f;
         ImGui::EndTable();
     }
 

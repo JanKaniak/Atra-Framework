@@ -116,6 +116,11 @@ int main(int, char**)
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        if (ImGui::Button("New formular")) {
+            formular = nullptr;
+            formular = std::make_unique<Formular>();
+        }
+
         formular->showControls();
         formular->showAttributes();
 

@@ -15,6 +15,15 @@ bool IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::saveToJson(n
     return true;
 }
 
+bool AttributeCharText::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+{
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum", getMinimum()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Maximum", getMaximum()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Value", (char)getValue()));
+    return true;
+}
+
 bool AttributeBool::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
@@ -22,22 +31,34 @@ bool AttributeBool::saveToJson(nlohmann::ordered_json &json, std::vector<Message
     return true;
 }
 
-bool AttributeCluster::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) { 
+bool AttributeCluster::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+{
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute descriptions", nlohmann::ordered_json::array()));
-    if (json.find("Attribute descriptions") == json.end()) {
+    if (json.find("Attribute descriptions") == json.end())
+    {
         messagesHistory.emplace_back("There has been an error while saving attribute to file!");
         return false;
     }
-    for (int i = 0; i < value_->getSize(); ++i) {
+    for (int i = 0; i < value_->getSize(); ++i)
+    {
         json.find("Attribute descriptions").value().push_back(nlohmann::ordered_json::object());
-        json.find("Attribute descriptions").value().at(json.find("Attribute descriptions").value().size()-1)[AttributeTypeConverter::EnumToFileString(value_->giveAttribute(i)->getType())] = nlohmann::ordered_json::array();
-        auto jsonObject = json.find("Attribute descriptions").value().at(json.find("Attribute descriptions").value().size()-1).find(AttributeTypeConverter::EnumToFileString(value_->giveAttribute(i)->getType()));
+        json.find("Attribute descriptions").value().at(json.find("Attribute descriptions").value().size() - 1)[AttributeTypeConverter::EnumToFileString(value_->giveAttribute(i)->getType())] = nlohmann::ordered_json::array();
+        auto jsonObject = json.find("Attribute descriptions").value().at(json.find("Attribute descriptions").value().size() - 1).find(AttributeTypeConverter::EnumToFileString(value_->giveAttribute(i)->getType()));
         jsonObject.value().push_back(nlohmann::ordered_json::object());
-        value_->giveAttribute(i)->saveToJson(jsonObject.value()[jsonObject.value().size()-1],messagesHistory);
+        value_->giveAttribute(i)->saveToJson(jsonObject.value()[jsonObject.value().size() - 1], messagesHistory);
     }
     return true;
- }
+}
+
+bool AttributeString::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+{
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum", getMinimum()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Maximum", getMaximum()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Value", getValue()));
+    return true;
+}
 
 AttributeCluster::AttributeCluster()
 {
@@ -67,57 +88,67 @@ void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptio
     {
         controlType = components->getControlTypeByAttributeName(desc_->getName());
     }
-    ImGuiChildFlags flags;
-    bool empty;
+    
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", desc_->getName().c_str());
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
+    ImGui::TableNextColumn();
+    Factory *factory = config->getFactory(desc_->getType());
+    if (ImGui::BeginCombo(std::format("##Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
+    {
+        for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
+        {
+            bool selected = (controlType.compare(factory->getNameOfControlTypesVector().at(j)) == 0);
+            if (ImGui::Selectable(factory->getNameOfControlTypesVector().at(j).c_str(), selected))
+            {
+                controlType = factory->getNameOfControlTypesVector().at(j);
+                components->swapControlComponent(components->positionOfComponentByAttributeName(desc_->getName()), factory->createEdit(controlType), this);
+            }
+            if (selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+
+        ImGui::EndCombo();
+    }
+    
+}
+
+void AttributeCharText::controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory)
+{
+    std::string controlType;
     if (controlType.empty())
     {
-        empty = true;
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1, 0, 0, 1));
-        flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
+        controlType = components->getControlTypeByAttributeName(desc_->getName());
     }
-    else
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", desc_->getName().c_str());
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
+    ImGui::TableNextColumn();
+    Factory *factory = config->getFactory(desc_->getType());
+    if (ImGui::BeginCombo(std::format("##Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
     {
-        empty = false;
-        flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
-    }
-
-    if (ImGui::BeginChild(std::format("Border##{}", desc_->getID()).c_str(), ImVec2(0, 0), flags))
-    {
-        ImGui::SameLine();
-        ImGui::Text("%s", desc_->getName().c_str());
-        ImGui::SameLine();
-        ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
-        ImGui::SameLine();
-        Factory *factory = config->getFactory(desc_->getType());
-        if (ImGui::BeginCombo(std::format("Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
+        for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
         {
-            for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
+            bool selected = (controlType.compare(factory->getNameOfControlTypesVector().at(j)) == 0);
+            if (ImGui::Selectable(factory->getNameOfControlTypesVector().at(j).c_str(), selected))
             {
-                bool selected = (controlType.compare(factory->getNameOfControlTypesVector().at(j)) == 0);
-                if (ImGui::Selectable(factory->getNameOfControlTypesVector().at(j).c_str(), selected))
-                {
-                    controlType = factory->getNameOfControlTypesVector().at(j);
-                    components->swapControlComponent(components->positionOfComponentByAttributeName(desc_->getName()), factory->createEdit(controlType), this);
-                }
-                if (selected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
+                controlType = factory->getNameOfControlTypesVector().at(j);
+                components->swapControlComponent(components->positionOfComponentByAttributeName(desc_->getName()), factory->createEdit(controlType), this);
             }
+            if (selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
 
-            ImGui::EndCombo();
-        }
-        ImGui::EndChild();
-        if (empty)
-        {
-            ImGui::PopStyleColor();
-            ImGui::Dummy(ImVec2(100, 30));
-        } else {
-            ImGui::Dummy(ImVec2(100, 35));
-        }
-        
+        ImGui::EndCombo();
     }
 }
+
 
 void AttributeBool::controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory)
 {
@@ -126,52 +157,29 @@ void AttributeBool::controlOptions(int position, ControlComponentsContainer *com
     {
         controlType = components->getControlTypeByAttributeName(desc_->getName());
     }
-    ImGuiChildFlags flags;
-    bool empty;
-    if (!components->existControlType(desc_->getName()))
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", desc_->getName().c_str());
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
+    ImGui::TableNextColumn();
+    Factory *factory = config->getFactory(desc_->getType());
+    if (ImGui::BeginCombo(std::format("##Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
     {
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1, 0, 0, 1));
-        flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
-        empty = true;
-    }
-    else
-    {
-        empty = false;
-        flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
-    }
-
-    if (ImGui::BeginChild(std::format("Border##{}", desc_->getID()).c_str(), ImVec2(0, 0), flags))
-    {
-        ImGui::SameLine();
-        ImGui::Text("%s", desc_->getName().c_str());
-        ImGui::SameLine();
-        ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
-        ImGui::SameLine();
-        Factory *factory = config->getFactory(desc_->getType());
-        if (ImGui::BeginCombo(std::format("Control Type##{}", desc_->getName()).c_str(), controlType.c_str()))
+        for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
         {
-            for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
+            bool selected = (controlType.compare(factory->getNameOfControlTypesVector().at(j)) == 0);
+            if (ImGui::Selectable(factory->getNameOfControlTypesVector().at(j).c_str(), selected))
             {
-                bool selected = (controlType.compare(factory->getNameOfControlTypesVector().at(j)) == 0);
-                if (ImGui::Selectable(factory->getNameOfControlTypesVector().at(j).c_str(), selected))
-                {
-                    controlType = factory->getNameOfControlTypesVector().at(j);
-                    components->swapControlComponent(position, factory->createEdit(controlType), this);
-                }
-                if (selected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
+                controlType = factory->getNameOfControlTypesVector().at(j);
+                components->swapControlComponent(components->positionOfComponentByAttributeName(desc_->getName()), factory->createEdit(controlType), this);
             }
+            if (selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
 
-            ImGui::EndCombo();
-        }
-        ImGui::EndChild();
-        if (empty)
-        {
-            ImGui::PopStyleColor();
-        }
-        ImGui::Dummy(ImVec2(30, 30));
+        ImGui::EndCombo();
     }
 }
 
@@ -182,52 +190,29 @@ void AttributeCluster::controlOptions(int position, ControlComponentsContainer *
     {
         controlType = components->getControlTypeByAttributeName(desc_->getName());
     }
-    ImGuiChildFlags flags;
-    bool empty;
-    if (controlType.empty())
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", desc_->getName().c_str());
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
+    ImGui::TableNextColumn();
+    Factory *factory = config->getFactory(desc_->getType());
+    if (ImGui::BeginCombo(std::format("##Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
     {
-        empty = true;
-        ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(1, 0, 0, 1));
-        flags = ImGuiChildFlags_Borders | ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
-    }
-    else
-    {
-        empty = false;
-        flags = ImGuiChildFlags_AlwaysAutoResize | ImGuiChildFlags_AutoResizeX | ImGuiChildFlags_AutoResizeY | ImGuiChildFlags_AlwaysUseWindowPadding;
-    }
-
-    if (ImGui::BeginChild(std::format("Border##{}", desc_->getID()).c_str(), ImVec2(0, 0), flags))
-    {
-        ImGui::SameLine();
-        ImGui::Text("%s", desc_->getName().c_str());
-        ImGui::SameLine();
-        ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
-        ImGui::SameLine();
-        Factory *factory = config->getFactory(desc_->getType());
-        if (ImGui::BeginCombo(std::format("Control Type##{}", desc_->getID()).c_str(), controlType.c_str()))
+        for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
         {
-            for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
+            bool selected = (controlType.compare(factory->getNameOfControlTypesVector().at(j)) == 0);
+            if (ImGui::Selectable(factory->getNameOfControlTypesVector().at(j).c_str(), selected))
             {
-                bool selected = (controlType.compare(factory->getNameOfControlTypesVector().at(j)) == 0);
-                if (ImGui::Selectable(factory->getNameOfControlTypesVector().at(j).c_str(), selected))
-                {
-                    controlType = factory->getNameOfControlTypesVector().at(j);
-                    components->swapControlComponent(components->positionOfComponentByAttributeName(desc_->getName()), factory->createEdit(controlType), this);
-                }
-                if (selected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
+                controlType = factory->getNameOfControlTypesVector().at(j);
+                components->swapControlComponent(components->positionOfComponentByAttributeName(desc_->getName()), factory->createEdit(controlType), this);
             }
+            if (selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
 
-            ImGui::EndCombo();
-        }
-        ImGui::EndChild();
-        if (empty)
-        {
-            ImGui::PopStyleColor();
-        }
-        ImGui::Dummy(ImVec2(30, 30));
+        ImGui::EndCombo();
     }
 
     for (int i = 0; i < components->getSize(); ++i)
@@ -259,4 +244,38 @@ AttributeCluster::~AttributeCluster()
 AttributesContainer *AttributeCluster::getAttributeContainer()
 {
     return value_.get();
+}
+
+
+void AttributeString::controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory)
+{
+    std::string controlType;
+    if (controlType.empty())
+    {
+        controlType = components->getControlTypeByAttributeName(desc_->getName());
+    }
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", desc_->getName().c_str());
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
+    ImGui::TableNextColumn();
+    Factory *factory = config->getFactory(desc_->getType());
+    if (ImGui::BeginCombo(std::format("##Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
+    {
+        for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
+        {
+            bool selected = (controlType.compare(factory->getNameOfControlTypesVector().at(j)) == 0);
+            if (ImGui::Selectable(factory->getNameOfControlTypesVector().at(j).c_str(), selected))
+            {
+                controlType = factory->getNameOfControlTypesVector().at(j);
+                components->swapControlComponent(components->positionOfComponentByAttributeName(desc_->getName()), factory->createEdit(controlType), this);
+            }
+            if (selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+
+        ImGui::EndCombo();
+    }
 }

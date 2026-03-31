@@ -1,7 +1,6 @@
 #pragma once
 #include "AttributeFactory.h"
 
-
 #include <format>
 
 template <typename TypeT, typename AttributeDescriptionT>
@@ -20,7 +19,7 @@ public:
     inline const TypeT getMaximum() { return desc_->getMaximum(); }
     bool setValue(TypeT value)
     {
-        if (value > getMinimum() && value < getMaximum())
+        if (value >= getMinimum() && value <= getMaximum())
         {
             value_ = value;
             return true;
@@ -28,7 +27,7 @@ public:
         return false;
     }
 
-    void setDescription(AttributeDescription *desc, std::vector<Message>& messagesHistory) override
+    void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override
     {
         if (dynamic_cast<AttributeDescriptionT *>(desc))
         {
@@ -37,9 +36,9 @@ public:
         }
     }
     TypeT getValue() { return value_; }
-    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
+    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
 
-    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message>& messagesHistory) override;
+    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory) override;
     ~IntegerNumberBaseAttributeClass() override = default;
 };
 
@@ -60,7 +59,7 @@ public:
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeInt>(*this); }
 };
 
-struct AutoRegisterIntAttribute : public AutoRegisterAttribute<AttributeInt,AttributeType::INT>
+struct AutoRegisterIntAttribute : public AutoRegisterAttribute<AttributeInt, AttributeType::INT>
 {
     inline static bool autoRegister = []()
     {
@@ -98,14 +97,91 @@ struct AutoRegisterFloatAttribute : public AutoRegisterAttribute<AttributeFloat,
     };
 };
 
-class AttributeChar : public IntegerNumberBaseAttributeClass<char, AttributeDescription_char>
+class AttributeUint : public IntegerNumberBaseAttributeClass<uint32_t, AttributeDescription_uint>
 {
 public:
-    AttributeChar() : IntegerNumberBaseAttributeClass() {};
-    std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeChar>(*this); }
+    AttributeUint() : IntegerNumberBaseAttributeClass() {};
+    std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeUint>(*this); }
 };
 
-struct AutoRegisterCharAttribute : public AutoRegisterAttribute<AttributeChar, AttributeType::CHAR>
+struct AutoRegisterUintAttribute : public AutoRegisterAttribute<AttributeUint, AttributeType::UINT>
+{
+    inline static bool registerUintAttribute = []()
+    {
+        AutoRegisterAttribute::autoRegisterAttribute;
+    };
+};
+
+class AttributeLong : public IntegerNumberBaseAttributeClass<long, AttributeDescription_long>
+{
+public:
+    AttributeLong() : IntegerNumberBaseAttributeClass() {};
+    std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeLong>(*this); }
+};
+
+struct AutoRegisterLongAttribute : public AutoRegisterAttribute<AttributeLong, AttributeType::LONG>
+{
+    inline static bool registerLongAttribute = []()
+    {
+        AutoRegisterAttribute::autoRegisterAttribute;
+    };
+};
+
+class AttributeCharNumber : public IntegerNumberBaseAttributeClass<char, AttributeDescriptionCharNumber>
+{
+public:
+    AttributeCharNumber() : IntegerNumberBaseAttributeClass() {};
+    std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeCharNumber>(*this); }
+};
+
+struct AutoRegisterCharNumberAttribute : public AutoRegisterAttribute<AttributeCharNumber, AttributeType::CHARN>
+{
+    inline static bool registerCharAttribute = []()
+    {
+        AutoRegisterAttribute::autoRegisterAttribute;
+    };
+};
+
+class AttributeCharText : public Attribute
+{
+private:
+    char value_;
+    AttributeDescriptionCharText *desc_;
+
+public:
+    AttributeCharText() {}
+    std::string getName() override { return desc_->getName(); }
+    AttributeType getType() override { return desc_->getType(); }
+    AttributeDescription *getDescription() override { return desc_; }
+    std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeCharText>(*this); }
+    inline const uint8_t getMinimum() { return desc_->getMinimum(); }
+    inline const uint8_t getMaximum() { return desc_->getMaximum(); }
+    bool setValue(char value)
+    {
+        if (sizeof(value) >= getMinimum() && sizeof(value) <= getMaximum())
+        {
+            value_ = value;
+            return true;
+        }
+        return false;
+    }
+
+    void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override
+    {
+        if (dynamic_cast<AttributeDescriptionCharText *>(desc))
+        {
+            desc_ = dynamic_cast<AttributeDescriptionCharText *>(desc);
+            value_ = desc_->getMinimum();
+        }
+    }
+    char getValue() { return value_; }
+    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
+
+    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory) override;
+    ~AttributeCharText() override = default;
+};
+
+struct AutoRegisterCharTextAttribute : public AutoRegisterAttribute<AttributeCharText, AttributeType::CHART>
 {
     inline static bool registerCharAttribute = []()
     {
@@ -125,7 +201,7 @@ public:
     AttributeType getType() override { return desc_->getType(); }
     AttributeDescription *getDescription() override { return desc_; }
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeBool>(*this); }
-    void setDescription(AttributeDescription *desc, std::vector<Message>& messagesHistory) override
+    void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override
     {
         if (dynamic_cast<AttributeDescription_bool *>(desc))
         {
@@ -133,7 +209,7 @@ public:
             value_ = false;
         }
     }
-    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
+    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
 
     bool setValue(bool value)
     {
@@ -141,10 +217,8 @@ public:
         return true;
     }
     bool getValue() { return value_; }
-    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message>& messagesHistory) override;
+    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory) override;
     ~AttributeBool() override = default;
-    
-
 };
 
 struct AutoRegisterBoolAttribute : public AutoRegisterAttribute<AttributeBool, AttributeType::BOOL>
@@ -157,26 +231,72 @@ struct AutoRegisterBoolAttribute : public AutoRegisterAttribute<AttributeBool, A
 
 class AttributesContainer;
 
-class AttributeCluster : public Attribute {
+class AttributeCluster : public Attribute
+{
 private:
     std::unique_ptr<AttributesContainer> value_;
     AttributeDescriptionCluster *desc_;
 
 public:
-AttributeCluster();
-AttributeCluster(const AttributeCluster& attributeCluster);
-AttributesContainer* getAttributeContainer();
-~AttributeCluster() override;
+    AttributeCluster();
+    AttributeCluster(const AttributeCluster &attributeCluster);
+    AttributesContainer *getAttributeContainer();
+    ~AttributeCluster() override;
 
 public:
-    
     std::string getName() override { return desc_->getName(); }
     AttributeType getType() override { return desc_->getType(); }
     AttributeDescription *getDescription() override { return desc_; }
     std::unique_ptr<Attribute> clone() override;
-    void setDescription(AttributeDescription *desc, std::vector<Message>& messagesHistory) override;
-    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) override;
-    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message>& messagesHistory) override;
+    void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override;
+    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
+    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory) override;
 };
 
 struct AutoRegisterClusterAttribute;
+
+class AttributeString : public Attribute
+{
+private:
+    std::string value_;
+    AttributeDescriptionString *desc_;
+
+public:
+    AttributeString() {}
+    std::string getName() override { return desc_->getName(); }
+    AttributeType getType() override { return desc_->getType(); }
+    uint32_t getMinimum() { return desc_->getMinimum(); }
+    uint32_t getMaximum() { return desc_->getMaximum(); }
+    AttributeDescription *getDescription() override { return desc_; }
+    std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeString>(*this); }
+    void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override
+    {
+        if (dynamic_cast<AttributeDescriptionString *>(desc))
+        {
+            desc_ = dynamic_cast<AttributeDescriptionString *>(desc);
+            value_ = "";
+        }
+    }
+    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
+
+    bool setValue(std::string value)
+    {
+        if (value.length() >= desc_->getMinimum() && value.length() <= desc_->getMaximum())
+        {
+            value_ = value;
+            return true;
+        }
+        return false;
+    }
+    std::string getValue() { return value_; }
+    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory) override;
+    ~AttributeString() override = default;
+};
+
+struct AutoRegisterStringAttribute : public AutoRegisterAttribute<AttributeString, AttributeType::STRING>
+{
+    inline static bool registerStringAttribute = []()
+    {
+        AutoRegisterAttribute::autoRegisterAttribute;
+    };
+};

@@ -7,24 +7,18 @@
 // Class Formular
 Formular::Formular()
 {
-    attributeDescs_ = std::make_unique<AttributeDescriptionsContainer>();
+    attributeDescs_ = std::make_unique<AttributesDescriptionsContainer>();
     attributes_ = std::make_unique<AttributesContainer>(attributeDescs_.get());
     config = Config::getInstance();
     components_ = std::make_unique<ControlComponentsContainer>(attributes_.get());
     showAttributesWindowSize_ = ImVec2(600, 800);
-
+    templateDescriptions_ = TemplateAttributesDescriptionContainer::getInstance();
+    chosenAttributesDescription_ = attributeDescs_.get();
+    
+    
+    addDescriptionWindow_ = false;
     showSettingWindow_ = false;
     saveWindow_ = false;
-
-    attributes_->addDescriptions("x", AttributeType::FLOAT, messageHistory_);
-    attributes_->addDescriptions("y", AttributeType::FLOAT, messageHistory_);
-    attributes_->addDescriptions("velX", AttributeType::FLOAT, messageHistory_);
-    attributes_->addDescriptions("velY", AttributeType::FLOAT, messageHistory_);
-    attributes_->createAttributes(messageHistory_);
-    components_->addControl(config->getFactory(AttributeType::FLOAT)->createDefaultEdit(), attributes_->giveAttribute(0));
-    components_->addControl(config->getFactory(AttributeType::FLOAT)->createDefaultEdit(), attributes_->giveAttribute(1));
-    components_->addControl(config->getFactory(AttributeType::FLOAT)->createDefaultEdit(), attributes_->giveAttribute(2));
-    components_->addControl(config->getFactory(AttributeType::FLOAT)->createDefaultEdit(), attributes_->giveAttribute(3));
 }
 
 bool Formular::addControlType(std::string attributeName, std::string editType)
@@ -230,8 +224,21 @@ void Formular::showControls()
 
         if (ImGui::Button("Add description", ImVec2(190, 30)))
         {
-            ImGui::OpenPopup("Edit window", ImGuiPopupFlags_NoOpenOverExistingPopup | ImGuiPopupFlags_NoReopen);
+            addDescriptionWindow_ = true;
+            chosenAttributesDescription_ = attributeDescs_.get();
         }
+
+        if (ImGui::Button("Create templates", ImVec2(190, 30)))
+        {
+            ImGui::OpenPopup("Template edit window", ImGuiPopupFlags_NoOpenOverExistingPopup | ImGuiPopupFlags_NoReopen);
+        }
+
+        ImGui::BeginDisabled(templateDescriptions_->getSize() == 0);
+        if (ImGui::Button("Create from templates", ImVec2(190, 30)))
+        {
+            ImGui::OpenPopup("Template create attributes", ImGuiPopupFlags_NoOpenOverExistingPopup | ImGuiPopupFlags_NoReopen);
+        }
+        ImGui::EndDisabled();
 
         ImGui::BeginDisabled(attributes_->getNumberOfDescriptions() == 0);
         if (ImGui::Button("Generate attributes", ImVec2(190, 30)))
@@ -254,10 +261,12 @@ void Formular::showControls()
 
         ImGui::EndDisabled();
 
-        showAddDescriptionWindow();
+        showAddDescriptionWindow(chosenAttributesDescription_, true);
         showModifyControlTypesWindow();
         showSettings();
         saveToFile();
+        showCreateTemplateAttribute();
+        showCreateAttributesFromTemplates();
         ImGui::End();
     }
 }
@@ -327,8 +336,13 @@ void Formular::showLogger()
     ImGui::EndDisabled();
 }
 
-void Formular::showAddDescriptionWindow()
+void Formular::showAddDescriptionWindow(AttributesDescriptionsContainer *attributeDesc, bool isCreatingAttributesOutsideClusterAllowed)
 {
+
+    if (!ImGui::IsPopupOpen("Edit window") && addDescriptionWindow_) {
+        ImGui::OpenPopup("Edit window");
+        addDescriptionWindow_ = false;
+    }
 
     static char buffer[40] = "Attribute";
     static int selected;
@@ -338,18 +352,26 @@ void Formular::showAddDescriptionWindow()
     static std::string category = "NUMERIC";
     static bool addedAndCorrect = false;
     static std::vector<AttributeDescription *> clusterDescriptions;
-    static AttributeDescriptionsContainer *descriptionContainer;
+    static AttributesDescriptionsContainer *descriptionContainer;
 
     if (ImGui::BeginPopupModal("Edit window", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
         if (clusterDescriptions.empty())
         {
             clusterDescriptions.push_back(nullptr);
-            attributes_->findDescriptionsByType(clusterDescriptions, AttributeType::CLUSTER);
+            attributeDesc->findDescriptionsByType(clusterDescriptions, AttributeType::CLUSTER);
             chosenLevelName = "NULL";
         }
 
-        ImGui::BeginDisabled(addedAndCorrect);
+        if (isCreatingAttributesOutsideClusterAllowed)
+        {
+            ImGui::BeginDisabled(addedAndCorrect);
+        }
+        else
+        {
+            ImGui::BeginDisabled(addedAndCorrect && (chosenLevelName.compare("NULL") == 0));
+        }
+
         if (ImGui::RadioButton("Numeric", selected == 0))
         {
             selected = 0;
@@ -424,16 +446,16 @@ void Formular::showAddDescriptionWindow()
         {
             if (ImGui::BeginCombo("Attribute type", chosenType.c_str()))
             {
-                for (int i = 0; i < attributes_->getRegisteredDescriptionsTypes().size(); ++i)
+                for (int i = 0; i < attributeDesc->getRegisteredDescriptionsTypes().size(); ++i)
                 {
-                    if (attributes_->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
+                    if (attributeDesc->getRegisteredDescriptionsTypes().at(i).getCategory().compare(category) != 0)
                     {
                         continue;
                     }
-                    bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType()));
-                    if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
+                    bool selected = (chosenType == AttributeTypeConverter::EnumToString(attributeDesc->getRegisteredDescriptionsTypes().at(i).getType()));
+                    if (ImGui::Selectable(std::string(AttributeTypeConverter::EnumToString(attributeDesc->getRegisteredDescriptionsTypes().at(i).getType())).c_str(), selected))
                     {
-                        chosenType = AttributeTypeConverter::EnumToString(attributes_->getRegisteredDescriptionsTypes().at(i).getType());
+                        chosenType = AttributeTypeConverter::EnumToString(attributeDesc->getRegisteredDescriptionsTypes().at(i).getType());
                     }
                     if (selected)
                     {
@@ -457,13 +479,13 @@ void Formular::showAddDescriptionWindow()
             {
                 if (descriptionContainer == nullptr)
                 {
-                    descriptionContainer = attributes_->getDescriptionContainer(chosenLevelName, chosenLevelNameId);
+                    descriptionContainer = attributeDesc->getDescriptionContainer(chosenLevelName, chosenLevelNameId);
                 }
 
                 nameExists = descriptionContainer->existsDescription(buffer);
                 if (!nameExists)
                 {
-                    descriptionContainer->addDescriptions(std::string(buffer), AttributeTypeConverter::StringToEnum(chosenType), messageHistory_);
+                    descriptionContainer->addDescription(std::string(buffer), AttributeTypeConverter::StringToEnum(chosenType), messageHistory_);
                     addedAndCorrect = true;
                 }
             }
@@ -498,7 +520,16 @@ void Formular::showModifyControlTypesWindow()
 {
     if (ImGui::BeginPopupModal("Modify control types window", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        attributes_->setControlTypes(components_.get(), config, messageHistory_);
+        if (ImGui::BeginTable("Control types", 3))
+        {
+            ImGui::TableSetupColumn("Attribute name");
+            ImGui::TableSetupColumn("Attribute type");
+            ImGui::TableSetupColumn("Control type");
+            ImGui::TableHeadersRow();
+            attributes_->setControlTypes(components_.get(), config, messageHistory_);
+            ImGui::EndTable();
+        }
+
         if (ImGui::Button("Close", ImVec2(190, 30)))
         {
             ImGui::CloseCurrentPopup();
@@ -508,13 +539,77 @@ void Formular::showModifyControlTypesWindow()
     }
 }
 
-void Formular::showCreateTemplateAttribute() {
-    if (ImGui::BeginPopupModal("Template edit window")) {
+void Formular::showCreateTemplateAttribute()
+{
+    static char buffer[40];
+    static bool successfullyAdded = true;
+    static bool openWindow = false;
+    if (ImGui::BeginPopupModal("Template edit window"))
+    {
+        openWindow = true;
+        ImGui::InputText("Template name", buffer, sizeof(buffer));
+        if (ImGui::Button("Add description"))
+        {
+            templateDescriptions_->addTemplateDescription(buffer,messageHistory_);
+            chosenAttributesDescription_ = templateDescriptions_->getContainer(buffer);
+            addDescriptionWindow_ = true;
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Close"))
+        {
+            openWindow = false;
+            chosenAttributesDescription_ = attributeDescs_.get();
+            ImGui::CloseCurrentPopup();
+        }
+
         ImGui::EndPopup();
     }
 }
 
+void Formular::showCreateAttributesFromTemplates()
+{
+    
+    if (ImGui::BeginPopupModal("Template create attributes"))
+    {
+        static bool created = false;
+        static std::string chosenTemplate;
+        if (chosenTemplate.empty()) {
+            templateDescriptions_->getNameByPosition(0);
+        }
+        if (ImGui::BeginCombo("##Template attribute descriptions", chosenTemplate.c_str()))
+        {
+            for (int i = 0; i < templateDescriptions_->getSize(); ++i)
+            {
+                bool open = (chosenTemplate == templateDescriptions_->getTemplateByPosition(i)->getName());
+                if (ImGui::Selectable(templateDescriptions_->getTemplateByPosition(i)->getName().c_str(),open)) {
+                    chosenTemplate = templateDescriptions_->getNameByPosition(i);
+                }
 
+                if (open) {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+
+        if (ImGui::Button("OK")) {
+            chosenAttributesDescription_ = templateDescriptions_->getContainer(chosenTemplate);
+            chosenTemplate = "";
+            ImGui::CloseCurrentPopup();
+            created = true;
+        }
+        ImGui::EndPopup();
+
+        if (created) {
+            attributeDescs_->addDescriptions(chosenAttributesDescription_,messageHistory_);
+            attributes_->createAttributes(messageHistory_);
+            created = false;
+        }
+
+    }
+
+
+}
 
 void Formular::showAttributes()
 {
@@ -543,7 +638,7 @@ bool Formular::loadDescriptions(nlohmann::ordered_json json)
 
         for (auto &descriptionsOfTheSameType : descriptions.items())
         {
-            if (!attributes_->addDescriptions(AttributeTypeConverter::StringToEnum(descriptionsOfTheSameType.key()), descriptionsOfTheSameType.value(), messageHistory_))
+            if (!attributes_->addDescription(AttributeTypeConverter::StringToEnum(descriptionsOfTheSameType.key()), descriptionsOfTheSameType.value(), messageHistory_))
             {
                 return false;
             }
@@ -728,16 +823,15 @@ nlohmann::ordered_json Formular::saveOutput()
     for (int i = 0; i < attributes_->getSize(); ++i)
     {
         tempJson.push_back(nlohmann::ordered_json::object());
-        tempJson[tempJson.size()-1][AttributeTypeConverter::EnumToFileString(attributes_->giveAttribute(i)->getType())] = nlohmann::ordered_json::array();
+        tempJson[tempJson.size() - 1][AttributeTypeConverter::EnumToFileString(attributes_->giveAttribute(i)->getType())] = nlohmann::ordered_json::array();
         auto attributeType = tempJson[i].find(AttributeTypeConverter::EnumToFileString(attributes_->giveAttribute(i)->getType()));
-        if (tempJson[tempJson.size()-1].end() == attributeType)
+        if (tempJson[tempJson.size() - 1].end() == attributeType)
         {
             messageHistory_.emplace_back(Message("Attribute type does not exist in this file yet!"));
             return nullptr;
         }
         attributeType.value().push_back(nlohmann::ordered_json::object());
         attributes_->giveAttribute(i)->saveToJson(attributeType.value()[attributeType.value().size() - 1], messageHistory_);
-        
     }
 
     return tempJson;
@@ -786,7 +880,7 @@ void Formular::saveToFile()
 
         static std::filesystem::path completedPath;
         ImGui::InputText("File name", buffer, sizeof(buffer));
-        if (ImGui::Button("OK"))
+        if (ImGui::Button("OK",ImVec2(100,30)))
         {
 
             completedPath = outputPath_ / std::string(buffer).append(".json");
@@ -803,7 +897,8 @@ void Formular::saveToFile()
                 ImGui::CloseCurrentPopup();
             }
         }
-        if (ImGui::Button("Cancel"))
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel",ImVec2(100,30)))
         {
             std::fill(&buffer[0], &buffer[0] + sizeof(buffer), 0);
             saveWindow_ = false;
@@ -816,13 +911,14 @@ void Formular::saveToFile()
         if (ImGui::BeginPopup("File overwrite", ImGuiWindowFlags_AlwaysAutoResize))
         {
             ImGui::Text("Do you wish to overwrite existing file? Path and name of the file is: %s", completedPath.string().c_str());
-            if (ImGui::Button("Yes"))
+            if (ImGui::Button("Yes",ImVec2(100,30)))
             {
                 chosen = true;
                 outputPath_ = completedPath;
                 ImGui::CloseCurrentPopup();
             }
-            if (ImGui::Button("No"))
+            ImGui::SameLine();
+            if (ImGui::Button("No",ImVec2(100,30)))
             {
                 ImGui::CloseCurrentPopup();
             }
@@ -834,7 +930,6 @@ void Formular::saveToFile()
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("File name window"))
     {
-        std::cout << ImGui::IsPopupOpen("File name window") << std::endl;
         std::fill(&buffer[0], &buffer[0] + sizeof(buffer), 0);
         saveWindow_ = false;
         outputPath_.clear();

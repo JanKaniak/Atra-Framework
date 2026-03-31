@@ -4,7 +4,7 @@
 template <EditTypeCluster TYPE>
 bool ControlComponentCluster<TYPE>::sameName(std::string name)
 {
-    if (attributecluster_->getName().compare(name) == 0)
+    if (attribute_->getName().compare(name) == 0)
     {
         return true;
     }
@@ -26,9 +26,9 @@ void ControlComponentCluster<TYPE>::setAttribute(Attribute *attribute)
 {
     if (dynamic_cast<AttributeCluster *>(attribute))
     {
-        attributecluster_ = dynamic_cast<AttributeCluster *>(attribute);
+        attribute_ = dynamic_cast<AttributeCluster *>(attribute);
         components_ = new ControlComponentsContainer();
-        components_->changeAttributesContainer(attributecluster_->getAttributeContainer());
+        components_->changeAttributesContainer(attribute_->getAttributeContainer());
     }
 }
 
@@ -41,27 +41,19 @@ void ControlComponentCluster<TYPE>::updateLimitValues()
     }
 }
 
+
+Tree::Tree() { dimensions_ = ImVec2(0,0);}
+
+
 void Tree::draw(std::vector<Message> &messageHistory)
 {
-    static float width;
-    static bool toggled = false;
-    ImGui::Text("%f", width);
-    ImGui::Text("%s", ((toggled) ? "Toggled" : "Off"));
     if (ImGui::TreeNodeEx(std::format("##{}", getName()).c_str()))
     {
-        if (ImGui::is())
-        {
-            components_->draw(messageHistory);
-            width = ImGui::GetItemRectSize().x;
-            toggled = true;
-        }
-        else
-        {
-            width = 0;
-            toggled = false;
-        }
+        components_->draw(messageHistory);
+        dimensions_.x = components_->getDimensions().x;
+        dimensions_.y = components_->getDimensions().y * 1.7f;
         ImGui::TreePop();
+    } else {
+        dimensions_ = ImVec2(ImGui::CalcTextSize("Input").x,(ImGui::CalcTextSize("Input").y * 1.5f));
     }
-
-    ImGui::Dummy(ImVec2(0, width));
 }

@@ -14,8 +14,9 @@ public:
     };
     void draw(std::vector<Message> &messageHistory) override {
         if (ImGui::Checkbox(std::format("##{}",getName()).c_str(),&value_)) {
-            attributebool_->setValue(value_);
+            attribute_->setValue(value_);
         }
+        dimensions_ = ImGui::GetItemRectSize();
     }
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<CheckBox>(*this); };
 };
@@ -39,8 +40,9 @@ public:
         ImGui::PushStyleColor(ImGuiCol_Button,color);
         if (ImGui::Button(std::format("##{}",getName()).c_str(),ImVec2(50,30))) {
             value_ = !value_;
-            attributebool_->setValue(value_);
+            attribute_->setValue(value_);
         }
+        dimensions_ = ImGui::GetItemRectSize();
         ImGui::PopStyleColor();
     }
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<LogicButton>(*this); };

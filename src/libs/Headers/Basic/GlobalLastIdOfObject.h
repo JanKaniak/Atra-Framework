@@ -11,6 +11,7 @@ class GlobalLastIdOfObject {
     public:
     static GlobalLastIdOfObject* getInstance();
     uint64_t getNewId();
+    void resetIdCounter() { lastId_ = 0;}
 
 };
 

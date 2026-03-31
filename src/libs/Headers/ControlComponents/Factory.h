@@ -32,10 +32,6 @@ using IntEditUptr = std::unique_ptr<ControlComponent>;
 class IntEditFactory : public Factory
 {
 private:
-    static IntEditFactory *instance_;
-
-
-private:
     std::map<EditTypeNumber, IntEditUptr> prototypes_;
 
 private:
@@ -70,9 +66,6 @@ public:
 using DoubleEditUptr = std::unique_ptr<ControlComponent>;
 class DoubleEditFactory : public Factory
 {
-private:
-    static DoubleEditFactory *instance;
-
 private:
     std::map<EditTypeNumber, DoubleEditUptr> prototypes_;
 
@@ -109,9 +102,6 @@ using FloatEditUptr = std::unique_ptr<ControlComponent>;
 class FloatEditFactory : public Factory
 {
 private:
-    static FloatEditFactory *instance;
-
-private:
     std::map<EditTypeNumber, FloatEditUptr> prototypes_;
 
 private:
@@ -143,28 +133,25 @@ public:
 
 //---------------------------------------------------
 
-using CharEditUptr = std::unique_ptr<ControlComponent>;
-class CharEditFactory : public Factory
+using CharTextEditUptr = std::unique_ptr<ControlComponent>;
+class CharTextEditFactory : public Factory
 {
 private:
-    static CharEditFactory *instance;
+    std::map<EditTypeCharText, CharTextEditUptr> prototypes_;
 
 private:
-    std::map<EditTypeChar, CharEditUptr> prototypes_;
-
-private:
-    CharEditFactory();
+    CharTextEditFactory();
 
     template <typename EditTypeCharT>
     void registerPrototype();
 
 public:
-    static CharEditFactory *getInstance();
-    const AttributeType type_ = AttributeType::FLOAT;
+    static CharTextEditFactory *getInstance();
+    const AttributeType type_ = AttributeType::CHART;
     std::unique_ptr<ControlComponent> createEdit(std::string editType)
     {
-        EditTypeChar edit = EditTypeCharConverter::StringToEnum(editType);
-        if (edit == EditTypeChar::NOTACONTROL)
+        EditTypeCharText edit = EditTypeCharConverter::StringToEnum(editType);
+        if (edit == EditTypeCharText::NOTACONTROL)
         {
             return nullptr;
         }
@@ -174,7 +161,41 @@ public:
         if (prototypes_.size() == 0) {
             return nullptr;
         }
-        return prototypes_[EditTypeChar::TEXT]->clone();
+        return prototypes_[EditTypeCharText::TEXT]->clone();
+    }
+};
+
+//---------------------------------------------------
+
+using CharNumberEditUptr = std::unique_ptr<ControlComponent>;
+class CharNumberEditFactory : public Factory
+{
+private:
+    std::map<EditTypeNumber, CharNumberEditUptr> prototypes_;
+
+private:
+    CharNumberEditFactory();
+
+    template <typename EditTypeCharT>
+    void registerPrototype();
+
+public:
+    static CharNumberEditFactory *getInstance();
+    const AttributeType type_ = AttributeType::CHARN;
+    std::unique_ptr<ControlComponent> createEdit(std::string editType)
+    {
+        EditTypeNumber edit = EditTypeNumberConverter::StringToEnum(editType);
+        if (edit == EditTypeNumber::NOTACONTROL)
+        {
+            return nullptr;
+        }
+        return prototypes_[edit]->clone();
+    }
+    std::unique_ptr<ControlComponent> createDefaultEdit()  {
+        if (prototypes_.size() == 0) {
+            return nullptr;
+        }
+        return prototypes_[EditTypeNumber::SLIDER]->clone();
     }
 };
 
@@ -183,9 +204,6 @@ public:
 using LogicEditUptr = std::unique_ptr<ControlComponent>;
 class LogicEditFactory : public Factory
 {
-private:
-    static LogicEditFactory *instance;
-
 private:
     std::map<EditTypeLogic, LogicEditUptr> prototypes_;
 
@@ -222,9 +240,6 @@ using ClusterEditUptr = std::unique_ptr<ControlComponent>;
 class ClusterEditFactory : public Factory
 {
 private:
-    static ClusterEditFactory *instance;
-
-private:
     std::map<EditTypeCluster, ClusterEditUptr> prototypes_;
 
 private:
@@ -254,6 +269,112 @@ public:
 
 //---------------------------------------------------
 
+using LongEditUptr = std::unique_ptr<ControlComponent>;
+class LongEditFactory : public Factory
+{
+private:
+    std::map<EditTypeNumber, LongEditUptr> prototypes_;
+
+private:
+    LongEditFactory();
+
+    template <typename EditTypeLongT>
+    void registerPrototype();
+
+public:
+    static LongEditFactory *getInstance();
+    const AttributeType type_ = AttributeType::LONG;
+    std::unique_ptr<ControlComponent> createEdit(std::string editType)
+    {
+        EditTypeNumber edit = EditTypeNumberConverter::StringToEnum(editType);
+        if (edit == EditTypeNumber::NOTACONTROL)
+        {
+            return nullptr;
+        }
+        return prototypes_[edit]->clone();
+    }
+
+    std::unique_ptr<ControlComponent> createDefaultEdit() {
+        if (prototypes_.size() == 0) {
+            return nullptr;
+        }
+        return prototypes_[EditTypeNumber::SLIDER]->clone();
+    }
+};
+
+//---------------------------------------------------
+
+using UintEditUptr = std::unique_ptr<ControlComponent>;
+class UintEditFactory : public Factory
+{
+private:
+    std::map<EditTypeNumber, UintEditUptr> prototypes_;
+
+private:
+    UintEditFactory();
+
+    template <typename EditTypeUintT>
+    void registerPrototype();
+
+public:
+    static UintEditFactory *getInstance();
+    const AttributeType type_ = AttributeType::UINT;
+    std::unique_ptr<ControlComponent> createEdit(std::string editType)
+    {
+        EditTypeNumber edit = EditTypeNumberConverter::StringToEnum(editType);
+        if (edit == EditTypeNumber::NOTACONTROL)
+        {
+            return nullptr;
+        }
+        return prototypes_[edit]->clone();
+    }
+
+    std::unique_ptr<ControlComponent> createDefaultEdit() {
+        if (prototypes_.size() == 0) {
+            return nullptr;
+        }
+        return prototypes_[EditTypeNumber::SLIDER]->clone();
+    }
+};
+
+//---------------------------------------------------
+using StringEditUptr = std::unique_ptr<ControlComponent>;
+class StringEditFactory : public Factory
+{
+private:
+    std::map<EditTypeString, StringEditUptr> prototypes_;
+
+private:
+    StringEditFactory();
+
+    template <typename EditTypeStringT>
+    void registerPrototype();
+
+public:
+    static StringEditFactory *getInstance();
+    const AttributeType type_ = AttributeType::STRING;
+    std::unique_ptr<ControlComponent> createEdit(std::string editType)
+    {
+        EditTypeString edit = EditTypeStringConverter::StringToEnum(editType);
+        if (edit == EditTypeString::NOTACONTROL)
+        {
+            return nullptr;
+        }
+        return prototypes_[edit]->clone();
+    }
+
+    std::unique_ptr<ControlComponent> createDefaultEdit() {
+        if (prototypes_.size() == 0) {
+            return nullptr;
+        }
+        return prototypes_[EditTypeString::TEXT]->clone();
+    }
+};
+
+//---------------------------------------------------
+
+
+
 
 class Config
 {
@@ -272,23 +393,53 @@ public:
 
 // ------------------------------------------------------------------
 
-
-#define Factory_register \
-    FactoryR(Int, IntEditFactory) \
-    FactoryR(Double, DoubleEditFactory) \
-    FactoryR(Float, FloatEditFactory) \
-    FactoryR(Char, CharEditFactory) \
-    FactoryR(Logic, LogicEditFactory) 
-
-#define FactoryR(type,factory) \
-struct AutoRegister##type##Factory { \
-    inline static bool autoRegister = [] () { \
-        Config::getInstance()->registerFactory(factory::getInstance()); \
-        return true; \
-    } (); \
+struct AutoRegisterIntFactory {
+    inline static bool autoRegister = [] () {
+        
+        Config::getInstance()->registerFactory(IntEditFactory::getInstance());
+        return true;
+    } ();
 };
-Factory_register
-#undef FactoryR
+
+struct AutoRegisterDoubleFactory {
+    inline static bool autoRegister = [] () {
+        
+        Config::getInstance()->registerFactory(DoubleEditFactory::getInstance());
+        return true;
+    } ();
+};
+
+struct AutoRegisterFloatFactory {
+    inline static bool autoRegister = [] () {
+        
+        Config::getInstance()->registerFactory(FloatEditFactory::getInstance());
+        return true;
+    } ();
+};
+
+struct AutoRegisterCharTextFactory {
+    inline static bool autoRegister = [] () {
+        
+        Config::getInstance()->registerFactory(CharTextEditFactory::getInstance());
+        return true;
+    } ();
+};
+
+struct AutoRegisterCharNumberFactory {
+    inline static bool autoRegister = [] () {
+        
+        Config::getInstance()->registerFactory(CharNumberEditFactory::getInstance());
+        return true;
+    } ();
+};
+
+struct AutoRegisterLogicFactory {
+    inline static bool autoRegister = [] () {
+        
+        Config::getInstance()->registerFactory(LogicEditFactory::getInstance());
+        return true;
+    } ();
+};
 
 struct AutoRegisterClusterFactory {
     inline static bool autoRegister = [] () {
@@ -297,11 +448,28 @@ struct AutoRegisterClusterFactory {
         return true;
     } ();
 };
-/*
-struct AutoRegisterFloatFactory {
+
+struct AutoRegisterStringFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(FloatEditFactory::getInstance());
+        Config::getInstance()->registerFactory(StringEditFactory::getInstance());
         return true;
     } ();
-};*/
+};
+
+struct AutoRegisterLongFactory {
+    inline static bool autoRegister = [] () {
+        
+        Config::getInstance()->registerFactory(LongEditFactory::getInstance());
+        return true;
+    } ();
+};
+
+struct AutoRegisterUintFactory {
+    inline static bool autoRegister = [] () {
+        
+        Config::getInstance()->registerFactory(UintEditFactory::getInstance());
+        return true;
+    } ();
+};
+

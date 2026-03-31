@@ -14,7 +14,7 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
         max_ = maximum;
         return true;
     }
-    messagesHistory.emplace_back(Message("Minimum must be lower value than maximum!"));
+    messagesHistory.emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
     return false;
 }
 
@@ -23,7 +23,7 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
     {
-        messagesHistory.emplace_back(Message("Incorrect json format!"));
+
         return false;
     }
     if ((!json["Minimum"].is_number_integer() && json["Minimum"].type() != TypeEnumT) || (!json["Maximum"].is_number_integer() && json["Maximum"].type() != TypeEnumT))
@@ -52,17 +52,19 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
         ImGui::OpenPopup("Edit limit for description");
     }
 
-    ImGui::SetNextWindowSize(ImVec2(400, 300));
+    ImGui::SetNextWindowSize(ImVec2(0, 112));
     if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
     {
 
         ImGui::InputScalar("Minimum", ImGuiDataTypeT, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
         ImGui::InputScalar("Maximum", ImGuiDataTypeT, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
 
-        if (ImGui::Button("Save"))
+        if (ImGui::Button("Save",ImVec2(60,30)))
         {
             if (setLimit(tmpMin, tmpMax, messagesHistory))
             {
+                tmpMin = 0;
+                tmpMax = 0;
                 ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
                 return false;
@@ -75,7 +77,7 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
         }
 
         ImGui::SameLine();
-        if (ImGui::Button("Close"))
+        if (ImGui::Button("Close",ImVec2(60,30)))
         {
             tmpMin = 0;
             tmpMax = 0;
@@ -118,7 +120,7 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
         max_ = maximum;
         return true;
     }
-    messagesHistory.emplace_back(Message("Minimum must be lower value than maximum!"));
+    messagesHistory.emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
     return false;
 }
 
@@ -271,7 +273,7 @@ bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::v
 
         for (auto &descriptionsOfTheSameType : descriptions.items())
         {
-            if (!descriptions_->addDescriptions(AttributeTypeConverter::StringToEnum(descriptionsOfTheSameType.key()), descriptionsOfTheSameType.value(), messagesHistory))
+            if (!descriptions_->addDescription(AttributeTypeConverter::StringToEnum(descriptionsOfTheSameType.key()), descriptionsOfTheSameType.value(), messagesHistory))
             {
                 return false;
             }
@@ -294,7 +296,7 @@ void AttributeDescriptionCluster::addItselfToVectorByCondition(std::vector<Attri
     descriptions_->findDescriptionsByType(vector, type);
 }
 
-AttributeDescriptionsContainer *AttributeDescriptionCluster::getContainer(std::string_view descriptionName, uint64_t descriptionId)
+AttributesDescriptionsContainer *AttributeDescriptionCluster::getContainer(std::string_view descriptionName, uint64_t descriptionId)
 {
     if (descriptionName.empty() || (descriptionName.compare(name_) == 0 && descriptionId == id_))
     {
@@ -308,6 +310,226 @@ AttributeDescriptionCluster::~AttributeDescriptionCluster()
     descriptions_ = nullptr;
 }
 
+//--------------------------------------------------------------
+
+// CHAR text ---------------------------------------------------
+
+bool AttributeDescriptionCharText::setLimit(uint8_t minimum, uint8_t maximum, std::vector<Message> &messagesHistory)
+{
+    if ((minimum < maximum) || (minimum > 0 && minimum <= maximum))
+    {
+        min_ = minimum;
+        max_ = maximum;
+        return true;
+    }
+    messagesHistory.emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
+    return false;
+}
+
+bool AttributeDescriptionCharText::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+{
+    if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
+    {
+        messagesHistory.emplace_back(Message("Incorrect json format!"));
+        return false;
+    }
+    if ((!json["Minimum"].is_number_integer() && json["Minimum"].type() != nlohmann::ordered_json::value_t::number_unsigned) || (!json["Maximum"].is_number_integer() && json["Maximum"].type() != nlohmann::ordered_json::value_t::number_unsigned))
+    {
+        messagesHistory.emplace_back(Message(std::format("{} Bounds must be number value!", json["Attribute name"].get<std::string>())));
+        return false;
+    }
+
+    if (!json["Attribute name"].is_string())
+    {
+        messagesHistory.emplace_back(Message("Name must be string type!"));
+        return false;
+    }
+
+    setName(json["Attribute name"].get<std::string>());
+    return setLimit(json["Minimum"].get<uint8_t>(), json["Maximum"].get<uint8_t>(), messagesHistory);
+}
+
+
+bool AttributeDescriptionCharText::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
+{
+    static uint8_t tmpMin = 0;
+    static uint8_t tmpMax = 0;
+    if (!ImGui::IsPopupOpen("Edit limit for description"))
+    {
+        ImGui::OpenPopup("Edit limit for description");
+    }
+
+    ImGui::SetNextWindowSize(ImVec2(0, 112));
+    if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
+    {
+
+        ImGui::InputScalar("Minimum", dataType_, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
+        ImGui::InputScalar("Maximum", dataType_, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
+
+        if (ImGui::Button("Save",ImVec2(60,30)))
+        {
+            if (setLimit(tmpMin, tmpMax, messagesHistory))
+            {
+                tmpMin = 0;
+                tmpMax = 0;
+                ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+                return false;
+            }
+            tmpMin = 0;
+            tmpMax = 0;
+            ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
+            return true;
+        }
+
+        ImGui::SameLine();
+        if (ImGui::Button("Close",ImVec2(60,30)))
+        {
+            tmpMin = 0;
+            tmpMax = 0;
+            ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
+            return false;
+        }
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
+    {
+        tmpMin = 0;
+        tmpMax = 0;
+        ImGui::EndPopup();
+        return false;
+    }
+    return true;
+}
+
+
+void AttributeDescriptionCharText::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
+{
+    if (type == type_)
+    {
+        vector.emplace_back(this);
+    }
+}
+
+//----------------------------------------------------------------
+
+// STRING ---------------------------------------------------
+
+bool AttributeDescriptionString::setLimit(uint32_t minimum, uint32_t maximum, std::vector<Message> &messagesHistory)
+{
+    if (minimum < maximum)
+    {
+        min_ = minimum;
+        max_ = maximum;
+        return true;
+    }
+    messagesHistory.emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
+    return false;
+}
+
+bool AttributeDescriptionString::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+{
+    if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
+    {
+        messagesHistory.emplace_back(Message("Incorrect json format!"));
+        return false;
+    }
+    if ((!json["Minimum"].is_number_integer() && json["Minimum"].type() != nlohmann::ordered_json::value_t::number_unsigned) || (!json["Maximum"].is_number_integer() && json["Maximum"].type() != nlohmann::ordered_json::value_t::number_unsigned))
+    {
+        messagesHistory.emplace_back(Message(std::format("{} Bounds must be number value!", json["Attribute name"].get<std::string>())));
+        return false;
+    }
+
+    if (!json["Attribute name"].is_string())
+    {
+        messagesHistory.emplace_back(Message("Name must be string type!"));
+        return false;
+    }
+
+    setName(json["Attribute name"].get<std::string>());
+    return setLimit(json["Minimum"].get<uint32_t>(), json["Maximum"].get<uint32_t>(), messagesHistory);
+}
+
+
+bool AttributeDescriptionString::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
+{
+    static uint32_t tmpMin = 0;
+    static uint32_t tmpMax = 0;
+    if (!ImGui::IsPopupOpen("Edit limit for description"))
+    {
+        ImGui::OpenPopup("Edit limit for description");
+    }
+
+    ImGui::SetNextWindowSize(ImVec2(0, 112));
+    if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
+    {
+
+        ImGui::InputScalar("Minimum", dataType_, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
+        ImGui::InputScalar("Maximum", dataType_, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
+
+        if (ImGui::Button("Save",ImVec2(60,30)))
+        {
+            if (setLimit(tmpMin, tmpMax, messagesHistory))
+            {
+                tmpMin = 0;
+                tmpMax = 0;
+                ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+                return false;
+            }
+            tmpMin = 0;
+            tmpMax = 0;
+            ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
+            return true;
+        }
+
+        ImGui::SameLine();
+        if (ImGui::Button("Close",ImVec2(60,30)))
+        {
+            tmpMin = 0;
+            tmpMax = 0;
+            ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
+            return false;
+        }
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
+    {
+        tmpMin = 0;
+        tmpMax = 0;
+        ImGui::EndPopup();
+        return false;
+    }
+    return true;
+}
+
+
+void AttributeDescriptionString::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
+{
+    if (type == type_)
+    {
+        vector.emplace_back(this);
+    }
+}
+
+//----------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
 std::unique_ptr<AttributeDescription> AttributeDescription_int::clone() { return std::make_unique<AttributeDescription_int>(*this); }
 
 std::unique_ptr<AttributeDescription> AttributeDescription_double::clone() { return std::make_unique<AttributeDescription_double>(*this); }
@@ -318,8 +540,12 @@ std::unique_ptr<AttributeDescription> AttributeDescription_long::clone() { retur
 
 std::unique_ptr<AttributeDescription> AttributeDescription_uint::clone() { return std::make_unique<AttributeDescription_uint>(*this); }
 
-std::unique_ptr<AttributeDescription> AttributeDescription_char::clone() { return std::make_unique<AttributeDescription_char>(*this); }
+std::unique_ptr<AttributeDescription> AttributeDescriptionCharNumber::clone() { return std::make_unique<AttributeDescriptionCharNumber>(*this); }
 
 std::unique_ptr<AttributeDescription> AttributeDescription_bool::clone() { return std::make_unique<AttributeDescription_bool>(*this); }
 
 std::unique_ptr<AttributeDescription> AttributeDescriptionCluster::clone() { return std::make_unique<AttributeDescriptionCluster>(*this); }
+
+std::unique_ptr<AttributeDescription> AttributeDescriptionCharText::clone() { return std::make_unique<AttributeDescriptionCharText>(*this); }
+
+std::unique_ptr<AttributeDescription> AttributeDescriptionString::clone() { return std::make_unique<AttributeDescriptionString>(*this); }

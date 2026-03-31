@@ -1,6 +1,6 @@
 #pragma once
 #include "ImplementedAttribute.h"
-#include "AttributeDescriptionsContainer.h"
+#include "AttributesDescriptionsContainer.h"
 #include <vector>
 #include <memory>
 #include <map>
@@ -12,16 +12,16 @@
 class AttributesContainer
 {
 private:
-    AttributeDescriptionsContainer* attributeDescs_;
+    AttributesDescriptionsContainer* attributeDescs_;
     std::vector<std::unique_ptr<Attribute>> attributes_;
     AttributeFactory *attributeFactory_;
 
 public:
     AttributesContainer();
-    AttributesContainer(AttributeDescriptionsContainer* attributeDescs);
+    AttributesContainer(AttributesDescriptionsContainer* attributeDescs);
     ~AttributesContainer();
-    bool addDescriptions(AttributeType type, nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) { return attributeDescs_->addDescriptions(type, json, messagesHistory); }
-    bool addDescriptions(std::string attributeName, AttributeType type, std::vector<Message> &messagesHistory) { return attributeDescs_->addDescriptions(attributeName, type, messagesHistory); }
+    bool addDescription(AttributeType type, nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) { return attributeDescs_->addDescription(type, json, messagesHistory); }
+    bool addDescription(std::string attributeName, AttributeType type, std::vector<Message> &messagesHistory) { return attributeDescs_->addDescription(attributeName, type, messagesHistory); }
     bool createAttributes(std::vector<Message> &messagesHistory);
     inline Attribute *getLast() { return attributes_.at(attributes_.size() - 1).get(); }
     inline int getSize() { return attributes_.size(); }
@@ -35,20 +35,13 @@ public:
     int getPosition(std::string attributeName);
     AttributeDescription *getDescription(int rank) { return attributeDescs_->getDescription(rank); }
     bool deleteLastDescription(std::vector<Message> &messagesHistory) { return attributeDescs_->deleteLastDescription(messagesHistory); }
-    void changeDescriptionContainer(AttributeDescriptionsContainer *descs) { attributeDescs_ = descs; }
+    void changeDescriptionContainer(AttributesDescriptionsContainer *descs) { attributeDescs_ = descs; }
     void setControlTypes(ControlComponentsContainer *components, Config *config, std::vector<Message> &messagehistory);
     bool existDescription(std::string_view name) { return attributeDescs_->existsDescription(name); }
     void findDescriptionsByType(std::vector<AttributeDescription *> &vector, AttributeType type)
     {
         attributeDescs_->findDescriptionsByType(vector, type);
     }
-
-    AttributeDescriptionsContainer *getDescriptionContainer(std::string_view descriptionName,uint64_t descriptionId)
-    {
-        if (descriptionName.empty() || (descriptionName.compare("NULL") == 0 && descriptionId == 0))
-        {
-            return attributeDescs_;
-        }
-        return attributeDescs_->findDescriptionContainer(descriptionName,descriptionId);
-    }
+    
+    
 };

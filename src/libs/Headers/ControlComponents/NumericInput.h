@@ -11,22 +11,24 @@ private:
 public:
     IntSlider() {
         minimumWidth_ = 100;
+        maximumWidth_ = 300;
     };
     void draw(std::vector<Message> &messageHistory) override;
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<IntSlider>(*this); };
 };
 
-class IntVSSlider : public ControlComponentInt<EditTypeNumber::VSLIDER>
+class IntVSlider : public ControlComponentInt<EditTypeNumber::VSLIDER>
 {
 private:
 public:
-    IntVSSlider() {
+    IntVSlider() {
         minimumWidth_ = 100;
+        maximumWidth_ = 300;
     };
 
     void draw(std::vector<Message> &messageHistory) override;
     
-    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<IntVSSlider>(*this); }
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<IntVSlider>(*this); }
     
 };
 
@@ -35,6 +37,7 @@ class IntDrag : public ControlComponentInt<EditTypeNumber::DRAG>
 public:
     IntDrag() {
         minimumWidth_ = 100;
+        maximumWidth_ = 300;
     };
 
     void draw(std::vector<Message> &messageHistory) override;
@@ -49,6 +52,7 @@ class DoubleSlider : public ControlComponentDouble<EditTypeNumber::SLIDER>
 public:
     DoubleSlider() {
         minimumWidth_ = 100;
+        maximumWidth_ = 300;
     };
     void draw(std::vector<Message> &messageHistory) override;
     
@@ -56,15 +60,16 @@ public:
     
 };
 
-class DoubleVSSlider : public ControlComponentDouble<EditTypeNumber::VSLIDER>
+class DoubleVSlider : public ControlComponentDouble<EditTypeNumber::VSLIDER>
 {
 public:
-    DoubleVSSlider() {
+    DoubleVSlider() {
         minimumWidth_ = 100;
+        maximumWidth_ = 300;
     };
     void draw(std::vector<Message> &messageHistory) override;
     
-    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleVSSlider>(*this); };
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<DoubleVSlider>(*this); };
 };
 
 class DoubleDrag : public ControlComponentDouble<EditTypeNumber::DRAG>
@@ -74,6 +79,7 @@ private:
 public:
     DoubleDrag() {
         minimumWidth_ = 100;
+        maximumWidth_ = 300;
     };
     void draw(std::vector<Message> &messageHistory) override;
     
@@ -87,6 +93,7 @@ class FloatSlider : public ControlComponentFloat<EditTypeNumber::SLIDER>
 public:
     FloatSlider() {
         minimumWidth_ = 100;
+        maximumWidth_ = 300;
     };
     void draw(std::vector<Message> &messageHistory) override;
    
@@ -94,15 +101,16 @@ public:
     
 };
 
-class FloatVSSlider : public ControlComponentFloat<EditTypeNumber::VSLIDER>
+class FloatVSlider : public ControlComponentFloat<EditTypeNumber::VSLIDER>
 {
 public:
-    FloatVSSlider() {
+    FloatVSlider() {
         minimumWidth_ = 100;
+        maximumWidth_ = 300;
     };
     void draw(std::vector<Message> &messageHistory) override;
 
-    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<FloatVSSlider>(*this); };
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<FloatVSlider>(*this); };
 
 };
 
@@ -113,9 +121,139 @@ private:
 public:
     FloatDrag() {
         minimumWidth_ = 100;
+        maximumWidth_ = 300;
     };
     void draw(std::vector<Message> &messageHistory) override;
 
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<FloatDrag>(*this); };
+
+};
+
+//------------------------------------------------------------------------------------------
+
+class CharSlider : public ControlComponentCharNumber<EditTypeNumber::SLIDER>
+{
+public:
+    CharSlider() {
+        minimumWidth_ = 100;
+        maximumWidth_ = 300;
+    };
+    void draw(std::vector<Message> &messageHistory) override;
+   
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<CharSlider>(*this); };
+    
+};
+
+class CharVSlider : public ControlComponentCharNumber<EditTypeNumber::VSLIDER>
+{
+public:
+    CharVSlider() {
+        minimumWidth_ = 100;
+        maximumWidth_ = 300;
+    };
+    void draw(std::vector<Message> &messageHistory) override;
+
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<CharVSlider>(*this); };
+
+};
+
+class CharDrag : public ControlComponentCharNumber<EditTypeNumber::DRAG>
+{
+private:
+
+public:
+    CharDrag() {
+        minimumWidth_ = 100;
+        maximumWidth_ = 300;
+    };
+    void draw(std::vector<Message> &messageHistory) override;
+
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<CharDrag>(*this); };
+
+};
+
+//------------------------------------------------------------------------------------------
+
+class LongSlider : public ControlComponentLong<EditTypeNumber::SLIDER>
+{
+public:
+    LongSlider() {
+        minimumWidth_ = 100;
+        maximumWidth_ = 300;
+    };
+    void draw(std::vector<Message> &messageHistory) override;
+   
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<LongSlider>(*this); };
+    
+};
+
+class LongVSlider : public ControlComponentLong<EditTypeNumber::VSLIDER>
+{
+public:
+    LongVSlider() {
+        minimumWidth_ = 100;
+        maximumWidth_ = 300;
+    };
+    void draw(std::vector<Message> &messageHistory) override;
+
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<LongVSlider>(*this); };
+
+};
+
+class LongDrag : public ControlComponentLong<EditTypeNumber::DRAG>
+{
+private:
+
+public:
+    LongDrag() {
+        minimumWidth_ = 100;
+        maximumWidth_ = 300;
+    };
+    void draw(std::vector<Message> &messageHistory) override;
+
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<LongDrag>(*this); };
+
+};
+
+//------------------------------------------------------------------------------------------
+
+class UintSlider : public ControlComponentUInt<EditTypeNumber::SLIDER>
+{
+public:
+    UintSlider() {
+        minimumWidth_ = 100;
+        maximumWidth_ = 300;
+    };
+    void draw(std::vector<Message> &messageHistory) override;
+   
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<UintSlider>(*this); };
+    
+};
+
+class UintVSlider : public ControlComponentUInt<EditTypeNumber::VSLIDER>
+{
+public:
+    UintVSlider() {
+        minimumWidth_ = 100;
+        maximumWidth_ = 300;
+    };
+    void draw(std::vector<Message> &messageHistory) override;
+
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<UintVSlider>(*this); };
+
+};
+
+class UintDrag : public ControlComponentUInt<EditTypeNumber::DRAG>
+{
+private:
+
+public:
+    UintDrag() {
+        minimumWidth_ = 100;
+        maximumWidth_ = 300;
+    };
+    void draw(std::vector<Message> &messageHistory) override;
+
+    std::unique_ptr<ControlComponent> clone() override { return std::make_unique<UintDrag>(*this); };
 
 };

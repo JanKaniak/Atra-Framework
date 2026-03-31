@@ -13,8 +13,6 @@
 #include <fstream>
 #include <format>
 
-using AttributeTypeVariant = std::variant<int, double, char>;
-
 class Formular
 {
     
@@ -26,7 +24,7 @@ private:
     bool mainWindows = true;
     bool openedWindow = false;
     bool selectedMenu = false;
-    bool addDescriptionWindow = false;
+    bool addDescriptionWindow_;
     bool modifyControlTypesWindow = false;
     bool useDefaultControls = true;
     bool overWriteExistingControls = false;
@@ -53,16 +51,12 @@ private:
     std::string infoMessage = "";
 
 private:
-    AttributeType numAttributeType[2] = {AttributeType::INT, AttributeType::DOUBLE};
-    AttributeType textAttributeType[1] = {AttributeType::CHAR};
-    
-
-private:
-private:
-    std::unique_ptr<AttributeDescriptionsContainer> attributeDescs_;
+    std::unique_ptr<AttributesDescriptionsContainer> attributeDescs_;
     std::unique_ptr<AttributesContainer> attributes_;
     std::unique_ptr<ControlComponentsContainer> components_;
     std::vector<Message> messageHistory_;
+    TemplateAttributesDescriptionContainer* templateDescriptions_;
+    AttributesDescriptionsContainer* chosenAttributesDescription_;
 
 public:
     Formular();
@@ -82,9 +76,10 @@ private:
     void showLogger();
     void editAttribute(Attribute *attribute);
     void deleteAttribute(Attribute *attribute);
-    void showAddDescriptionWindow();
+    void showAddDescriptionWindow(AttributesDescriptionsContainer* attributeDesc, bool isCreatingAttributesOutsideClusterAllowed);
     void showModifyControlTypesWindow();
     void showCreateTemplateAttribute();
+    void showCreateAttributesFromTemplates();
     inline int getNumberOfAttributes() { return attributes_->getSize(); }
     int readFileDescriptions();
     int readFileControlTypes();

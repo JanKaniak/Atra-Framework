@@ -4,7 +4,7 @@ AttributesContainer::AttributesContainer() {
     attributeFactory_ = AttributeFactory::getInstance();
 }
 
-AttributesContainer::AttributesContainer(AttributeDescriptionsContainer* attributeDesc) {
+AttributesContainer::AttributesContainer(AttributesDescriptionsContainer* attributeDesc) {
     attributeDescs_ = attributeDesc;
     attributeFactory_ = AttributeFactory::getInstance();
     
@@ -89,6 +89,7 @@ int AttributesContainer::getPosition(std::string attributeName) {
 
 void AttributesContainer::setControlTypes(ControlComponentsContainer *components, Config *config, std::vector<Message>& messagehistory) {
     for (int i = 0; i < attributes_.size();++i) {
+        ImGui::TableNextRow();
         attributes_.at(i)->controlOptions(i,components,config,messagehistory);
     }
 }
