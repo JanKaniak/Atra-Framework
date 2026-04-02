@@ -42,6 +42,7 @@ public:
     {
         attributeDescs_->findDescriptionsByType(vector, type);
     }
+    void deleteAllAttributes(std::vector<Message> &messageHistory);
     
     
 };

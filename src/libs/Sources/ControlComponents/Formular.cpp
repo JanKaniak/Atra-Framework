@@ -14,8 +14,7 @@ Formular::Formular()
     showAttributesWindowSize_ = ImVec2(600, 800);
     templateDescriptions_ = TemplateAttributesDescriptionContainer::getInstance();
     chosenAttributesDescription_ = attributeDescs_.get();
-    
-    
+
     addDescriptionWindow_ = false;
     showSettingWindow_ = false;
     saveWindow_ = false;
@@ -247,18 +246,32 @@ void Formular::showControls()
             messageHistory_.emplace_back(Message("All attributes with actual descriptions are generated!"));
         }
         ImGui::EndDisabled();
-
+        ImGui::BeginDisabled(templateDescriptions_->getSize() == 0);
+        if (ImGui::Button("Manage templates", ImVec2(190, 30)))
+        {
+            ImGui::OpenPopup("Templates");
+        }
+        ImGui::EndDisabled();
         ImGui::BeginDisabled(attributes_->getSize() == 0);
         if (ImGui::Button("Modify control types", ImVec2(190, 30)))
         {
             ImGui::OpenPopup("Modify control types window", ImGuiPopupFlags_NoOpenOverExistingPopup | ImGuiPopupFlags_NoReopen);
         }
+        ImGui::EndDisabled();
 
+        ImGui::BeginDisabled(attributeDescs_->getSize() == 0);
+        if (ImGui::Button("Delete All",ImVec2(190,30))) {
+            components_->deleteAllControlComponents(messageHistory_);
+            attributes_->deleteAllAttributes(messageHistory_);
+            attributeDescs_->deleteAllDescriptions(messageHistory_);
+        }
+        ImGui::EndDisabled();
+
+        ImGui::BeginDisabled(attributes_->getSize() == 0);
         if (ImGui::Button("Save", ImVec2(190, 30)))
         {
             saveWindow_ = true;
         }
-
         ImGui::EndDisabled();
 
         showAddDescriptionWindow(chosenAttributesDescription_, true);
@@ -267,6 +280,7 @@ void Formular::showControls()
         saveToFile();
         showCreateTemplateAttribute();
         showCreateAttributesFromTemplates();
+        showWindowManageTemplates();
         ImGui::End();
     }
 }
@@ -288,7 +302,7 @@ void Formular::showSettings()
     ImGui::InputText("Path for attributes descriptions", descriptionsPath, sizeof(descriptionsPath));
     ImGui::InputText("Path for control types", controlTypesPath, sizeof(controlTypesPath));
 
-    if (ImGui::Button("Save"))
+    if (ImGui::Button("Save", ImVec2(80, 30)))
     {
         if (descriptionsPath[0] != '\0' && controlTypesPath[0] != '\0')
         {
@@ -298,7 +312,7 @@ void Formular::showSettings()
         }
     }
 
-    if (ImGui::Button("Close"))
+    if (ImGui::Button("Close", ImVec2(80, 30)))
     {
         showSettingWindow_ = false;
     }
@@ -339,7 +353,8 @@ void Formular::showLogger()
 void Formular::showAddDescriptionWindow(AttributesDescriptionsContainer *attributeDesc, bool isCreatingAttributesOutsideClusterAllowed)
 {
 
-    if (!ImGui::IsPopupOpen("Edit window") && addDescriptionWindow_) {
+    if (!ImGui::IsPopupOpen("Edit window") && addDescriptionWindow_)
+    {
         ImGui::OpenPopup("Edit window");
         addDescriptionWindow_ = false;
     }
@@ -475,7 +490,7 @@ void Formular::showAddDescriptionWindow(AttributesDescriptionsContainer *attribu
         {
 
             ImGui::BeginDisabled(chosenType.empty());
-            if (ImGui::Button("Add description"))
+            if (ImGui::Button("Add description", ImVec2(190, 30)))
             {
                 if (descriptionContainer == nullptr)
                 {
@@ -501,8 +516,11 @@ void Formular::showAddDescriptionWindow(AttributesDescriptionsContainer *attribu
                 clusterDescriptions.clear();
             }
         }
-        ImGui::SameLine();
-        if (ImGui::Button("Close"))
+        if (!addedAndCorrect)
+        {
+            ImGui::SameLine();
+        }
+        if (ImGui::Button("Close", ImVec2(190, 30)))
         {
             ImGui::CloseCurrentPopup();
             addedAndCorrect = false;
@@ -518,7 +536,15 @@ void Formular::showAddDescriptionWindow(AttributesDescriptionsContainer *attribu
 
 void Formular::showModifyControlTypesWindow()
 {
-    if (ImGui::BeginPopupModal("Modify control types window", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    static ImVec2 size = ImVec2(400, 300);
+    static bool sizeSet = false;
+    if (!sizeSet)
+    {
+        ImGui::SetNextWindowSize(size);
+        sizeSet = true;
+    }
+
+    if (ImGui::BeginPopupModal("Modify control types window", nullptr))
     {
         if (ImGui::BeginTable("Control types", 3))
         {
@@ -532,6 +558,7 @@ void Formular::showModifyControlTypesWindow()
 
         if (ImGui::Button("Close", ImVec2(190, 30)))
         {
+            sizeSet = false;
             ImGui::CloseCurrentPopup();
         }
 
@@ -544,18 +571,18 @@ void Formular::showCreateTemplateAttribute()
     static char buffer[40];
     static bool successfullyAdded = true;
     static bool openWindow = false;
-    if (ImGui::BeginPopupModal("Template edit window"))
+    if (ImGui::BeginPopupModal("Template edit window", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
         openWindow = true;
         ImGui::InputText("Template name", buffer, sizeof(buffer));
-        if (ImGui::Button("Add description"))
+        if (ImGui::Button("Add description", ImVec2(190, 30)))
         {
-            templateDescriptions_->addTemplateDescription(buffer,messageHistory_);
+            templateDescriptions_->addTemplateDescription(buffer, messageHistory_);
             chosenAttributesDescription_ = templateDescriptions_->getContainer(buffer);
             addDescriptionWindow_ = true;
         }
         ImGui::SameLine();
-        if (ImGui::Button("Close"))
+        if (ImGui::Button("Close", ImVec2(190, 30)))
         {
             openWindow = false;
             chosenAttributesDescription_ = attributeDescs_.get();
@@ -568,12 +595,13 @@ void Formular::showCreateTemplateAttribute()
 
 void Formular::showCreateAttributesFromTemplates()
 {
-    
+
     if (ImGui::BeginPopupModal("Template create attributes"))
     {
         static bool created = false;
         static std::string chosenTemplate;
-        if (chosenTemplate.empty()) {
+        if (chosenTemplate.empty())
+        {
             templateDescriptions_->getNameByPosition(0);
         }
         if (ImGui::BeginCombo("##Template attribute descriptions", chosenTemplate.c_str()))
@@ -581,34 +609,38 @@ void Formular::showCreateAttributesFromTemplates()
             for (int i = 0; i < templateDescriptions_->getSize(); ++i)
             {
                 bool open = (chosenTemplate == templateDescriptions_->getTemplateByPosition(i)->getName());
-                if (ImGui::Selectable(templateDescriptions_->getTemplateByPosition(i)->getName().c_str(),open)) {
+                if (ImGui::Selectable(templateDescriptions_->getTemplateByPosition(i)->getName().c_str(), open))
+                {
                     chosenTemplate = templateDescriptions_->getNameByPosition(i);
                 }
 
-                if (open) {
+                if (open)
+                {
                     ImGui::SetItemDefaultFocus();
                 }
             }
             ImGui::EndCombo();
         }
 
-        if (ImGui::Button("OK")) {
-            chosenAttributesDescription_ = templateDescriptions_->getContainer(chosenTemplate);
-            chosenTemplate = "";
-            ImGui::CloseCurrentPopup();
-            created = true;
+        if (ImGui::Button("OK"))
+        {
+            if (!chosenTemplate.empty())
+            {
+                chosenAttributesDescription_ = templateDescriptions_->getContainer(chosenTemplate);
+                chosenTemplate = "";
+                ImGui::CloseCurrentPopup();
+                created = true;
+            }
         }
         ImGui::EndPopup();
 
-        if (created) {
-            attributeDescs_->addDescriptions(chosenAttributesDescription_,messageHistory_);
+        if (created)
+        {
+            attributeDescs_->addDescriptions(chosenAttributesDescription_, messageHistory_);
             attributes_->createAttributes(messageHistory_);
             created = false;
         }
-
     }
-
-
 }
 
 void Formular::showAttributes()
@@ -880,7 +912,7 @@ void Formular::saveToFile()
 
         static std::filesystem::path completedPath;
         ImGui::InputText("File name", buffer, sizeof(buffer));
-        if (ImGui::Button("OK",ImVec2(100,30)))
+        if (ImGui::Button("OK", ImVec2(100, 30)))
         {
 
             completedPath = outputPath_ / std::string(buffer).append(".json");
@@ -898,7 +930,7 @@ void Formular::saveToFile()
             }
         }
         ImGui::SameLine();
-        if (ImGui::Button("Cancel",ImVec2(100,30)))
+        if (ImGui::Button("Cancel", ImVec2(100, 30)))
         {
             std::fill(&buffer[0], &buffer[0] + sizeof(buffer), 0);
             saveWindow_ = false;
@@ -911,14 +943,14 @@ void Formular::saveToFile()
         if (ImGui::BeginPopup("File overwrite", ImGuiWindowFlags_AlwaysAutoResize))
         {
             ImGui::Text("Do you wish to overwrite existing file? Path and name of the file is: %s", completedPath.string().c_str());
-            if (ImGui::Button("Yes",ImVec2(100,30)))
+            if (ImGui::Button("Yes", ImVec2(100, 30)))
             {
                 chosen = true;
                 outputPath_ = completedPath;
                 ImGui::CloseCurrentPopup();
             }
             ImGui::SameLine();
-            if (ImGui::Button("No",ImVec2(100,30)))
+            if (ImGui::Button("No", ImVec2(100, 30)))
             {
                 ImGui::CloseCurrentPopup();
             }
@@ -968,4 +1000,126 @@ bool Formular::showWarning(std::string message)
         }
     }
     return false;
+}
+
+void Formular::showWindowManageTemplates()
+{
+    static ImVec2 size = ImVec2(400, 300);
+    static TemplateAttributesDescription *templateContainer = nullptr;
+    static bool open = false;
+    static bool editing = false;
+    static bool sizeSet = false;
+    if (templateDescriptions_->getSize() == 0)
+    {
+        return;
+    }
+
+    if (!sizeSet)
+    {
+        ImGui::SetNextWindowSize(size);
+        sizeSet = true;
+    }
+    if (ImGui::BeginPopup("Templates", ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        if (ImGui::BeginTable("Template table", 3))
+        {
+            ImGui::TableSetupColumn("Template name");
+            ImGui::TableSetupColumn("Edit");
+            ImGui::TableSetupColumn("Delete");
+            ImGui::TableHeadersRow();
+            for (int i = 0; i < templateDescriptions_->getSize(); ++i)
+            {
+                ImGui::TableNextRow();
+                if (templateDescriptions_->getTemplateByPosition(i) == nullptr)
+                {
+                    continue;
+                }
+
+                ImGui::TableNextColumn();
+                ImGui::Text("%s", templateDescriptions_->getTemplateByPosition(i)->getName().c_str());
+                ImGui::TableNextColumn();
+                ImGui::BeginDisabled(templateDescriptions_->getTemplateByPosition(i)->getContainer()->getSize() == 0);
+                if (ImGui::Button("Edit", ImVec2(60, 30)))
+                {
+                    templateContainer = templateDescriptions_->getTemplateByPosition(i);
+                    open = true;
+                }
+                ImGui::EndDisabled();
+                ImGui::TableNextColumn();
+                if (ImGui::Button("Delete", ImVec2(60, 30)))
+                {
+                    templateDescriptions_->removeTemplateDescription(templateDescriptions_->getTemplateByPosition(i));
+                }
+            }
+
+            ImGui::EndTable();
+        }
+
+        if (open && !ImGui::IsPopupOpen("Edit template"))
+        {
+            ImGui::OpenPopup("Edit template");
+            open = false;
+        }
+        static ImVec2 sizeEditTemplate = ImVec2(400, 300);
+        static bool sizeSetEditTemplate = false;
+        if (!sizeSetEditTemplate)
+        {
+            ImGui::SetNextWindowSize(size);
+            sizeSetEditTemplate = true;
+        }
+        if (ImGui::BeginPopupModal("Edit template", nullptr))
+        {
+            static AttributeDescription *chosenDescription = nullptr;
+
+            if (ImGui::BeginTable("Descriptions of template", 3))
+            {
+                ImGui::TableSetupColumn("Attribute description name");
+                ImGui::TableSetupColumn("Edit");
+                ImGui::TableSetupColumn("Delete");
+                ImGui::TableHeadersRow();
+                for (int i = 0; i < templateContainer->getContainer()->getSize(); ++i)
+                {
+                    ImGui::TableNextRow();
+                    if (templateContainer->getContainer()->getDescription(i) == nullptr)
+                    {
+                        continue;
+                    }
+                    ImGui::TableNextColumn();
+                    ImGui::Text("%s", templateContainer->getContainer()->getDescription(i)->getName().c_str());
+                    ImGui::TableNextColumn();
+                    if (ImGui::Button("Edit", ImVec2(60, 30)))
+                    {
+                        chosenDescription = templateContainer->getContainer()->getDescription(i);
+                        editing = true;
+                    }
+                    ImGui::TableNextColumn();
+                    if (ImGui::Button("Delete", ImVec2(60, 30)))
+                    {
+                        templateContainer->getContainer()->deleteDescription(templateContainer->getContainer()->getDescription(i));
+                    }
+                }
+
+                ImGui::EndTable();
+            }
+
+            if (editing)
+            {
+                editing = chosenDescription->drawInputForChangingLimits(messageHistory_);
+            }
+            if (ImGui::Button("Close", ImVec2(80, 30)))
+            {
+                open = false;
+                sizeSetEditTemplate = false;
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+
+        if (ImGui::Button("Close", ImVec2(80, 30)))
+        {
+            sizeSet = false;
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
 }

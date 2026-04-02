@@ -99,7 +99,14 @@ AttributesContainer::~AttributesContainer() {
 
 }
 
-
+void AttributesContainer::deleteAllAttributes(std::vector<Message> &messageHistory) {
+    if (attributes_.size() == 0) {
+        return;
+    }
+    attributes_.clear();
+    messageHistory.emplace_back("All attributes were successfuly removed!");
+    
+}
 
 
 

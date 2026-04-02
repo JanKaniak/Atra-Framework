@@ -19,77 +19,23 @@ public:
     AttributesDescriptionsContainer();
     bool addDescription(AttributeType type, nlohmann::ordered_json &json, std::vector<Message> &messagesHistory);
     bool addDescription(std::string attributeName, AttributeType type, std::vector<Message> &messagesHistory);
-    bool addDescription(std::unique_ptr<AttributeDescription> descriptionPtr)
-    {
-        if (descriptionPtr != nullptr && !existsDescription(descriptionPtr->getName()))
-        {
-            attributeDescs_.push_back(std::move(descriptionPtr));
-            return true;
-        }
-        return false;
-    }
-    bool addDescriptions(AttributesDescriptionsContainer *container,std::vector<Message> &messageHistory) {
-        for (int i = 0; i < container->getSize(); ++i)
-        {
-            addDescription(container->getDescription(i)->clone());
-        }
-        return true;
-        
-    }
+    bool addDescription(std::unique_ptr<AttributeDescription> descriptionPtr);
+    bool addDescriptions(AttributesDescriptionsContainer *container,std::vector<Message> &messageHistory);
     AttributeDescription *getDescription(std::string name);
     inline AttributeDescription *getDescription(int i) { return (i >= 0 && i < attributeDescs_.size()) ? attributeDescs_.at(i).get() : nullptr; }
     inline int getSize() { return attributeDescs_.size(); }
-
-    inline AttributeDescription *getLast()
-    {
-        if (attributeDescs_.empty())
-        {
-            return nullptr;
-        }
-        return attributeDescs_.at(attributeDescs_.size() - 1).get();
-    }
+    AttributeDescription *getLast();
     bool deleteDescription(AttributeDescription *description);
     inline std::vector<AttributeTypeC> getRegisteredDescriptionsTypes() { return descFactory_->getRegisteredDescriptionsTypes(); }
     bool deleteLastDescription(std::vector<Message> &messagesHistory);
-    bool existsDescription(std::string_view name)
-    {
-        for (int i = 0; i < attributeDescs_.size(); ++i)
-        {
-            if (attributeDescs_.at(i)->getName().compare(name) == 0)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool existsDescription(std::string_view name);
     void findDescriptionsByType(std::vector<AttributeDescription *> &vector, AttributeType type);
-    AttributesDescriptionsContainer *findDescriptionContainer(std::string_view descriptionName, uint64_t descriptionId)
-    {
-        for (int i = 0; i < attributeDescs_.size(); ++i)
-        {
-            AttributesDescriptionsContainer *container = attributeDescs_.at(i)->getContainer(descriptionName, descriptionId);
-            if (container != nullptr)
-            {
-                return container;
-            }
-        }
-        return this;
-    }
-    ~AttributesDescriptionsContainer()
-    {
-        descFactory_ = nullptr;
-        attributeDescs_.clear();
-    }
-
-    AttributesDescriptionsContainer *getDescriptionContainer(std::string_view descriptionName, uint64_t descriptionId)
-    {
-        if (descriptionName.empty() || (descriptionName.compare("NULL") == 0 && descriptionId == 0))
-        {
-            return this;
-        }
-        return findDescriptionContainer(descriptionName, descriptionId);
-    }
+    AttributesDescriptionsContainer *findDescriptionContainer(std::string_view descriptionName, uint64_t descriptionId);
+    ~AttributesDescriptionsContainer();
+    AttributesDescriptionsContainer *getDescriptionContainer(std::string_view descriptionName, uint64_t descriptionId);
+    void deleteAllDescriptions(std::vector<Message> &messageHistory);
 };
+
 
 class TemplateAttributesDescription {
     private:
@@ -172,5 +118,18 @@ public:
             return nullptr;
         }
         return templateDescriptions_.at(position).get();
+    }
+
+    bool removeTemplateDescription(TemplateAttributesDescription *templateDescription) {
+        if (templateDescription == nullptr) {
+            return false;
+        }
+        for (auto it = templateDescriptions_.begin(); it != templateDescriptions_.end(); ++it) {
+            if (it->get() == templateDescription) {
+                templateDescriptions_.erase(it);
+                return true;
+            }
+        }
+        return false;
     }
 };

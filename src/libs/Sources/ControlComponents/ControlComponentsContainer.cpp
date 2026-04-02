@@ -85,6 +85,39 @@ bool ControlComponentsContainer::deleteControlComponent(Attribute *attribute)
     return false;
 }
 
+bool ControlComponentsContainer::swapControlComponent(int position, std::unique_ptr<ControlComponent> control, Attribute *attribute)
+{
+    if (control == nullptr)
+    {
+        return false;
+    }
+
+    if (components_.empty() || position >= components_.size())
+    {
+        components_.emplace_back(std::move(control));
+        components_.at(components_.size() - 1)->setAttribute(attribute);
+        updatedTable_ = true;
+        return true;
+    }
+
+    components_.at(position) = std::move(control);
+    components_.at(position)->setAttribute(attribute);
+    updatedTable_ = true;
+    return true;
+}
+
+ControlComponent *ControlComponentsContainer::getControlComponentByAttribute(Attribute *attribute)
+    {
+        for (int i = 0; i < components_.size(); ++i)
+        {
+            if (components_.at(i)->getAttribute(attribute->getName()) != nullptr)
+            {
+                return components_.at(i).get();
+            }
+        }
+        return nullptr;
+    }
+
 void ControlComponentsContainer::deleteAttribute(Attribute *attribute, AttributesContainer *attributesContainer, std::vector<Message> &messageHistory)
 {
     deleteControlComponent(attribute);
@@ -106,10 +139,10 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
     static bool drawed = false;
     static Attribute *chosenAttribute;
     static ImVec2 firstColumn = ImGui::CalcTextSize("Attribute name");
-    static ImVec2 secondColumn = ImVec2((ImGui::CalcTextSize("Input").x * 1.5f),0);
+    static ImVec2 secondColumn = ImVec2((ImGui::CalcTextSize("Input").x * 1.5f), 0);
     static ImVec2 thirdColumn = ImGui::CalcTextSize("Attribute type");
     static ImVec2 fourthColumn = ImGui::CalcTextSize("Edit button");
-    static ImVec2 fifthColumn = ImVec2(ImGui::CalcTextSize("Delete button").x * 1.5f,0);
+    static ImVec2 fifthColumn = ImVec2(ImGui::CalcTextSize("Delete button").x * 1.5f, 0);
 
     ImGui::Text("%f", secondColumn.x);
     if (dimensions_.x < 0 && dimensions_.y < 0)
@@ -137,7 +170,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
             ImGui::Text("%s", components_.at(i)->getName().c_str());
             if (ImGui::CalcTextSize(components_.at(i)->getName().c_str()).x > ImGui::CalcTextSize("Attribute name").x)
             {
-                firstColumn = ImVec2((ImGui::CalcTextSize(components_.at(i)->getName().c_str()).x * 1.5f),0);
+                firstColumn = ImVec2((ImGui::CalcTextSize(components_.at(i)->getName().c_str()).x * 1.5f), 0);
             }
             else
             {
@@ -158,27 +191,29 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
                 thirdColumn = ImGui::CalcTextSize("Attribute type");
             }
             ImGui::TableNextColumn();
-            if (ImGui::Button(std::format("Edit##{}", components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(0, 30)))
+            if (ImGui::Button(std::format("Edit##{}", components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(65, 30)))
             {
                 drawed = true;
                 chosenAttribute = components_.at(i)->getAttribute(components_.at(i)->getName());
             }
-            
-            if (columnHeight[i] < ImGui::GetItemRectSize().y) {
+
+            if (columnHeight[i] < ImGui::GetItemRectSize().y)
+            {
                 columnHeight[i] = ImGui::GetItemRectSize().y;
             }
             ImGui::TableNextColumn();
-            if (ImGui::Button(std::format("Delete##{}", components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(0, 30)))
+            if (ImGui::Button(std::format("Delete##{}", components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(65, 30)))
             {
                 deleteAttribute(components_.at(i)->getAttribute(components_.at(i)->getName()), attributesContainer_, messageHistory);
             }
         }
         auto dimensionsX = *std::max_element(inputColumnsWidth, inputColumnsWidth + sizeof(inputColumnsWidth) / sizeof(inputColumnsWidth[0]));
         auto dimensionsY = *std::max_element(columnHeight, columnHeight + sizeof(columnHeight) / sizeof(columnHeight[0]));
-        secondColumn = ImVec2(dimensionsX,dimensionsY);
+        secondColumn = ImVec2(dimensionsX, dimensionsY);
         dimensions_.x = firstColumn.x + secondColumn.x + thirdColumn.x + fourthColumn.x + fifthColumn.x;
         dimensions_.y = firstColumn.y;
-        for (int i = 0; i < components_.size(); ++i) {
+        for (int i = 0; i < components_.size(); ++i)
+        {
             dimensions_.y += columnHeight[i];
         }
         dimensions_.y = dimensions_.y * 1.2f;
@@ -212,7 +247,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
         }
         ImGui::Text("Attribute type: %s", AttributeTypeConverter::EnumToString(chosenAttribute->getType()).data());
 
-        if (ImGui::Button("Save", ImVec2(0, 30)))
+        if (ImGui::Button("Save", ImVec2(150, 30)))
         {
             if (attributesContainer_->giveAttributeByName(chosenAttribute->getName()) == chosenAttribute)
             {
@@ -236,7 +271,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
             }
         }
         ImGui::SameLine();
-        if (ImGui::Button("Edit description"))
+        if (ImGui::Button("Edit description", ImVec2(150, 30)))
         {
             changingLimits = true;
         }
@@ -245,7 +280,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
         {
             changingLimits = chosenAttribute->getDescription()->drawInputForChangingLimits(messageHistory);
         }
-        if (ImGui::Button("Close", ImVec2(0, 30)))
+        if (ImGui::Button("Close", ImVec2(150, 30)))
         {
             component = nullptr;
             ImGui::CloseCurrentPopup();
@@ -266,4 +301,14 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
         component = nullptr;
         std::memset(editBuffer, 0, sizeof(editBuffer[0]));
     }
+}
+
+void ControlComponentsContainer::deleteAllControlComponents(std::vector<Message> &messageHistory)
+{
+    if (components_.size() == 0)
+    {
+        return;
+    }
+    components_.clear();
+    messageHistory.emplace_back("All control components were successfuly removed!");
 }

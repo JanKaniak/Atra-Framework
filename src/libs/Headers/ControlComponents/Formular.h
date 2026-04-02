@@ -85,6 +85,7 @@ private:
     int readFileControlTypes();
     void saveToFile();
     bool showWarning(std::string message);
+    void showWindowManageTemplates();
     
     
 

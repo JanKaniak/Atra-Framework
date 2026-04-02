@@ -45,8 +45,15 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
 bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
 {
+    static bool isSetLastLimit = false;
     static TypeT tmpMin = 0;
     static TypeT tmpMax = 0;
+
+    if (!isSetLastLimit) {
+        tmpMin = min_;
+        tmpMax = max_;
+        isSetLastLimit = true;
+    }
     if (!ImGui::IsPopupOpen("Edit limit for description"))
     {
         ImGui::OpenPopup("Edit limit for description");
@@ -63,14 +70,12 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
         {
             if (setLimit(tmpMin, tmpMax, messagesHistory))
             {
-                tmpMin = 0;
-                tmpMax = 0;
+                isSetLastLimit = false;
                 ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
                 return false;
             }
-            tmpMin = 0;
-            tmpMax = 0;
+            isSetLastLimit = false;
             ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
             return true;
@@ -79,8 +84,7 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
         ImGui::SameLine();
         if (ImGui::Button("Close",ImVec2(60,30)))
         {
-            tmpMin = 0;
-            tmpMax = 0;
+            isSetLastLimit = false;
             ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
             return false;
@@ -90,8 +94,7 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
     {
-        tmpMin = 0;
-        tmpMax = 0;
+        isSetLastLimit = false;
         ImGui::EndPopup();
         return false;
     }
@@ -152,8 +155,15 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
 bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
 {
+    static bool isSetLastLimit = false;
     static TypeT tmpMin = 0;
     static TypeT tmpMax = 0;
+
+    if (!isSetLastLimit) {
+        tmpMin = min_;
+        tmpMax = max_;
+        isSetLastLimit = true;
+    }
     if (!ImGui::IsPopupOpen("Edit limit for description"))
     {
         ImGui::OpenPopup("Edit limit for description");
@@ -174,8 +184,7 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
                 ImGui::EndPopup();
                 return false;
             }
-            tmpMin = 0;
-            tmpMax = 0;
+            isSetLastLimit = false;
             ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
             return true;
@@ -184,8 +193,7 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
         ImGui::SameLine();
         if (ImGui::Button("Close"))
         {
-            tmpMin = 0;
-            tmpMax = 0;
+            isSetLastLimit = false;
             ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
             return false;
@@ -195,8 +203,7 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
     {
-        tmpMin = 0;
-        tmpMax = 0;
+        isSetLastLimit = false;
         ImGui::EndPopup();
         return false;
     }
@@ -352,8 +359,15 @@ bool AttributeDescriptionCharText::jsonParse(nlohmann::ordered_json &json, std::
 
 bool AttributeDescriptionCharText::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
 {
+   static bool isSetLastLimit = false;
     static uint8_t tmpMin = 0;
     static uint8_t tmpMax = 0;
+
+    if (!isSetLastLimit) {
+        tmpMin = min_;
+        tmpMax = max_;
+        isSetLastLimit = true;
+    }
     if (!ImGui::IsPopupOpen("Edit limit for description"))
     {
         ImGui::OpenPopup("Edit limit for description");
@@ -370,14 +384,12 @@ bool AttributeDescriptionCharText::drawInputForChangingLimits(std::vector<Messag
         {
             if (setLimit(tmpMin, tmpMax, messagesHistory))
             {
-                tmpMin = 0;
-                tmpMax = 0;
+                isSetLastLimit = false;
                 ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
                 return false;
             }
-            tmpMin = 0;
-            tmpMax = 0;
+            isSetLastLimit = false;
             ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
             return true;
@@ -386,8 +398,7 @@ bool AttributeDescriptionCharText::drawInputForChangingLimits(std::vector<Messag
         ImGui::SameLine();
         if (ImGui::Button("Close",ImVec2(60,30)))
         {
-            tmpMin = 0;
-            tmpMax = 0;
+            isSetLastLimit = false;
             ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
             return false;
@@ -397,8 +408,7 @@ bool AttributeDescriptionCharText::drawInputForChangingLimits(std::vector<Messag
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
     {
-        tmpMin = 0;
-        tmpMax = 0;
+        isSetLastLimit = false;
         ImGui::EndPopup();
         return false;
     }
@@ -456,8 +466,15 @@ bool AttributeDescriptionString::jsonParse(nlohmann::ordered_json &json, std::ve
 
 bool AttributeDescriptionString::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
 {
+    static bool isSetLastLimit = false;
     static uint32_t tmpMin = 0;
     static uint32_t tmpMax = 0;
+
+    if (!isSetLastLimit) {
+        tmpMin = min_;
+        tmpMax = max_;
+        isSetLastLimit = true;
+    }
     if (!ImGui::IsPopupOpen("Edit limit for description"))
     {
         ImGui::OpenPopup("Edit limit for description");
@@ -474,14 +491,12 @@ bool AttributeDescriptionString::drawInputForChangingLimits(std::vector<Message>
         {
             if (setLimit(tmpMin, tmpMax, messagesHistory))
             {
-                tmpMin = 0;
-                tmpMax = 0;
+                isSetLastLimit = false;
                 ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
                 return false;
             }
-            tmpMin = 0;
-            tmpMax = 0;
+            isSetLastLimit = false;
             ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
             return true;
@@ -490,8 +505,7 @@ bool AttributeDescriptionString::drawInputForChangingLimits(std::vector<Message>
         ImGui::SameLine();
         if (ImGui::Button("Close",ImVec2(60,30)))
         {
-            tmpMin = 0;
-            tmpMax = 0;
+            isSetLastLimit = false;
             ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
             return false;
@@ -501,8 +515,7 @@ bool AttributeDescriptionString::drawInputForChangingLimits(std::vector<Message>
 
     if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
     {
-        tmpMin = 0;
-        tmpMax = 0;
+        isSetLastLimit = false;
         ImGui::EndPopup();
         return false;
     }

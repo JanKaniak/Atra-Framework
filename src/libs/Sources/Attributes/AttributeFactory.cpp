@@ -11,6 +11,8 @@ AttributeFactory *AttributeFactory::getInstance()
     return instance_;
 }
 
+
+
 AttributeUptr AttributeFactory::createAttribute(AttributeType type)
 {
     if (prototypes_.find(type) == prototypes_.end())
