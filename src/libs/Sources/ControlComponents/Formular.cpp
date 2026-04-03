@@ -9,7 +9,7 @@ Formular::Formular()
 {
     attributeDescs_ = std::make_unique<AttributesDescriptionsContainer>();
     attributes_ = std::make_unique<AttributesContainer>(attributeDescs_.get());
-    config = Config::getInstance();
+    config_ = Config::getInstance();
     components_ = std::make_unique<ControlComponentsContainer>(attributes_.get());
     showAttributesWindowSize_ = ImVec2(600, 800);
     templateDescriptions_ = TemplateAttributesDescriptionContainer::getInstance();
@@ -30,7 +30,7 @@ bool Formular::addControlType(std::string attributeName, std::string editType)
 
     if (!components_->existControlType(attributeName))
     {
-        Factory *factory = config->getFactory(attributes_->giveAttributeByName(attributeName)->getType());
+        Factory *factory = config_->getFactory(attributes_->giveAttributeByName(attributeName)->getType());
         if (factory == nullptr)
         {
             messageHistory_.emplace_back(Message(std::format("Controls for {}  attribute type does not exist!", AttributeTypeConverter::EnumToString(attributes_->giveAttributeByName(attributeName)->getType()))));
@@ -68,7 +68,7 @@ bool Formular::addControlType(std::string attributeName, std::string editType)
 
 bool Formular::addControlType(Attribute *attribute)
 {
-    Factory *factory = config->getFactory(attribute->getType());
+    Factory *factory = config_->getFactory(attribute->getType());
     if (factory == nullptr)
     {
         messageHistory_.emplace_back(Message("Attribute type does not exist!"));
@@ -110,7 +110,7 @@ bool Formular::addOrReplaceControlTypeByVector(std::vector<std::string> controlT
         {
             continue;
         }
-        Factory *factory = config->getFactory(attributes_->giveAttribute(i)->getType());
+        Factory *factory = config_->getFactory(attributes_->giveAttribute(i)->getType());
         if (!components_->existControlType(attributes_->giveAttribute(i)->getName()))
         {
             if (components_->isEmpty())
@@ -150,7 +150,7 @@ bool Formular::addOrReplaceControlTypeByVector(std::vector<std::string> controlT
 
 bool Formular::replaceControlType(Attribute *attribute, std::string controlType)
 {
-    Factory *factory = config->getFactory(attribute->getType());
+    Factory *factory = config_->getFactory(attribute->getType());
     if (factory == nullptr)
     {
         messageHistory_.emplace_back(Message("Attribute type does not exist!"));
@@ -253,6 +253,7 @@ void Formular::showControls()
         }
         ImGui::EndDisabled();
         ImGui::BeginDisabled(attributes_->getSize() == 0);
+
         if (ImGui::Button("Modify control types", ImVec2(190, 30)))
         {
             ImGui::OpenPopup("Modify control types window", ImGuiPopupFlags_NoOpenOverExistingPopup | ImGuiPopupFlags_NoReopen);
@@ -552,7 +553,7 @@ void Formular::showModifyControlTypesWindow()
             ImGui::TableSetupColumn("Attribute type");
             ImGui::TableSetupColumn("Control type");
             ImGui::TableHeadersRow();
-            attributes_->setControlTypes(components_.get(), config, messageHistory_);
+            attributes_->setControlTypes(components_.get(), config_, messageHistory_);
             ImGui::EndTable();
         }
 

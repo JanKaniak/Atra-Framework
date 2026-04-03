@@ -1,4 +1,5 @@
 #include "ControlComponent.h"
+#include "Factory.h"
 
 class ControlComponentsContainer
 {
@@ -39,4 +40,5 @@ public:
     bool isTableUpdated() { return updatedTable_;}
     void setTableUpdated(bool update) { updatedTable_ = update;}
     void deleteAllControlComponents(std::vector<Message> &messageHistory);
+    void setDefaultControls(Config *config, std::vector<Message> &messageHistory);
 };

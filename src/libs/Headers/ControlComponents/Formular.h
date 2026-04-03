@@ -18,7 +18,7 @@ class Formular
     
 
 private:
-    Config *config;
+    Config *config_;
 
 private:
     bool mainWindows = true;
