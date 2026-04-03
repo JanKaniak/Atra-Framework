@@ -65,66 +65,66 @@ struct AutoRegisterDescription
     }();
 };
 
-class AttributeDescription_int : public IntegerNumberBaseClass<int, AttributeType::INT, ImGuiDataType_S32, nlohmann::ordered_json::value_t::number_integer>
+class AttributeDescriptionInt : public IntegerNumberBaseClass<int, AttributeType::INT, ImGuiDataType_S32, nlohmann::ordered_json::value_t::number_integer>
 {
 public:
-    AttributeDescription_int() : IntegerNumberBaseClass(10, 50, Category::NUMERIC) {}
+    AttributeDescriptionInt() : IntegerNumberBaseClass(10, 50, Category::NUMERIC) {}
     std::unique_ptr<AttributeDescription> clone() override;
 };
 
-struct AutoRegisterIntDescription : public AutoRegisterDescription<AttributeDescription_int>
+struct AutoRegisterIntDescription : public AutoRegisterDescription<AttributeDescriptionInt>
 {
     inline static bool registerDescription = []()
     { AutoRegisterDescription::autoRegister; };
 };
 
-class AttributeDescription_double : public DecimalNumberBaseClass<double, AttributeType::DOUBLE, ImGuiDataType_Double, nlohmann::ordered_json::value_t::number_float>
+class AttributeDescriptionDouble : public DecimalNumberBaseClass<double, AttributeType::DOUBLE, ImGuiDataType_Double, nlohmann::ordered_json::value_t::number_float>
 {
 public:
-    AttributeDescription_double() : DecimalNumberBaseClass(10, 50, Category::NUMERIC) {}
+    AttributeDescriptionDouble() : DecimalNumberBaseClass(10, 50, Category::NUMERIC) {}
     std::unique_ptr<AttributeDescription> clone() override;
 };
 
-struct AutoRegisterDoubleDescription : public AutoRegisterDescription<AttributeDescription_double>
+struct AutoRegisterDoubleDescription : public AutoRegisterDescription<AttributeDescriptionDouble>
 {
     inline static bool registerDescription = []()
     { AutoRegisterDescription::autoRegister; };
 };
 
-class AttributeDescription_float : public DecimalNumberBaseClass<float, AttributeType::FLOAT, ImGuiDataType_Float, nlohmann::ordered_json::value_t::number_float>
+class AttributeDescriptionFloat : public DecimalNumberBaseClass<float, AttributeType::FLOAT, ImGuiDataType_Float, nlohmann::ordered_json::value_t::number_float>
 {
 public:
-    AttributeDescription_float() : DecimalNumberBaseClass(10, 50, Category::NUMERIC) {}
+    AttributeDescriptionFloat() : DecimalNumberBaseClass(10, 50, Category::NUMERIC) {}
     std::unique_ptr<AttributeDescription> clone() override;
 };
 
-struct AutoRegisterFloatDescription : public AutoRegisterDescription<AttributeDescription_float>
+struct AutoRegisterFloatDescription : public AutoRegisterDescription<AttributeDescriptionFloat>
 {
     inline static bool registerDescription = []()
     { AutoRegisterDescription::autoRegister; };
 };
 
-class AttributeDescription_long : public IntegerNumberBaseClass<long, AttributeType::LONG, ImGuiDataType_S64, nlohmann::ordered_json::value_t::number_integer>
+class AttributeDescriptionLong : public IntegerNumberBaseClass<long, AttributeType::LONG, ImGuiDataType_S64, nlohmann::ordered_json::value_t::number_integer>
 {
 public:
-    AttributeDescription_long() : IntegerNumberBaseClass(10, 50, Category::NUMERIC) {}
+    AttributeDescriptionLong() : IntegerNumberBaseClass(10, 50, Category::NUMERIC) {}
     std::unique_ptr<AttributeDescription> clone() override;
 };
 
-struct AutoRegisterLongDescription : public AutoRegisterDescription<AttributeDescription_long>
+struct AutoRegisterLongDescription : public AutoRegisterDescription<AttributeDescriptionLong>
 {
     inline static bool registerDescription = []()
     { AutoRegisterDescription::autoRegister; };
 };
 
-class AttributeDescription_uint : public IntegerNumberBaseClass<uint32_t, AttributeType::UINT, ImGuiDataType_U32, nlohmann::ordered_json::value_t::number_unsigned>
+class AttributeDescriptionUint : public IntegerNumberBaseClass<uint32_t, AttributeType::UINT, ImGuiDataType_U32, nlohmann::ordered_json::value_t::number_unsigned>
 {
 public:
-    AttributeDescription_uint() : IntegerNumberBaseClass(10, 50, Category::NUMERIC) {}
+    AttributeDescriptionUint() : IntegerNumberBaseClass(10, 50, Category::NUMERIC) {}
     std::unique_ptr<AttributeDescription> clone() override;
 };
 
-struct AutoRegisterUintDescription : public AutoRegisterDescription<AttributeDescription_uint>
+struct AutoRegisterUintDescription : public AutoRegisterDescription<AttributeDescriptionUint>
 {
     inline static bool registerDescription = []()
     { AutoRegisterDescription::autoRegister; };
@@ -144,10 +144,10 @@ struct AutoRegisterCharNumberDescription : public AutoRegisterDescription<Attrib
     { AutoRegisterDescription::autoRegister; };
 };
 
-class AttributeDescription_bool : public AttributeDescription
+class AttributeDescriptionBool : public AttributeDescription
 {
 public:
-    AttributeDescription_bool() : AttributeDescription(AttributeType::BOOL)
+    AttributeDescriptionBool() : AttributeDescription(AttributeType::BOOL)
     {
         category_ = Category::LOGIC;
     }
@@ -160,7 +160,7 @@ private:
     bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override { return false; }
 };
 
-struct AutoRegisterBoolDescription : public AutoRegisterDescription<AttributeDescription_bool>
+struct AutoRegisterBoolDescription : public AutoRegisterDescription<AttributeDescriptionBool>
 {
     inline static bool registerDescription = []()
     { AutoRegisterDescription::autoRegister; };

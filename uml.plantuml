@@ -1,13 +1,13 @@
 @startuml Uml
 object AtributeType
 object AtributeDescription
-object AtributeDescription_int
-object AtributeDescription_double
-object AtributeDescription_char
-object AttributeDescriptions
+object AtributeDescriptionInt
+object AtributeDescriptionDouble
+object AtributeDescriptionChar
+object AttributeDescriptionsContainer
 
 object Atribute
-object Attributes
+object AttributesContainer
 
 object ControlComponent
 object ControlComponentInt
@@ -15,20 +15,24 @@ object IntSlider
 object IntVSlider
 object IntDrag
 object Formular
+object ControlComponentsContainer
+
 AtributeDescription -down-> AtributeType
-AtributeDescription_int -left-|> AtributeDescription
-AtributeDescription_double -right-|> AtributeDescription
-AtributeDescription_char -down-|> AtributeDescription
-AttributeDescriptions -down-> AtributeDescription
+AtributeDescriptionInt -left-|> AtributeDescription
+AtributeDescriptionDouble -right-|> AtributeDescription
+AtributeDescriptionChar -down-|> AtributeDescription
+AttributeDescriptionsContainer -down-> AtributeDescription
 Atribute -down-> AtributeDescription
-Attributes -down---> Atribute
-Attributes ----> AttributeDescriptions
+AttributesContainer -down---> Atribute
+AttributesContainer ----> AttributeDescriptionsContainer
 ControlComponent -> Atribute
 ControlComponentInt -|> ControlComponent
 IntSlider -down-|> ControlComponentInt
 IntVSlider -up-|> ControlComponentInt
 IntDrag -up-|> ControlComponentInt
-Formular ----> Attributes
-Formular ----> ControlComponent
+Formular --> AttributesContainer
+Formular --> ControlComponentsContainer
+ControlComponentsContainer -> AttributesContainer
+ControlComponentsContainer --> ControlComponent
 
 @enduml

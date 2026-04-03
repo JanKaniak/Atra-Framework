@@ -52,7 +52,7 @@ struct AutoRegisterAttribute
     }();
 };
 
-class AttributeInt : public IntegerNumberBaseAttributeClass<int, AttributeDescription_int>
+class AttributeInt : public IntegerNumberBaseAttributeClass<int, AttributeDescriptionInt>
 {
 public:
     AttributeInt() : IntegerNumberBaseAttributeClass() {}
@@ -67,7 +67,7 @@ struct AutoRegisterIntAttribute : public AutoRegisterAttribute<AttributeInt, Att
     };
 };
 
-class AttributeDouble : public IntegerNumberBaseAttributeClass<double, AttributeDescription_double>
+class AttributeDouble : public IntegerNumberBaseAttributeClass<double, AttributeDescriptionDouble>
 {
 public:
     AttributeDouble() : IntegerNumberBaseAttributeClass() {};
@@ -82,7 +82,7 @@ struct AutoRegisterDoubleAttribute : public AutoRegisterAttribute<AttributeDoubl
     };
 };
 
-class AttributeFloat : public IntegerNumberBaseAttributeClass<float, AttributeDescription_float>
+class AttributeFloat : public IntegerNumberBaseAttributeClass<float, AttributeDescriptionFloat>
 {
 public:
     AttributeFloat() : IntegerNumberBaseAttributeClass() {};
@@ -97,7 +97,7 @@ struct AutoRegisterFloatAttribute : public AutoRegisterAttribute<AttributeFloat,
     };
 };
 
-class AttributeUint : public IntegerNumberBaseAttributeClass<uint32_t, AttributeDescription_uint>
+class AttributeUint : public IntegerNumberBaseAttributeClass<uint32_t, AttributeDescriptionUint>
 {
 public:
     AttributeUint() : IntegerNumberBaseAttributeClass() {};
@@ -112,7 +112,7 @@ struct AutoRegisterUintAttribute : public AutoRegisterAttribute<AttributeUint, A
     };
 };
 
-class AttributeLong : public IntegerNumberBaseAttributeClass<long, AttributeDescription_long>
+class AttributeLong : public IntegerNumberBaseAttributeClass<long, AttributeDescriptionLong>
 {
 public:
     AttributeLong() : IntegerNumberBaseAttributeClass() {};
@@ -193,7 +193,7 @@ class AttributeBool : public Attribute
 {
 private:
     bool value_;
-    AttributeDescription_bool *desc_;
+    AttributeDescriptionBool *desc_;
 
 public:
     AttributeBool() {}
@@ -203,9 +203,9 @@ public:
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeBool>(*this); }
     void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override
     {
-        if (dynamic_cast<AttributeDescription_bool *>(desc))
+        if (dynamic_cast<AttributeDescriptionBool *>(desc))
         {
-            desc_ = dynamic_cast<AttributeDescription_bool *>(desc);
+            desc_ = dynamic_cast<AttributeDescriptionBool *>(desc);
             value_ = false;
         }
     }

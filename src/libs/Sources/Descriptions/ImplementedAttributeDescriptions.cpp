@@ -223,7 +223,7 @@ void DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 
 // BOOL --------------------------------------------------------
 
-bool AttributeDescription_bool::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+bool AttributeDescriptionBool::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
     if (json.find("Attribute name") == json.end())
     {
@@ -241,7 +241,7 @@ bool AttributeDescription_bool::jsonParse(nlohmann::ordered_json &json, std::vec
     return true;
 }
 
-void AttributeDescription_bool::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
+void AttributeDescriptionBool::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
 {
     if (type == type_)
     {
@@ -543,19 +543,19 @@ void AttributeDescriptionString::addItselfToVectorByCondition(std::vector<Attrib
 
 
 
-std::unique_ptr<AttributeDescription> AttributeDescription_int::clone() { return std::make_unique<AttributeDescription_int>(*this); }
+std::unique_ptr<AttributeDescription> AttributeDescriptionInt::clone() { return std::make_unique<AttributeDescriptionInt>(*this); }
 
-std::unique_ptr<AttributeDescription> AttributeDescription_double::clone() { return std::make_unique<AttributeDescription_double>(*this); }
+std::unique_ptr<AttributeDescription> AttributeDescriptionDouble::clone() { return std::make_unique<AttributeDescriptionDouble>(*this); }
 
-std::unique_ptr<AttributeDescription> AttributeDescription_float::clone() { return std::make_unique<AttributeDescription_float>(*this); }
+std::unique_ptr<AttributeDescription> AttributeDescriptionFloat::clone() { return std::make_unique<AttributeDescriptionFloat>(*this); }
 
-std::unique_ptr<AttributeDescription> AttributeDescription_long::clone() { return std::make_unique<AttributeDescription_long>(*this); }
+std::unique_ptr<AttributeDescription> AttributeDescriptionLong::clone() { return std::make_unique<AttributeDescriptionLong>(*this); }
 
-std::unique_ptr<AttributeDescription> AttributeDescription_uint::clone() { return std::make_unique<AttributeDescription_uint>(*this); }
+std::unique_ptr<AttributeDescription> AttributeDescriptionUint::clone() { return std::make_unique<AttributeDescriptionUint>(*this); }
 
 std::unique_ptr<AttributeDescription> AttributeDescriptionCharNumber::clone() { return std::make_unique<AttributeDescriptionCharNumber>(*this); }
 
-std::unique_ptr<AttributeDescription> AttributeDescription_bool::clone() { return std::make_unique<AttributeDescription_bool>(*this); }
+std::unique_ptr<AttributeDescription> AttributeDescriptionBool::clone() { return std::make_unique<AttributeDescriptionBool>(*this); }
 
 std::unique_ptr<AttributeDescription> AttributeDescriptionCluster::clone() { return std::make_unique<AttributeDescriptionCluster>(*this); }
 
