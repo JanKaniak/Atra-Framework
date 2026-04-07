@@ -1,38 +1,73 @@
-@startuml Uml
-object AtributeType
-object AtributeDescription
-object AtributeDescriptionInt
-object AtributeDescriptionDouble
-object AtributeDescriptionChar
-object AttributeDescriptionsContainer
+@startuml MainUML
+allowmixing
 
-object Atribute
-object AttributesContainer
-
-object ControlComponent
-object ControlComponentInt
-object IntSlider
-object IntVSlider
-object IntDrag
 object Formular
-object ControlComponentsContainer
+package AttributeDescriptions
+package Attributes
+package ControlComponents
+object ControlComponentsFactoriesContainer
+object Message
+object TemplateAttributesDescriptionContainer
 
-AtributeDescription -down-> AtributeType
-AtributeDescriptionInt -left-|> AtributeDescription
-AtributeDescriptionDouble -right-|> AtributeDescription
-AtributeDescriptionChar -down-|> AtributeDescription
-AttributeDescriptionsContainer -down-> AtributeDescription
-Atribute -down-> AtributeDescription
-AttributesContainer -down---> Atribute
-AttributesContainer ----> AttributeDescriptionsContainer
-ControlComponent -> Atribute
-ControlComponentInt -|> ControlComponent
-IntSlider -down-|> ControlComponentInt
-IntVSlider -up-|> ControlComponentInt
-IntDrag -up-|> ControlComponentInt
-Formular --> AttributesContainer
-Formular --> ControlComponentsContainer
-ControlComponentsContainer -> AttributesContainer
-ControlComponentsContainer --> ControlComponent
+Formular --> ControlComponents
+Formular --> Attributes
+Formular --> AttributeDescriptions
+Formular --> ControlComponentsFactoriesContainer
+Formular -right-> Message
+Formular --left-> TemplateAttributesDescriptionContainer
 
+TemplateAttributesDescriptionContainer -> AttributeDescriptions
+
+@endumlW
+
+@startuml AttributeDescriptions
+package AttributeDescriptions {
+    object AttributesDescriptionsContainer
+    object AttributeDescription
+    object DescriptionFactory
+    object GlobalLastIdOfObject
+    object AttributeType
+    object Category
+    object IntegerNumberBaseClass
+    object DecimalNumberBaseClass
+
+    object AttributeDescriptionInt
+    object AttributeDescriptionUnsignedInt
+    object AttributeDescriptionLong
+    object AttributeDescriptionCharNumber
+
+    object AttributeDescriptionDouble
+    object AttributeDescriptionFloat
+
+    object AttributeDescriptionString
+    object AttributeDescriptionCharText
+
+    object AttributeDescriptionBool
+
+    object AttributeDescriptionCluster
+
+}
+
+AttributesDescriptionsContainer ---> AttributeDescription
+AttributesDescriptionsContainer -left-> DescriptionFactory
+AttributesDescriptionsContainer -right-> GlobalLastIdOfObject
+AttributeDescription -right-> AttributeType
+AttributeDescription --up-> Category
+IntegerNumberBaseClass -up-|> AttributeDescription
+DecimalNumberBaseClass -up-|> AttributeDescription
+
+AttributeDescriptionInt --|> IntegerNumberBaseClass
+AttributeDescriptionUnsignedInt --|> IntegerNumberBaseClass
+AttributeDescriptionLong --|> IntegerNumberBaseClass
+AttributeDescriptionCharNumber --|> IntegerNumberBaseClass
+
+AttributeDescriptionDouble --|> DecimalNumberBaseClass
+AttributeDescriptionFloat --|> DecimalNumberBaseClass
+
+AttributeDescriptionString -up-|> AttributeDescription
+AttributeDescriptionCharText -up-|> AttributeDescription
+
+AttributeDescriptionBool --|> AttributeDescription
+
+AttributeDescriptionCluster --|> AttributeDescription
 @enduml

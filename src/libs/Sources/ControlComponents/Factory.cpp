@@ -326,19 +326,19 @@ inline void UintEditFactory::registerPrototype()
 
 //-------------------------------------------------------------------------------------------------------
 
-// Config
-Config *Config::instance_ = nullptr;
+// ControlComponentsFactoriesContainer
 
-Config *Config::getInstance()
+ControlComponentsFactoriesContainer *ControlComponentsFactoriesContainer::getInstance()
 {
-    if (instance_ == nullptr)
+    ControlComponentsFactoriesContainer *instance;
+    if (instance == nullptr)
     {
-        return instance_ = new Config();
+        return instance = new ControlComponentsFactoriesContainer();
     }
-    return instance_;
+    return instance;
 }
 
-Factory *Config::getFactory(AttributeType type)
+Factory *ControlComponentsFactoriesContainer::getFactory(AttributeType type)
 {
     if (factoryChoice_.find(type) == factoryChoice_.end())
     {
@@ -347,7 +347,7 @@ Factory *Config::getFactory(AttributeType type)
     return factoryChoice_[type];
 }
 
-void Config::registerFactory(Factory *factory)
+void ControlComponentsFactoriesContainer::registerFactory(Factory *factory)
 {
     factoryChoice_[factory->getType()] = factory;
 }

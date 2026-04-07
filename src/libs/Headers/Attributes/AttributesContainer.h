@@ -36,7 +36,7 @@ public:
     AttributeDescription *getDescription(int rank) { return attributeDescs_->getDescription(rank); }
     bool deleteLastDescription(std::vector<Message> &messagesHistory) { return attributeDescs_->deleteLastDescription(messagesHistory); }
     void changeDescriptionContainer(AttributesDescriptionsContainer *descs) { attributeDescs_ = descs; }
-    void setControlTypes(ControlComponentsContainer *components, Config *config, std::vector<Message> &messagehistory);
+    void setControlTypes(ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagehistory);
     bool existDescription(std::string_view name) { return attributeDescs_->existsDescription(name); }
     void findDescriptionsByType(std::vector<AttributeDescription *> &vector, AttributeType type)
     {

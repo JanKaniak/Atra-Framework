@@ -15,6 +15,17 @@ bool IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::saveToJson(n
     return true;
 }
 
+template <typename TypeT, typename AttributeDescriptionT>
+bool DecimalNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+{
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Minimum", getMinimum()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Maximum", getMaximum()));
+    json.push_back(nlohmann::ordered_json::object_t::value_type("Value", getValue()));
+    return true;
+}
+
+
 bool AttributeCharText::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
@@ -81,7 +92,7 @@ void AttributeCluster::setDescription(AttributeDescription *desc, std::vector<Me
 }
 
 template <typename TypeT, typename AttributeDescriptionT>
-void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory)
+void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
 {
     std::string controlType;
     if (controlType.empty())
@@ -94,7 +105,7 @@ void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptio
     ImGui::TableNextColumn();
     ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
     ImGui::TableNextColumn();
-    Factory *factory = config->getFactory(desc_->getType());
+    Factory *factory = controlComponentsFactories->getFactory(desc_->getType());
     if (ImGui::BeginCombo(std::format("##Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
     {
         for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
@@ -116,7 +127,43 @@ void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptio
     
 }
 
-void AttributeCharText::controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory)
+template <typename TypeT, typename AttributeDescriptionT>
+void DecimalNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
+{
+    std::string controlType;
+    if (controlType.empty())
+    {
+        controlType = components->getControlTypeByAttributeName(desc_->getName());
+    }
+    
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", desc_->getName().c_str());
+    ImGui::TableNextColumn();
+    ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
+    ImGui::TableNextColumn();
+    Factory *factory = controlComponentsFactories->getFactory(desc_->getType());
+    if (ImGui::BeginCombo(std::format("##Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
+    {
+        for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
+        {
+            bool selected = (controlType.compare(factory->getNameOfControlTypesVector().at(j)) == 0);
+            if (ImGui::Selectable(factory->getNameOfControlTypesVector().at(j).c_str(), selected))
+            {
+                controlType = factory->getNameOfControlTypesVector().at(j);
+                components->swapControlComponent(components->positionOfComponentByAttributeName(desc_->getName()), factory->createEdit(controlType), this);
+            }
+            if (selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+        }
+
+        ImGui::EndCombo();
+    }
+    
+}
+
+void AttributeCharText::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
 {
     std::string controlType;
     if (controlType.empty())
@@ -128,7 +175,7 @@ void AttributeCharText::controlOptions(int position, ControlComponentsContainer 
     ImGui::TableNextColumn();
     ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
     ImGui::TableNextColumn();
-    Factory *factory = config->getFactory(desc_->getType());
+    Factory *factory = controlComponentsFactories->getFactory(desc_->getType());
     if (ImGui::BeginCombo(std::format("##Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
     {
         for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
@@ -150,7 +197,7 @@ void AttributeCharText::controlOptions(int position, ControlComponentsContainer 
 }
 
 
-void AttributeBool::controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory)
+void AttributeBool::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
 {
     std::string controlType;
     if (controlType.empty())
@@ -162,7 +209,7 @@ void AttributeBool::controlOptions(int position, ControlComponentsContainer *com
     ImGui::TableNextColumn();
     ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
     ImGui::TableNextColumn();
-    Factory *factory = config->getFactory(desc_->getType());
+    Factory *factory = controlComponentsFactories->getFactory(desc_->getType());
     if (ImGui::BeginCombo(std::format("##Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
     {
         for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
@@ -183,7 +230,7 @@ void AttributeBool::controlOptions(int position, ControlComponentsContainer *com
     }
 }
 
-void AttributeCluster::controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory)
+void AttributeCluster::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
 {
     std::string controlType;
     if (controlType.empty())
@@ -195,7 +242,7 @@ void AttributeCluster::controlOptions(int position, ControlComponentsContainer *
     ImGui::TableNextColumn();
     ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
     ImGui::TableNextColumn();
-    Factory *factory = config->getFactory(desc_->getType());
+    Factory *factory = controlComponentsFactories->getFactory(desc_->getType());
     if (ImGui::BeginCombo(std::format("##Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
     {
         for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)
@@ -220,7 +267,7 @@ void AttributeCluster::controlOptions(int position, ControlComponentsContainer *
         if (components->getComponent(i)->getAttribute(desc_->getName()) == this)
         {
 
-            value_->setControlTypes(components->getComponent(i)->getContainer(), config, messagesHistory);
+            value_->setControlTypes(components->getComponent(i)->getContainer(), controlComponentsFactories, messagesHistory);
             break;
         }
     }
@@ -247,7 +294,7 @@ AttributesContainer *AttributeCluster::getAttributeContainer()
 }
 
 
-void AttributeString::controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory)
+void AttributeString::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
 {
     std::string controlType;
     if (controlType.empty())
@@ -259,7 +306,7 @@ void AttributeString::controlOptions(int position, ControlComponentsContainer *c
     ImGui::TableNextColumn();
     ImGui::Text("%s", AttributeTypeConverter::EnumToString(desc_->getType()).data());
     ImGui::TableNextColumn();
-    Factory *factory = config->getFactory(desc_->getType());
+    Factory *factory = controlComponentsFactories->getFactory(desc_->getType());
     if (ImGui::BeginCombo(std::format("##Control Type##{}", std::format("{}{}", desc_->getName(), desc_->getTypeString())).c_str(), controlType.c_str()))
     {
         for (int j = 0; j < factory->getNameOfControlTypesVector().size(); ++j)

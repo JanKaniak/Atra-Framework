@@ -38,8 +38,47 @@ public:
     TypeT getValue() { return value_; }
     bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
 
-    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory) override;
+    void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~IntegerNumberBaseAttributeClass() override = default;
+};
+
+template <typename TypeT, typename AttributeDescriptionT>
+class DecimalNumberBaseAttributeClass : public Attribute
+{
+private:
+    TypeT value_;
+    AttributeDescriptionT *desc_;
+
+public:
+    DecimalNumberBaseAttributeClass() {}
+    std::string getName() override { return desc_->getName(); }
+    AttributeType getType() override { return desc_->getType(); }
+    AttributeDescription *getDescription() override { return desc_; }
+    inline const TypeT getMinimum() { return desc_->getMinimum(); }
+    inline const TypeT getMaximum() { return desc_->getMaximum(); }
+    bool setValue(TypeT value)
+    {
+        if (value >= getMinimum() && value <= getMaximum())
+        {
+            value_ = value;
+            return true;
+        }
+        return false;
+    }
+
+    void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override
+    {
+        if (dynamic_cast<AttributeDescriptionT *>(desc))
+        {
+            desc_ = dynamic_cast<AttributeDescriptionT *>(desc);
+            value_ = desc_->getMinimum();
+        }
+    }
+    TypeT getValue() { return value_; }
+    bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
+
+    void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
+    ~DecimalNumberBaseAttributeClass() override = default;
 };
 
 template <typename AttributeTypeClass, AttributeType EnumTypeT>
@@ -67,10 +106,10 @@ struct AutoRegisterIntAttribute : public AutoRegisterAttribute<AttributeInt, Att
     };
 };
 
-class AttributeDouble : public IntegerNumberBaseAttributeClass<double, AttributeDescriptionDouble>
+class AttributeDouble : public DecimalNumberBaseAttributeClass<double, AttributeDescriptionDouble>
 {
 public:
-    AttributeDouble() : IntegerNumberBaseAttributeClass() {};
+    AttributeDouble() : DecimalNumberBaseAttributeClass() {};
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeDouble>(*this); }
 };
 
@@ -82,10 +121,10 @@ struct AutoRegisterDoubleAttribute : public AutoRegisterAttribute<AttributeDoubl
     };
 };
 
-class AttributeFloat : public IntegerNumberBaseAttributeClass<float, AttributeDescriptionFloat>
+class AttributeFloat : public DecimalNumberBaseAttributeClass<float, AttributeDescriptionFloat>
 {
 public:
-    AttributeFloat() : IntegerNumberBaseAttributeClass() {};
+    AttributeFloat() : DecimalNumberBaseAttributeClass() {};
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeFloat>(*this); }
 };
 
@@ -177,7 +216,7 @@ public:
     char getValue() { return value_; }
     bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
 
-    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory) override;
+    void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~AttributeCharText() override = default;
 };
 
@@ -217,7 +256,7 @@ public:
         return true;
     }
     bool getValue() { return value_; }
-    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory) override;
+    void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~AttributeBool() override = default;
 };
 
@@ -250,7 +289,7 @@ public:
     std::unique_ptr<Attribute> clone() override;
     void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override;
     bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
-    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory) override;
+    void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
 };
 
 struct AutoRegisterClusterAttribute;
@@ -289,7 +328,7 @@ public:
         return false;
     }
     std::string getValue() { return value_; }
-    void controlOptions(int position, ControlComponentsContainer *components, Config *config, std::vector<Message> &messagesHistory) override;
+    void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~AttributeString() override = default;
 };
 

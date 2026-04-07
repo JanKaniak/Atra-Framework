@@ -376,14 +376,13 @@ public:
 
 
 
-class Config
+class ControlComponentsFactoriesContainer
 {
 private:
     std::map<AttributeType, Factory*> factoryChoice_;
-    static Config *instance_;
-    Config() = default;
+    ControlComponentsFactoriesContainer() = default;
 public:
-    static Config* getInstance();
+    static ControlComponentsFactoriesContainer* getInstance();
 
     Factory *getFactory(AttributeType type);
     void registerFactory(Factory *factory);
@@ -396,7 +395,7 @@ public:
 struct AutoRegisterIntFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(IntEditFactory::getInstance());
+        ControlComponentsFactoriesContainer::getInstance()->registerFactory(IntEditFactory::getInstance());
         return true;
     } ();
 };
@@ -404,7 +403,7 @@ struct AutoRegisterIntFactory {
 struct AutoRegisterDoubleFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(DoubleEditFactory::getInstance());
+        ControlComponentsFactoriesContainer::getInstance()->registerFactory(DoubleEditFactory::getInstance());
         return true;
     } ();
 };
@@ -412,7 +411,7 @@ struct AutoRegisterDoubleFactory {
 struct AutoRegisterFloatFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(FloatEditFactory::getInstance());
+        ControlComponentsFactoriesContainer::getInstance()->registerFactory(FloatEditFactory::getInstance());
         return true;
     } ();
 };
@@ -420,7 +419,7 @@ struct AutoRegisterFloatFactory {
 struct AutoRegisterCharTextFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(CharTextEditFactory::getInstance());
+        ControlComponentsFactoriesContainer::getInstance()->registerFactory(CharTextEditFactory::getInstance());
         return true;
     } ();
 };
@@ -428,7 +427,7 @@ struct AutoRegisterCharTextFactory {
 struct AutoRegisterCharNumberFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(CharNumberEditFactory::getInstance());
+        ControlComponentsFactoriesContainer::getInstance()->registerFactory(CharNumberEditFactory::getInstance());
         return true;
     } ();
 };
@@ -436,7 +435,7 @@ struct AutoRegisterCharNumberFactory {
 struct AutoRegisterLogicFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(LogicEditFactory::getInstance());
+        ControlComponentsFactoriesContainer::getInstance()->registerFactory(LogicEditFactory::getInstance());
         return true;
     } ();
 };
@@ -444,7 +443,7 @@ struct AutoRegisterLogicFactory {
 struct AutoRegisterClusterFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(ClusterEditFactory::getInstance());
+        ControlComponentsFactoriesContainer::getInstance()->registerFactory(ClusterEditFactory::getInstance());
         return true;
     } ();
 };
@@ -452,7 +451,7 @@ struct AutoRegisterClusterFactory {
 struct AutoRegisterStringFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(StringEditFactory::getInstance());
+        ControlComponentsFactoriesContainer::getInstance()->registerFactory(StringEditFactory::getInstance());
         return true;
     } ();
 };
@@ -460,7 +459,7 @@ struct AutoRegisterStringFactory {
 struct AutoRegisterLongFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(LongEditFactory::getInstance());
+        ControlComponentsFactoriesContainer::getInstance()->registerFactory(LongEditFactory::getInstance());
         return true;
     } ();
 };
@@ -468,7 +467,7 @@ struct AutoRegisterLongFactory {
 struct AutoRegisterUintFactory {
     inline static bool autoRegister = [] () {
         
-        Config::getInstance()->registerFactory(UintEditFactory::getInstance());
+        ControlComponentsFactoriesContainer::getInstance()->registerFactory(UintEditFactory::getInstance());
         return true;
     } ();
 };

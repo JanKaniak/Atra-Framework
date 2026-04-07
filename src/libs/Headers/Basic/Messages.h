@@ -4,21 +4,26 @@
 struct Message
 {
 private:
-    std::string time_;
+    struct tm *time_;
     std::string message_;
 
 private:
-    const std::string getTimeOfOccurence()
+    const void getTimeOfOccurence()
     {
         time_t now = time(NULL);
-        struct tm *t = localtime(&now);
-        char buffer[100];
-        strftime(buffer, sizeof(buffer), "%H:%M:%S", t);
-        return std::string(buffer);
+        time_ = localtime(&now);
     }
 
 public:
-    Message(std::string message) : time_(getTimeOfOccurence()),message_(message) {}
-    const std::string getTime() { return time_; }
+    Message(std::string message) : message_(message) {
+        getTimeOfOccurence();
+    }
+    const tm *getTime() { return time_; }
+    const std::string getTimeString()
+    {
+        char buffer[100];
+        strftime(buffer, sizeof(buffer), "%H:%M:%S", time_);
+        return std::string(buffer);
+    }
     const std::string getMessage() { return message_; }
 };

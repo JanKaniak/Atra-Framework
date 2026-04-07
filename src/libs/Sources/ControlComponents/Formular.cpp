@@ -9,15 +9,20 @@ Formular::Formular()
 {
     attributeDescs_ = std::make_unique<AttributesDescriptionsContainer>();
     attributes_ = std::make_unique<AttributesContainer>(attributeDescs_.get());
-    config_ = Config::getInstance();
+    controlComponentsFactories_ = ControlComponentsFactoriesContainer::getInstance();
     components_ = std::make_unique<ControlComponentsContainer>(attributes_.get());
     showAttributesWindowSize_ = ImVec2(600, 800);
     templateDescriptions_ = TemplateAttributesDescriptionContainer::getInstance();
     chosenAttributesDescription_ = attributeDescs_.get();
 
     addDescriptionWindow_ = false;
-    showSettingWindow_ = false;
     saveWindow_ = false;
+    useDefaultControls_ = true;
+    openedWindow_ = false;
+    overWriteExistingControls_ = false;
+
+    numberOfLoadedAtributes_ = INT_MAX;
+    numberOfLoadedControls_ = INT_MAX;
 }
 
 bool Formular::addControlType(std::string attributeName, std::string editType)
@@ -30,7 +35,7 @@ bool Formular::addControlType(std::string attributeName, std::string editType)
 
     if (!components_->existControlType(attributeName))
     {
-        Factory *factory = config_->getFactory(attributes_->giveAttributeByName(attributeName)->getType());
+        Factory *factory = controlComponentsFactories_->getFactory(attributes_->giveAttributeByName(attributeName)->getType());
         if (factory == nullptr)
         {
             messageHistory_.emplace_back(Message(std::format("Controls for {}  attribute type does not exist!", AttributeTypeConverter::EnumToString(attributes_->giveAttributeByName(attributeName)->getType()))));
@@ -68,7 +73,7 @@ bool Formular::addControlType(std::string attributeName, std::string editType)
 
 bool Formular::addControlType(Attribute *attribute)
 {
-    Factory *factory = config_->getFactory(attribute->getType());
+    Factory *factory = controlComponentsFactories_->getFactory(attribute->getType());
     if (factory == nullptr)
     {
         messageHistory_.emplace_back(Message("Attribute type does not exist!"));
@@ -110,7 +115,7 @@ bool Formular::addOrReplaceControlTypeByVector(std::vector<std::string> controlT
         {
             continue;
         }
-        Factory *factory = config_->getFactory(attributes_->giveAttribute(i)->getType());
+        Factory *factory = controlComponentsFactories_->getFactory(attributes_->giveAttribute(i)->getType());
         if (!components_->existControlType(attributes_->giveAttribute(i)->getName()))
         {
             if (components_->isEmpty())
@@ -150,7 +155,7 @@ bool Formular::addOrReplaceControlTypeByVector(std::vector<std::string> controlT
 
 bool Formular::replaceControlType(Attribute *attribute, std::string controlType)
 {
-    Factory *factory = config_->getFactory(attribute->getType());
+    Factory *factory = controlComponentsFactories_->getFactory(attribute->getType());
     if (factory == nullptr)
     {
         messageHistory_.emplace_back(Message("Attribute type does not exist!"));
@@ -203,18 +208,18 @@ void Formular::showControls()
         {
             if (ImGui::Button("Load Attribute description", ImVec2(190, 30)))
             {
-                numberOfLoadedAtributes = readFileDescriptions();
+                numberOfLoadedAtributes_ = readFileDescriptions();
             }
 
             ImGui::BeginDisabled(attributes_->getSize() == 0);
             if (ImGui::Button("Load Control types", ImVec2(190, 30)))
             {
-                numberOfLoadedControls = readFileControlTypes();
+                numberOfLoadedControls_ = readFileControlTypes();
             }
             ImGui::SameLine();
-            ImGui::Checkbox("Use default controls", &useDefaultControls);
+            ImGui::Checkbox("Use default controls", &useDefaultControls_);
             ImGui::SameLine();
-            ImGui::Checkbox("Overwrite existing controls", &overWriteExistingControls);
+            ImGui::Checkbox("Overwrite existing controls", &overWriteExistingControls_);
             ImGui::EndDisabled();
 
             ImGui::EndChild();
@@ -277,7 +282,6 @@ void Formular::showControls()
 
         showAddDescriptionWindow(chosenAttributesDescription_, true);
         showModifyControlTypesWindow();
-        showSettings();
         saveToFile();
         showCreateTemplateAttribute();
         showCreateAttributesFromTemplates();
@@ -286,39 +290,6 @@ void Formular::showControls()
     }
 }
 
-void Formular::showSettings()
-{
-    if (!showSettingWindow_)
-    {
-        return;
-    }
-
-    static char descriptionsPath[40] = "atributy.json";
-    static char controlTypesPath[40] = "controlTypes.json";
-    if (!ImGui::Begin("Settins", nullptr, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoCollapse))
-    {
-        return;
-    }
-
-    ImGui::InputText("Path for attributes descriptions", descriptionsPath, sizeof(descriptionsPath));
-    ImGui::InputText("Path for control types", controlTypesPath, sizeof(controlTypesPath));
-
-    if (ImGui::Button("Save", ImVec2(80, 30)))
-    {
-        if (descriptionsPath[0] != '\0' && controlTypesPath[0] != '\0')
-        {
-            descriptionsPath_ = descriptionsPath;
-            controlTypesPath_ = controlTypesPath;
-            showSettingWindow_ = false;
-        }
-    }
-
-    if (ImGui::Button("Close", ImVec2(80, 30)))
-    {
-        showSettingWindow_ = false;
-    }
-    ImGui::End();
-}
 
 void Formular::showLogger()
 {
@@ -328,7 +299,7 @@ void Formular::showLogger()
 
         for (int i = 0; i < messageHistory_.size(); ++i)
         {
-            ImGui::Text("%s", messageHistory_.at(i).getTime().c_str());
+            ImGui::Text("%s", messageHistory_.at(i).getTimeString().c_str());
             ImGui::SameLine();
             ImGui::Bullet();
             ImGui::SameLine();
@@ -369,6 +340,7 @@ void Formular::showAddDescriptionWindow(AttributesDescriptionsContainer *attribu
     static bool addedAndCorrect = false;
     static std::vector<AttributeDescription *> clusterDescriptions;
     static AttributesDescriptionsContainer *descriptionContainer;
+    static bool nameExists = false;
 
     if (ImGui::BeginPopupModal("Edit window", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
     {
@@ -553,7 +525,7 @@ void Formular::showModifyControlTypesWindow()
             ImGui::TableSetupColumn("Attribute type");
             ImGui::TableSetupColumn("Control type");
             ImGui::TableHeadersRow();
-            attributes_->setControlTypes(components_.get(), config_, messageHistory_);
+            attributes_->setControlTypes(components_.get(), controlComponentsFactories_, messageHistory_);
             ImGui::EndTable();
         }
 
@@ -782,7 +754,7 @@ int Formular::loadControlTypes(nlohmann::json json)
         auto editType = json.find(attributes_->giveAttribute(i)->getName());
         if (editType == json.end())
         {
-            if (!useDefaultControls)
+            if (!useDefaultControls_)
             {
                 continue;
             }
@@ -808,7 +780,7 @@ int Formular::loadControlTypes(nlohmann::json json)
 
         if (components_->existControlType(editType.key()))
         {
-            if (!overWriteExistingControls)
+            if (!overWriteExistingControls_)
             {
                 continue;
             }
@@ -991,7 +963,7 @@ void Formular::saveToFile()
 bool Formular::showWarning(std::string message)
 {
     ImGui::SetNextWindowSize(ImVec2(500, 400));
-    if (ImGui::Begin("Warning window", &openedWindow, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
+    if (ImGui::Begin("Warning window", &openedWindow_, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove))
     {
         ImGui::Text("There has been some error with your file!");
         ImGui::Text("%s", message.c_str());

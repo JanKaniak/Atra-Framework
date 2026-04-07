@@ -87,10 +87,10 @@ int AttributesContainer::getPosition(std::string attributeName) {
     return -1;
 }
 
-void AttributesContainer::setControlTypes(ControlComponentsContainer *components, Config *config, std::vector<Message>& messagehistory) {
+void AttributesContainer::setControlTypes(ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message>& messagehistory) {
     for (int i = 0; i < attributes_.size();++i) {
         ImGui::TableNextRow();
-        attributes_.at(i)->controlOptions(i,components,config,messagehistory);
+        attributes_.at(i)->controlOptions(i,components,controlComponentsFactories,messagehistory);
     }
 }
 

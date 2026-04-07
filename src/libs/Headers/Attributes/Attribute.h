@@ -18,7 +18,7 @@ struct ChosenControl {
     ChosenControl(AttributeType type,std::string controlType) : type_(type),controlType_(controlType) {}
 };
 
-class Config;
+class ControlComponentsFactoriesContainer;
 class ControlComponentsContainer;
 
 class Attribute
@@ -31,6 +31,6 @@ public:
     virtual std::unique_ptr<Attribute> clone() = 0;
     virtual void setDescription(AttributeDescription *desc, std::vector<Message>& messagesHistory) = 0;
     virtual bool saveToJson(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) = 0;
-    virtual void controlOptions(int position,ControlComponentsContainer *components, Config *config, std::vector<Message>& messagesHistory) = 0;
+    virtual void controlOptions(int position,ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message>& messagesHistory) = 0;
 };
 

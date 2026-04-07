@@ -18,37 +18,21 @@ class Formular
     
 
 private:
-    Config *config_;
+    ControlComponentsFactoriesContainer *controlComponentsFactories_;
 
 private:
-    bool mainWindows = true;
-    bool openedWindow = false;
-    bool selectedMenu = false;
+    bool openedWindow_;
     bool addDescriptionWindow_;
-    bool modifyControlTypesWindow = false;
-    bool useDefaultControls = true;
-    bool overWriteExistingControls = false;
-    bool nameExists = false;
-    bool drawed = false;
-    bool decision = false;
-    bool showSettingWindow_;
+    bool useDefaultControls_;
+    bool overWriteExistingControls_;
     bool saveWindow_;
-
+    
 private:
     ImVec2 showAttributesWindowSize_;
 
 private:
-    int numberOfLoadedAtributes = INT_MAX;
-    int numberOfLoadedControls = INT_MAX;
-
-private:
-    char bufferMin[40] = "0";
-    char bufferMax[40] = "50";
-    std::filesystem::path descriptionsPath_;
-    std::filesystem::path controlTypesPath_;
-
-private:
-    std::string infoMessage = "";
+    int numberOfLoadedAtributes_;
+    int numberOfLoadedControls_;
 
 private:
     std::unique_ptr<AttributesDescriptionsContainer> attributeDescs_;
@@ -87,13 +71,4 @@ private:
     bool showWarning(std::string message);
     void showWindowManageTemplates();
     
-    
-
-    // ==========
 };
-
-// pridavanie description do zoznamu
-// editor aj pre control type
-// agent prec
-// lepsie nazvy
-// aktualizovat uml

@@ -23,8 +23,8 @@ public:
         dataType_ = ImGuiDataTypeT;
     }
 
-    constexpr TypeT getMinimum() { return min_; }
-    constexpr TypeT getMaximum() { return max_; }
+    TypeT getMinimum() { return min_; }
+    TypeT getMaximum() { return max_; }
     bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory);
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
     bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override;
@@ -46,8 +46,8 @@ public:
         dataType_ = ImGuiDataTypeT;
     }
 
-    constexpr TypeT getMinimum() { return min_; }
-    constexpr TypeT getMaximum() { return max_; }
+    TypeT getMinimum() { return min_; }
+    TypeT getMaximum() { return max_; }
     bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory);
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
     bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override;

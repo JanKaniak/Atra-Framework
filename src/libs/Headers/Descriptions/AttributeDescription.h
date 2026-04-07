@@ -218,7 +218,7 @@ public:
     AttributeDescription(AttributeType type) : type_(type), assigned_(false), id_(0) {};
     inline std::string getName() { return name_; };
     inline AttributeType getType() { return type_; };
-    inline std::string_view getTypeString() { return AttributeTypeConverter::EnumToString(type_); }
+    inline std::string getTypeString() { return AttributeTypeConverter::EnumToString(type_).data(); }
     inline std::string getCategory() { return CategoryConverter::EnumToString(category_).data(); };
     inline void setName(std::string name) { name_ = name; };
     inline void setCategory(Category category) { category_ = category; }
