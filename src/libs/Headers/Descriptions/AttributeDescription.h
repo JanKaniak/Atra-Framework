@@ -23,7 +23,8 @@ enum class AttributeType
     STRING
 };
 
-enum class Category {
+enum class Category
+{
     NOTACATEGORY,
     NUMERIC,
     TEXT,
@@ -103,26 +104,30 @@ struct String
     static constexpr std::string_view typeInFile = "string";
 };
 
-using AttributeTypes = std::tuple<Int, Double, Float, CharN,CharT, Long, Uint, Bool, Cluster,String>;
+using AttributeTypes = std::tuple<Int, Double, Float, CharN, CharT, Long, Uint, Bool, Cluster, String>;
 
 // -----------------------------------------------------------------------
 
-struct Numeric {
+struct Numeric
+{
     static constexpr std::string_view categoryString = "NUMERIC";
     static constexpr Category categoryEnum = Category::NUMERIC;
 };
 
-struct Text {
+struct Text
+{
     static constexpr std::string_view categoryString = "TEXT";
     static constexpr Category categoryEnum = Category::TEXT;
 };
 
-struct Logic {
+struct Logic
+{
     static constexpr std::string_view categoryString = "LOGIC";
     static constexpr Category categoryEnum = Category::LOGIC;
 };
 
-struct Other {
+struct Other
+{
     static constexpr std::string_view categoryString = "OTHER";
     static constexpr Category categoryEnum = Category::OTHER;
 };
@@ -183,7 +188,7 @@ struct CategoryConverter
     static constexpr std::string_view EnumToString(Category category)
     {
         return StructUnpack<CategoryTypes>::unpack([&]<typename... CategoryParameter>()
-                                                    {
+                                                   {
             std::string_view tmpCategory = "";
             ((CategoryParameter::categoryEnum == category ? tmpCategory = CategoryParameter::categoryString : ""), ...);
             return tmpCategory; });
@@ -192,13 +197,12 @@ struct CategoryConverter
     static constexpr Category StringToEnum(std::string_view category)
     {
         return StructUnpack<CategoryTypes>::unpack([&]<typename... CategoryParameter>()
-                                                    {
+                                                   {
             Category tmpCategory = Category::NOTACATEGORY;
             ((CategoryParameter::categoryString == category ? tmpCategory = CategoryParameter::categoryEnum : Category::NOTACATEGORY), ...);
             return tmpCategory; });
     }
 };
-
 
 // -----------------------------------------------------------------------
 
@@ -220,7 +224,13 @@ public:
     inline AttributeType getType() { return type_; };
     inline std::string getTypeString() { return AttributeTypeConverter::EnumToString(type_).data(); }
     inline std::string getCategory() { return CategoryConverter::EnumToString(category_).data(); };
-    inline void setName(std::string name) { name_ = name; };
+    inline void setName(std::string name)
+    {
+        if (name.length() <= 40)
+        {
+            name_ = name;
+        }
+    };
     inline void setCategory(Category category) { category_ = category; }
     inline ImGuiDataType getDataType() { return dataType_; }
     inline void setAssigned(bool assigned) { assigned_ = assigned; }
@@ -237,5 +247,5 @@ public:
     virtual bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) = 0;
     virtual bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) = 0;
     virtual void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) = 0;
-    virtual AttributesDescriptionsContainer *getContainer(std::string_view descriptionName,uint64_t descriptionId) = 0;
+    virtual AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) = 0;
 };

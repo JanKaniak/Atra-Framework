@@ -379,7 +379,7 @@ public:
 class ControlComponentsFactoriesContainer
 {
 private:
-    std::map<AttributeType, Factory*> factoryChoice_;
+    std::unordered_map<AttributeType, Factory*> factoryChoice_;
     ControlComponentsFactoriesContainer() = default;
 public:
     static ControlComponentsFactoriesContainer* getInstance();

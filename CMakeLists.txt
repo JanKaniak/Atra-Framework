@@ -16,17 +16,10 @@ add_library(imgui
     src/imgui/imgui_stdlib.cpp
 )
 
-
-
-
 add_library(imgui_backends
     src/imgui/imgui_impl_glfw.cpp
     src/imgui/imgui_impl_opengl3.cpp
 )
-
-
-
-
 
 add_library(myLib
     src/libs/Sources/Descriptions/ImplementedAttributeDescriptions.cpp
@@ -65,12 +58,7 @@ target_link_libraries(myLib PRIVATE imgui nfd)
 target_link_libraries(GraphicEditor PRIVATE imgui OpenGL imgui_backends myLib)
 
 
-
-set(CPACK_PROJECT_NAME ${PROJECT_NAME})
-set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set_target_properties(myLib PROPERTIES LINKER_LANGUAGE CXX)
-
-include(CPack)
 
 

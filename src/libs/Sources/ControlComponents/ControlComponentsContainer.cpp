@@ -279,6 +279,9 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
         if (changingLimits)
         {
             changingLimits = chosenAttribute->getDescription()->drawInputForChangingLimits(messageHistory);
+            if (!changingLimits) {
+                chosenAttribute->updateValue();
+            }
         }
         if (ImGui::Button("Close", ImVec2(150, 30)))
         {

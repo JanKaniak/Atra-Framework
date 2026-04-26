@@ -139,11 +139,11 @@ To assign a control through GUI, choose type from dropdown menu and it will auto
 2. Put `showControls` and `showAttributes` methods into your main loop.
 
 ## Project structure
-
-- `src/main.cpp`: app setup, GLFW + ImGui main loop
+p
 - `src/imgui`: Dear ImGui core + backend
 - `src/glfw`: GLFW dependency sources
 - `src/nativefiledialog-extended`: file dialog support
+- - `src/nlohmannJson`: json file support
 - `CMakeLists.txt`: build config
 
 ## How to extend

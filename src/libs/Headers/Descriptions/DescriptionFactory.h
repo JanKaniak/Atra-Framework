@@ -44,7 +44,7 @@ public:
         return instance_;
     }
     
-    inline DescUptr createDesc(AttributeType type) { 
+    DescUptr createDesc(AttributeType type) { 
         if (prototypes_.find(type) == prototypes_.end()) {
             return nullptr;
         }

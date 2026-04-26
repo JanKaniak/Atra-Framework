@@ -169,8 +169,6 @@ struct AutoRegisterBoolDescription : public AutoRegisterDescription<AttributeDes
 class AttributeDescriptionCluster : public AttributeDescription
 {
 private:
-    uint32_t min_;
-    uint32_t max_;
     std::unique_ptr<AttributesDescriptionsContainer> descriptions_;
 
 public:
@@ -191,8 +189,6 @@ public:
         }
     }
 
-    uint32_t getMinimum() { return min_; }
-    uint32_t getMaximum() { return max_; }
     AttributesDescriptionsContainer *getDescription()
     {
         if (descriptions_ == nullptr)

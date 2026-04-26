@@ -32,5 +32,6 @@ public:
     virtual void setDescription(AttributeDescription *desc, std::vector<Message>& messagesHistory) = 0;
     virtual bool saveToJson(nlohmann::ordered_json &json, std::vector<Message>& messagesHistory) = 0;
     virtual void controlOptions(int position,ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message>& messagesHistory) = 0;
+    virtual void updateValue() = 0;
 };
 

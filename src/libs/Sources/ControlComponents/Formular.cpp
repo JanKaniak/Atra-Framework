@@ -191,16 +191,37 @@ bool Formular::replaceControlType(Attribute *attribute, std::string controlType)
     return true;
 }
 
+AttributeDescription* Formular::addDescription(std::string attributeName, AttributeType type) {
+    if (attributeDescs_->addDescription(attributeName, type, messageHistory_)) {
+        return attributeDescs_->getLast();
+    }
+    return null;
+}
+
+AttributeDescription* Formular::addDescription(std::unique_ptr<AttributeDescription> attributeDescription) {
+    if (attributeDescs_->addDescription(attributeDescription)) {
+        return attributeDescs_->getLast();
+    }
+    return null;
+}
+
+bool Formular::createAttributes() {
+    attributes_->createAttributes();
+}
+
 void Formular::showControls()
 {
     static float f = 0.0f;
     static int counter = 0;
+    static bool resized = false;
+    
 
-    int minHeight = (components_->getSize() * 30) + 100;
-    static ImVec2 size = ImGui::GetMainViewport()->Size;
-
-    ImGui::SetNextWindowSize(ImVec2(0 / 3, size.y));
-    if (ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_MenuBar))
+    if (!resized)
+    {
+        ImGui::SetNextWindowSize(ImVec2(650, 800));
+        resized = true;
+    }
+    if (ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoCollapse))
     {
         showLogger();
 
@@ -266,7 +287,8 @@ void Formular::showControls()
         ImGui::EndDisabled();
 
         ImGui::BeginDisabled(attributeDescs_->getSize() == 0);
-        if (ImGui::Button("Delete All",ImVec2(190,30))) {
+        if (ImGui::Button("Delete All", ImVec2(190, 30)))
+        {
             components_->deleteAllControlComponents(messageHistory_);
             attributes_->deleteAllAttributes(messageHistory_);
             attributeDescs_->deleteAllDescriptions(messageHistory_);
@@ -289,7 +311,6 @@ void Formular::showControls()
         ImGui::End();
     }
 }
-
 
 void Formular::showLogger()
 {

@@ -68,14 +68,7 @@ Attribute *AttributesContainer::giveAttributeByName(std::string name)
 
 bool AttributesContainer::contains(std::string attributeName)
 {
-    for (auto &object : attributes_)
-    {
-        if (object->getName().compare(attributeName) == 0)
-        {
-            return true;
-        }
-    }
-    return false;
+    attributeDescs_->existsDescription(attributeName);
 }
 
 int AttributesContainer::getPosition(std::string attributeName) {

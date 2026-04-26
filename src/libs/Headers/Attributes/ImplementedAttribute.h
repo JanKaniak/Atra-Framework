@@ -40,6 +40,9 @@ public:
 
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~IntegerNumberBaseAttributeClass() override = default;
+    void updateValue() override {
+        value_ = getMinimum();
+    }
 };
 
 template <typename TypeT, typename AttributeDescriptionT>
@@ -79,6 +82,9 @@ public:
 
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~DecimalNumberBaseAttributeClass() override = default;
+    void updateValue() override {
+        value_ = getMinimum();
+    }
 };
 
 template <typename AttributeTypeClass, AttributeType EnumTypeT>
@@ -184,7 +190,7 @@ struct AutoRegisterCharNumberAttribute : public AutoRegisterAttribute<AttributeC
 class AttributeCharText : public Attribute
 {
 private:
-    char value_;
+    unsigned char value_;
     AttributeDescriptionCharText *desc_;
 
 public:
@@ -218,6 +224,7 @@ public:
 
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~AttributeCharText() override = default;
+    void updateValue() override {}
 };
 
 struct AutoRegisterCharTextAttribute : public AutoRegisterAttribute<AttributeCharText, AttributeType::CHART>
@@ -258,6 +265,7 @@ public:
     bool getValue() { return value_; }
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~AttributeBool() override = default;
+    void updateValue() override {}
 };
 
 struct AutoRegisterBoolAttribute : public AutoRegisterAttribute<AttributeBool, AttributeType::BOOL>
@@ -290,6 +298,7 @@ public:
     void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override;
     bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
+    void updateValue() override {}
 };
 
 struct AutoRegisterClusterAttribute;
@@ -330,6 +339,7 @@ public:
     std::string getValue() { return value_; }
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~AttributeString() override = default;
+    void updateValue() override {}
 };
 
 struct AutoRegisterStringAttribute : public AutoRegisterAttribute<AttributeString, AttributeType::STRING>

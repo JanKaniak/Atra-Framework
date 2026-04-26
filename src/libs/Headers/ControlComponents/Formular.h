@@ -50,12 +50,14 @@ public:
     int loadControlTypes(nlohmann::json json);
     nlohmann::ordered_json saveOutput();
     void addLogMessage(std::string_view time, std::string_view message);
-
-private:
     bool addControlType(std::string atributeName, std::string edtitType);
     bool addControlType(Attribute *attribute);
     bool addOrReplaceControlTypeByVector(std::vector<std::string> controlTypesVector);
     bool replaceControlType(Attribute *attribute, std::string controlType);
+    AttributeDescription* addDescription(std::string attributeName, AttributeType type);
+    bool addDescription(std::string attributeName, AttributeType type, std::string * clusterAttributeName);
+    bool createAttributes();
+private:
     void showSettings();
     void showLogger();
     void editAttribute(Attribute *attribute);

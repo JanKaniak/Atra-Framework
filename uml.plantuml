@@ -21,13 +21,53 @@ TemplateAttributesDescriptionContainer -> AttributeDescriptions
 @endumlW
 
 @startuml AttributeDescriptions
+allowmixing
+
 package AttributeDescriptions {
-    object AttributesDescriptionsContainer
+    class TemplateAttributesDescription
+    class TemplateAttributesDescriptionContainer
+    class AttributesDescriptionsContainer
+    class AttributeDescription {
+        + {abstract}  clone() : std::unique_ptr<AttributeDescription>
+        + {abstract}  jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) : bool
+        + {abstract}  drawInputForChangingLimits(std::vector<Message> &messagesHistory) : bool
+        + {abstract}  addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) : void
+        + {abstract} getContainer(std::string_view descriptionName, uint64_t descriptionId) : AttributesDescriptionsContainer*
+    }
+    class DescriptionFactory
+    class GlobalLastIdOfObject
+    enum AttributeType
+    enum Category
+    package ImplementedAttributeDescriptions
+    class IntegerNumberBaseClass {
+        + setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory) : bool
+    }
+    class DecimalNumberBaseClass
+
+
+}
+
+TemplateAttributesDescriptionContainer -right-> TemplateAttributesDescription
+TemplateAttributesDescription --> AttributesDescriptionsContainer
+AttributesDescriptionsContainer ---> AttributeDescription
+AttributesDescriptionsContainer -left-> DescriptionFactory
+AttributesDescriptionsContainer -right-> GlobalLastIdOfObject
+AttributeDescription -down-> AttributeType
+AttributeDescription --> Category
+IntegerNumberBaseClass -up-|> AttributeDescription
+DecimalNumberBaseClass -up-|> AttributeDescription
+ImplementedAttributeDescriptions --|> IntegerNumberBaseClass
+ImplementedAttributeDescriptions --|> DecimalNumberBaseClass
+DescriptionFactory --> ImplementedAttributeDescriptions
+
+
+
+@enduml
+
+
+@startuml ImplementedAttributeDescriptions
+package ImplementedAttributeDescriptions {
     object AttributeDescription
-    object DescriptionFactory
-    object GlobalLastIdOfObject
-    object AttributeType
-    object Category
     object IntegerNumberBaseClass
     object DecimalNumberBaseClass
 
@@ -48,26 +88,129 @@ package AttributeDescriptions {
 
 }
 
-AttributesDescriptionsContainer ---> AttributeDescription
-AttributesDescriptionsContainer -left-> DescriptionFactory
-AttributesDescriptionsContainer -right-> GlobalLastIdOfObject
-AttributeDescription -right-> AttributeType
-AttributeDescription --up-> Category
-IntegerNumberBaseClass -up-|> AttributeDescription
-DecimalNumberBaseClass -up-|> AttributeDescription
+AttributeDescription ---[hidden]- DecimalNumberBaseClass
+DecimalNumberBaseClass ---[hidden]- IntegerNumberBaseClass
 
-AttributeDescriptionInt --|> IntegerNumberBaseClass
-AttributeDescriptionUnsignedInt --|> IntegerNumberBaseClass
-AttributeDescriptionLong --|> IntegerNumberBaseClass
+AttributeDescriptionInt -right-|> IntegerNumberBaseClass
+AttributeDescriptionUnsignedInt -left-|> IntegerNumberBaseClass
+AttributeDescriptionLong -up-|> IntegerNumberBaseClass
 AttributeDescriptionCharNumber --|> IntegerNumberBaseClass
 
-AttributeDescriptionDouble --|> DecimalNumberBaseClass
-AttributeDescriptionFloat --|> DecimalNumberBaseClass
 
-AttributeDescriptionString -up-|> AttributeDescription
-AttributeDescriptionCharText -up-|> AttributeDescription
+AttributeDescriptionDouble -right-|> DecimalNumberBaseClass
+AttributeDescriptionFloat -left-|> DecimalNumberBaseClass
 
-AttributeDescriptionBool --|> AttributeDescription
+AttributeDescriptionString --|> AttributeDescription
+AttributeDescriptionCharText --|> AttributeDescription
 
-AttributeDescriptionCluster --|> AttributeDescription
+AttributeDescriptionBool -right-|> AttributeDescription
+
+AttributeDescriptionCluster -left-|> AttributeDescription
+
+
+@enduml
+
+@startuml Attributes
+allowmixing
+
+package Attributes {
+    object AttributesContainer
+    object AttributeFactory
+    object Attribute
+    object AttributesDescriptionsContainer
+    package ImplementedAttributeDescriptions
+    package ImplementedAttributes
+}
+AttributesContainer -left-> AttributeFactory
+AttributesContainer --> Attribute
+AttributesContainer -right-> AttributesDescriptionsContainer
+Attribute ..> ImplementedAttributeDescriptions
+AttributeFactory --> ImplementedAttributes
+ImplementedAttributes -left-|> Attribute
+@enduml
+
+
+@startuml ImplementedAttributes {
+    package ImplementedAttributes {
+        object Attribute
+        object IntegerNumberBaseAttributeClass
+        object DecimalNumberBaseAttributeClass
+
+        object AttributeInt
+        object AttributeUnsignedInt
+        object AttributeLong
+        object AttributeCharNumber
+
+        object AttributeDouble
+        object AttributeFloat
+
+        object AttributeString
+        object AttributeCharText
+
+        object AttributeBool
+
+        object AttributeCluster
+    }
+
+    IntegerNumberBaseAttributeClass --|> Attribute
+    DecimalNumberBaseAttributeClass --|> Attribute
+
+    AttributeInt --|> IntegerNumberBaseAttributeClass
+    AttributeUnsignedInt --|> IntegerNumberBaseAttributeClass
+    AttributeLong --|> IntegerNumberBaseAttributeClass
+    AttributeCharNumber --|> IntegerNumberBaseAttributeClass
+
+    AttributeDouble --|> DecimalNumberBaseAttributeClass
+    AttributeFloat --|> DecimalNumberBaseAttributeClass
+
+    AttributeString --|> Attribute
+    AttributeCharText --|> Attribute
+
+    AttributeCluster -right-|> Attribute
+
+    AttributeBool --|> Attribute
+
+}
+
+@enduml
+
+@startuml ControlComponents
+allowmixing
+
+package ControlComponents {
+    object Formular
+    object ControlComponentsContainer
+    object ControlComponent
+    object NumberBaseControlComponent
+    object ControlComponentInt
+    object ControlComponentDouble
+    object ControlComponentsFactoriesContainer
+    object IntEditFactory
+    object DoubleEditFactory
+    object Factory
+    object IntSlider
+    object IntVSlider
+    object IntDrag
+    object DoubleSlider
+    object DoubleVSlider
+    object DoubleDrag
+}
+
+ControlComponentsContainer --> ControlComponent
+NumberBaseControlComponent --|> ControlComponent
+ControlComponentInt --|> NumberBaseControlComponent
+ControlComponentDouble --|> NumberBaseControlComponent
+IntSlider --|> ControlComponentInt
+IntVSlider --|> ControlComponentInt
+IntDrag --|> ControlComponentInt
+DoubleSlider --|> ControlComponentDouble
+DoubleVSlider --|> ControlComponentDouble
+DoubleDrag --|> ControlComponentDouble
+
+IntEditFactory --|> Factory
+DoubleEditFactory --|> Factory
+ControlComponentsFactoriesContainer --> Factory
+Formular --> ControlComponentsFactoriesContainer
+Formular --> ControlComponentsContainer
+
 @enduml

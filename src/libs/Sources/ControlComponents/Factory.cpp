@@ -330,7 +330,7 @@ inline void UintEditFactory::registerPrototype()
 
 ControlComponentsFactoriesContainer *ControlComponentsFactoriesContainer::getInstance()
 {
-    ControlComponentsFactoriesContainer *instance;
+    static ControlComponentsFactoriesContainer *instance;
     if (instance == nullptr)
     {
         return instance = new ControlComponentsFactoriesContainer();

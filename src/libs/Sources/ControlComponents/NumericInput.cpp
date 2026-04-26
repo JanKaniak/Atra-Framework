@@ -3,7 +3,7 @@
 // Class IntSlider
 void IntSlider::draw(std::vector<Message> &messageHistory)
 {
-    if ((((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
+    if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
     } else {
         ImGui::PushItemWidth(minimumWidth_);
