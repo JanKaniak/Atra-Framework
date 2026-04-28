@@ -135,6 +135,9 @@ void ControlComponentsContainer::deleteAttribute(Attribute *attribute, Attribute
 
 void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
 {
+    if (components_.empty()) {
+        return;
+    }
 
     static bool drawed = false;
     static ControlComponent *chosenComponent;

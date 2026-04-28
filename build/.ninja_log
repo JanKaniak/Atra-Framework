@@ -88,3 +88,8 @@
 885	1269	1777206929059957422	src/glfw/src/CMakeFiles/glfw.dir/null_window.c.o	b7c23eb24f54cef4
 364	597	1777206928388220949	src/glfw/src/CMakeFiles/glfw.dir/platform.c.o	78004e1540fe56b0
 16	4208	1777206931992323388	CMakeFiles/imgui.dir/src/imgui/imgui.cpp.o	26820dbe1a6b6794
+19	3524	1777403199763843097	CMakeFiles/GraphicEditor.dir/src/main.cpp.o	10c1bdfd412b0f30
+3524	4303	1777403200530910978	GraphicEditor	828e07326033dc47
+15	3959	1777404196614669427	CMakeFiles/myLib.dir/src/libs/Sources/ControlComponents/ControlComponentsContainer.cpp.o	473fd704d39cee51
+3960	4477	1777404197113285809	libmyLib.a	aac056950622efb8
+4477	5317	1777404197962562998	GraphicEditor	828e07326033dc47
