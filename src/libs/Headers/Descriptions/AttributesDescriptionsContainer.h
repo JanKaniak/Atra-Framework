@@ -17,23 +17,23 @@ private:
 
 public:
     AttributesDescriptionsContainer();
-    bool addDescription(AttributeType type, nlohmann::ordered_json &json, std::vector<Message> &messagesHistory);
-    bool addDescription(std::string attributeName, AttributeType type, std::vector<Message> &messagesHistory);
+    bool addDescription(AttributeType type, nlohmann::ordered_json &json, std::vector<Message> *messagesHistory);
+    bool addDescription(std::string attributeName, AttributeType type, std::vector<Message> *messagesHistory);
     bool addDescription(std::unique_ptr<AttributeDescription> descriptionPtr);
-    bool addDescriptions(AttributesDescriptionsContainer *container,std::vector<Message> &messageHistory);
+    bool addDescriptions(AttributesDescriptionsContainer *container,std::vector<Message> *messageHistory);
     AttributeDescription *getDescription(std::string name);
     inline AttributeDescription *getDescription(int i) { return (i >= 0 && i < attributeDescs_.size()) ? attributeDescs_.at(i).get() : nullptr; }
     inline int getSize() { return attributeDescs_.size(); }
     AttributeDescription *getLast();
     bool deleteDescription(AttributeDescription *description);
     inline std::vector<AttributeTypeC> getRegisteredDescriptionsTypes() { return descFactory_->getRegisteredDescriptionsTypes(); }
-    bool deleteLastDescription(std::vector<Message> &messagesHistory);
+    bool deleteLastDescription(std::vector<Message> *messagesHistory);
     bool existsDescription(std::string_view name);
     void findDescriptionsByType(std::vector<AttributeDescription *> &vector, AttributeType type);
     AttributesDescriptionsContainer *findDescriptionContainer(std::string_view descriptionName, uint64_t descriptionId);
     ~AttributesDescriptionsContainer();
     AttributesDescriptionsContainer *getDescriptionContainer(std::string_view descriptionName, uint64_t descriptionId);
-    void deleteAllDescriptions(std::vector<Message> &messageHistory);
+    void deleteAllDescriptions(std::vector<Message> *messageHistory);
 };
 
 
@@ -64,14 +64,14 @@ private:
 
 public:
     static TemplateAttributesDescriptionContainer *getInstance();
-    bool addTemplateDescription(std::string_view name, std::vector<Message> &messageHistory) {
+    bool addTemplateDescription(std::string_view name, std::vector<Message> *messageHistory) {
         if (name.empty()) {
-            messageHistory.emplace_back("Name cannot be empty!");
+            messageHistory->emplace_back("Name cannot be empty!");
             return false;
         }
 
         if (templateExists(name)) {
-            messageHistory.emplace_back("Names must be unique!");
+            messageHistory->emplace_back("Names must be unique!");
             return false;
         }
 

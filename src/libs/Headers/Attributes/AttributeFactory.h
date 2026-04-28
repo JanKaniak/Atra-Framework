@@ -13,12 +13,12 @@ private:
 public:
     AttributeUptr createAttribute(AttributeType type);
     static AttributeFactory *getInstance();
-    template <AttributeType TypeT>
+    template <AttributeType EnumTypeT>
     void registerPrototype(AttributeUptr prototype)
     {
-        if (prototypes_.find(TypeT) == prototypes_.end())
+        if (prototypes_.find(EnumTypeT) == prototypes_.end())
         {
-            prototypes_[TypeT] = std::move(prototype);
+            prototypes_[EnumTypeT] = std::move(prototype);
         }
     }
 };

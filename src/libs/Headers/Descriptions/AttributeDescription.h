@@ -214,10 +214,9 @@ protected:
     std::string name_;
     AttributeType type_;
     Category category_;
-    ImGuiDataType dataType_;
     bool assigned_;
     uint64_t id_;
-
+    ImGuiDataType dataType_;
 public:
     AttributeDescription(AttributeType type) : type_(type), assigned_(false), id_(0) {};
     inline std::string getName() { return name_; };
@@ -232,7 +231,6 @@ public:
         }
     };
     inline void setCategory(Category category) { category_ = category; }
-    inline ImGuiDataType getDataType() { return dataType_; }
     inline void setAssigned(bool assigned) { assigned_ = assigned; }
     inline bool isAssigned() { return assigned_; }
     void setID(uint64_t id)
@@ -240,12 +238,16 @@ public:
         id_ = id;
     }
     uint64_t getID() { return id_; }
+    ImGuiDataType getDataType() {
+        return dataType_;
+    }
 
 public:
     virtual ~AttributeDescription() = 0;
     virtual std::unique_ptr<AttributeDescription> clone() = 0;
-    virtual bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) = 0;
-    virtual bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) = 0;
+    virtual bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) = 0;
     virtual void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) = 0;
     virtual AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) = 0;
+    virtual bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) = 0;
+    
 };

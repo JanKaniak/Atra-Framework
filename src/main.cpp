@@ -35,11 +35,6 @@ int main(int, char**)
 
 
 
-
-
-
-
-
     glfwSetErrorCallback(glfw_error_callback);
     if (!glfwInit())
         return 1;

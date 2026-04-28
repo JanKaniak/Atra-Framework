@@ -47,7 +47,7 @@ Tree::Tree() { dimensions_ = ImVec2(0,0);}
 
 void Tree::draw(std::vector<Message> &messageHistory)
 {
-    if (ImGui::TreeNodeEx(std::format("##{}", getName()).c_str()))
+    if (ImGui::TreeNodeEx(std::format("##{}{}", getName(),attribute_->getDescription()->getID()).c_str()))
     {
         components_->draw(messageHistory);
         dimensions_.x = components_->getDimensions().x;

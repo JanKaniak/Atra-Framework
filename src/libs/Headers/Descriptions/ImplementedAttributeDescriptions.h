@@ -9,7 +9,7 @@
 #include <memory>
 #include <iostream>
 
-template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::ordered_json::value_t TypeEnumT>
+template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
 class IntegerNumberBaseClass : public AttributeDescription
 {
 private:
@@ -19,20 +19,20 @@ private:
 public:
     IntegerNumberBaseClass(TypeT min, TypeT max, Category category) : AttributeDescription(AttributeTypeEnumT), min_(min), max_(max)
     {
-        category_ = category;
         dataType_ = ImGuiDataTypeT;
+        category_ = category;
     }
 
     TypeT getMinimum() { return min_; }
     TypeT getMaximum() { return max_; }
-    bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory);
-    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
-    bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override;
+    bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message> *messagesHistory);
+    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override { return nullptr; }
+    bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override;
 };
 
-template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::ordered_json::value_t TypeEnumT>
+template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
 class DecimalNumberBaseClass : public AttributeDescription
 {
 private:
@@ -42,17 +42,17 @@ private:
 public:
     DecimalNumberBaseClass(TypeT min, TypeT max, Category category) : AttributeDescription(AttributeTypeEnumT), min_(min), max_(max)
     {
-        category_ = category;
         dataType_ = ImGuiDataTypeT;
+        category_ = category;
     }
 
     TypeT getMinimum() { return min_; }
     TypeT getMaximum() { return max_; }
-    bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory);
-    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
-    bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override;
+    bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message> *messagesHistory);
+    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override { return nullptr; }
+    bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override;
 };
 
 template <typename AttributeDescriptionType>
@@ -65,7 +65,7 @@ struct AutoRegisterDescription
     }();
 };
 
-class AttributeDescriptionInt : public IntegerNumberBaseClass<int, AttributeType::INT, ImGuiDataType_S32, nlohmann::ordered_json::value_t::number_integer>
+class AttributeDescriptionInt : public IntegerNumberBaseClass<int, AttributeType::INT,ImGuiDataType_S32,nlohmann::ordered_json::value_t::number_integer>
 {
 public:
     AttributeDescriptionInt() : IntegerNumberBaseClass(10, 50, Category::NUMERIC) {}
@@ -78,7 +78,7 @@ struct AutoRegisterIntDescription : public AutoRegisterDescription<AttributeDesc
     { AutoRegisterDescription::autoRegister; };
 };
 
-class AttributeDescriptionDouble : public DecimalNumberBaseClass<double, AttributeType::DOUBLE, ImGuiDataType_Double, nlohmann::ordered_json::value_t::number_float>
+class AttributeDescriptionDouble : public DecimalNumberBaseClass<double, AttributeType::DOUBLE,ImGuiDataType_Double,nlohmann::ordered_json::value_t::number_float>
 {
 public:
     AttributeDescriptionDouble() : DecimalNumberBaseClass(10, 50, Category::NUMERIC) {}
@@ -91,7 +91,7 @@ struct AutoRegisterDoubleDescription : public AutoRegisterDescription<AttributeD
     { AutoRegisterDescription::autoRegister; };
 };
 
-class AttributeDescriptionFloat : public DecimalNumberBaseClass<float, AttributeType::FLOAT, ImGuiDataType_Float, nlohmann::ordered_json::value_t::number_float>
+class AttributeDescriptionFloat : public DecimalNumberBaseClass<float, AttributeType::FLOAT,ImGuiDataType_Float ,nlohmann::ordered_json::value_t::number_float>
 {
 public:
     AttributeDescriptionFloat() : DecimalNumberBaseClass(10, 50, Category::NUMERIC) {}
@@ -104,7 +104,7 @@ struct AutoRegisterFloatDescription : public AutoRegisterDescription<AttributeDe
     { AutoRegisterDescription::autoRegister; };
 };
 
-class AttributeDescriptionLong : public IntegerNumberBaseClass<long, AttributeType::LONG, ImGuiDataType_S64, nlohmann::ordered_json::value_t::number_integer>
+class AttributeDescriptionLong : public IntegerNumberBaseClass<long, AttributeType::LONG,ImGuiDataType_S64 ,nlohmann::ordered_json::value_t::number_integer>
 {
 public:
     AttributeDescriptionLong() : IntegerNumberBaseClass(10, 50, Category::NUMERIC) {}
@@ -117,7 +117,7 @@ struct AutoRegisterLongDescription : public AutoRegisterDescription<AttributeDes
     { AutoRegisterDescription::autoRegister; };
 };
 
-class AttributeDescriptionUint : public IntegerNumberBaseClass<uint32_t, AttributeType::UINT, ImGuiDataType_U32, nlohmann::ordered_json::value_t::number_unsigned>
+class AttributeDescriptionUint : public IntegerNumberBaseClass<uint32_t, AttributeType::UINT,ImGuiDataType_U32 ,nlohmann::ordered_json::value_t::number_unsigned>
 {
 public:
     AttributeDescriptionUint() : IntegerNumberBaseClass(10, 50, Category::NUMERIC) {}
@@ -130,7 +130,7 @@ struct AutoRegisterUintDescription : public AutoRegisterDescription<AttributeDes
     { AutoRegisterDescription::autoRegister; };
 };
 
-class AttributeDescriptionCharNumber : public IntegerNumberBaseClass<char, AttributeType::CHARN, ImGuiDataType_S8, nlohmann::ordered_json::value_t::number_integer>
+class AttributeDescriptionCharNumber : public IntegerNumberBaseClass<char, AttributeType::CHARN,ImGuiDataType_U8 ,nlohmann::ordered_json::value_t::number_integer>
 {
 
 public:
@@ -151,13 +151,12 @@ public:
     {
         category_ = Category::LOGIC;
     }
-    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
+    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
     std::unique_ptr<AttributeDescription> clone() override;
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override { return nullptr; }
-
-private:
-    bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override { return false; }
+    bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override { return false; }
+    
 };
 
 struct AutoRegisterBoolDescription : public AutoRegisterDescription<AttributeDescriptionBool>
@@ -165,6 +164,11 @@ struct AutoRegisterBoolDescription : public AutoRegisterDescription<AttributeDes
     inline static bool registerDescription = []()
     { AutoRegisterDescription::autoRegister; };
 };
+
+
+
+
+
 
 class AttributeDescriptionCluster : public AttributeDescription
 {
@@ -200,11 +204,13 @@ public:
 
 public:
     std::unique_ptr<AttributeDescription> clone() override;
-    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
-    bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override;
+    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override;
     ~AttributeDescriptionCluster() override;
+    AttributeDescription* addDescription(std::string attributeName, AttributeType type);
+    AttributeDescription* addDescription(std::unique_ptr<AttributeDescription> attributeDescription);
+    bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override { return false; }
 };
 
 struct AutoRegisterClusterDescription : public AutoRegisterDescription<AttributeDescriptionCluster>
@@ -212,6 +218,10 @@ struct AutoRegisterClusterDescription : public AutoRegisterDescription<Attribute
     inline static bool registerDescription = []()
     { AutoRegisterDescription::autoRegister; };
 };
+
+
+
+
 
 class AttributeDescriptionCharText : public AttributeDescription
 {
@@ -223,16 +233,15 @@ public:
     AttributeDescriptionCharText() : AttributeDescription(AttributeType::CHART)
     {
         category_ = Category::TEXT;
-        dataType_ = ImGuiDataType_U8;
     }
     char getMinimum() { return min_; }
     char getMaximum() { return max_; }
     std::unique_ptr<AttributeDescription> clone() override;
-    bool setLimit(uint8_t minimum, uint8_t maximum, std::vector<Message> &messagesHistory);
-    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
-    bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override;
+    bool setLimit(uint8_t minimum, uint8_t maximum, std::vector<Message> *messagesHistory);
+    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override { return nullptr; }
+    bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override;
 };
 
 struct AutoRegisterCharTextDescription : public AutoRegisterDescription<AttributeDescriptionCharText>
@@ -240,6 +249,11 @@ struct AutoRegisterCharTextDescription : public AutoRegisterDescription<Attribut
     inline static bool registerDescription = []()
     { AutoRegisterDescription::autoRegister; };
 };
+
+
+
+
+
 
 class AttributeDescriptionString : public AttributeDescription
 {
@@ -251,16 +265,15 @@ public:
     AttributeDescriptionString() : AttributeDescription(AttributeType::STRING)
     {
         category_ = Category::TEXT;
-        dataType_ = ImGuiDataType_U32;
     }
     uint32_t getMinimum() { return min_; }
     uint32_t getMaximum() { return max_; }
     std::unique_ptr<AttributeDescription> clone() override;
-    bool setLimit(uint32_t minimum, uint32_t maximum, std::vector<Message> &messagesHistory);
-    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
-    bool drawInputForChangingLimits(std::vector<Message> &messagesHistory) override;
+    bool setLimit(uint32_t minimum, uint32_t maximum, std::vector<Message> *messagesHistory);
+    bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override { return nullptr; }
+    bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override;
 };
 
 struct AutoRegisterStringDescription : public AutoRegisterDescription<AttributeDescriptionString>

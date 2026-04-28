@@ -5,8 +5,8 @@
 AttributeDescription::~AttributeDescription() = default;
 
 // INTEGER NUMBERS -------------------------------------------
-template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory)
+template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
+bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message> *messagesHistory)
 {
     if (minimum < maximum)
     {
@@ -14,12 +14,14 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
         max_ = maximum;
         return true;
     }
-    messagesHistory.emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
+    if (messagesHistory != nullptr)
+    messagesHistory->emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
     return false;
 }
 
-template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+
+template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
+bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
     {
@@ -28,13 +30,15 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
     }
     if ((!json["Minimum"].is_number_integer() && json["Minimum"].type() != TypeEnumT) || (!json["Maximum"].is_number_integer() && json["Maximum"].type() != TypeEnumT))
     {
-        messagesHistory.emplace_back(Message(std::format("{} Bounds must be number value!", json["Attribute name"].get<std::string>())));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message(std::format("{} Bounds must be number value!", json["Attribute name"].get<std::string>())));
         return false;
     }
 
     if (!json["Attribute name"].is_string())
     {
-        messagesHistory.emplace_back(Message("Name must be string type!"));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Name must be string type!"));
         return false;
     }
 
@@ -43,117 +47,7 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 }
 
 template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
-{
-    static bool isSetLastLimit = false;
-    static TypeT tmpMin = 0;
-    static TypeT tmpMax = 0;
-
-    if (!isSetLastLimit) {
-        tmpMin = min_;
-        tmpMax = max_;
-        isSetLastLimit = true;
-    }
-    if (!ImGui::IsPopupOpen("Edit limit for description"))
-    {
-        ImGui::OpenPopup("Edit limit for description");
-    }
-
-    ImGui::SetNextWindowSize(ImVec2(0, 112));
-    if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
-    {
-
-        ImGui::InputScalar("Minimum", ImGuiDataTypeT, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
-        ImGui::InputScalar("Maximum", ImGuiDataTypeT, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
-
-        if (ImGui::Button("Save",ImVec2(60,30)))
-        {
-            if (setLimit(tmpMin, tmpMax, messagesHistory))
-            {
-                isSetLastLimit = false;
-                ImGui::CloseCurrentPopup();
-                ImGui::EndPopup();
-                return false;
-            }
-            isSetLastLimit = false;
-            ImGui::CloseCurrentPopup();
-            ImGui::EndPopup();
-            return true;
-        }
-
-        ImGui::SameLine();
-        if (ImGui::Button("Close",ImVec2(60,30)))
-        {
-            isSetLastLimit = false;
-            ImGui::CloseCurrentPopup();
-            ImGui::EndPopup();
-            return false;
-        }
-        ImGui::EndPopup();
-    }
-
-    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
-    {
-        isSetLastLimit = false;
-        ImGui::EndPopup();
-        return false;
-    }
-    return true;
-}
-
-template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-void IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
-{
-    if (type == AttributeTypeEnumT)
-    {
-        vector.emplace_back(this);
-    }
-}
-
-//------------------------------------------------------
-
-// DECIMAL NUMBERS -----------------------------------------------------
-template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory)
-{
-
-    if (minimum < maximum)
-    {
-        min_ = minimum;
-        max_ = maximum;
-        return true;
-    }
-    messagesHistory.emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
-    return false;
-}
-
-template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
-{
-    if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
-    {
-        messagesHistory.emplace_back(Message("Incorrect json format!"));
-        return false;
-    }
-
-    if (!json["Attribute name"].is_string())
-    {
-        messagesHistory.emplace_back(Message("Name must be string type!"));
-        return false;
-    }
-
-    if ((!json["Minimum"].is_number_float() && json["Minimum"].type() != TypeEnumT) || (!json["Minimum"].is_number_float() && json["Maximum"].type() != TypeEnumT))
-    {
-        messagesHistory.emplace_back(Message("Bounds must be number value!"));
-        return false;
-    }
-
-    setName(json["Attribute name"].get<std::string>());
-    return setLimit(json["Minimum"].get<TypeT>(), json["Maximum"].get<TypeT>(), messagesHistory);
-}
-
-template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
-bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
+bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> *messagesHistory)
 {
     static bool isSetLastLimit = false;
     static TypeT tmpMin = 0;
@@ -210,7 +104,62 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
     return true;
 }
 
-template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
+void IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
+{
+    if (type == AttributeTypeEnumT)
+    {
+        vector.emplace_back(this);
+    }
+}
+
+//------------------------------------------------------
+
+// DECIMAL NUMBERS -----------------------------------------------------
+template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
+bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message> *messagesHistory)
+{
+
+    if (minimum < maximum)
+    {
+        min_ = minimum;
+        max_ = maximum;
+        return true;
+    }
+    if (messagesHistory != nullptr)
+    messagesHistory->emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
+    return false;
+}
+
+template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
+bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
+{
+    if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
+    {
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Incorrect json format!"));
+        return false;
+    }
+
+    if (!json["Attribute name"].is_string())
+    {
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Name must be string type!"));
+        return false;
+    }
+
+    if ((!json["Minimum"].is_number_float() && json["Minimum"].type() != TypeEnumT) || (!json["Minimum"].is_number_float() && json["Maximum"].type() != TypeEnumT))
+    {
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Bounds must be number value!"));
+        return false;
+    }
+
+    setName(json["Attribute name"].get<std::string>());
+    return setLimit(json["Minimum"].get<TypeT>(), json["Maximum"].get<TypeT>(), messagesHistory);
+}
+
+template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
 void DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
 {
     if (type == AttributeTypeEnumT)
@@ -219,21 +168,81 @@ void DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
     }
 }
 
+template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> *messagesHistory)
+{
+    static bool isSetLastLimit = false;
+    static TypeT tmpMin = 0;
+    static TypeT tmpMax = 0;
+
+    if (!isSetLastLimit) {
+        tmpMin = min_;
+        tmpMax = max_;
+        isSetLastLimit = true;
+    }
+    if (!ImGui::IsPopupOpen("Edit limit for description"))
+    {
+        ImGui::OpenPopup("Edit limit for description");
+    }
+
+    ImGui::SetNextWindowSize(ImVec2(400, 300));
+    if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
+    {
+
+        ImGui::InputScalar("Minimum", ImGuiDataTypeT, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
+        ImGui::InputScalar("Maximum", ImGuiDataTypeT, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
+
+        if (ImGui::Button("Save"))
+        {
+            if (setLimit(tmpMin, tmpMax, messagesHistory))
+            {
+                ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+                return false;
+            }
+            isSetLastLimit = false;
+            ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
+            return true;
+        }
+
+        ImGui::SameLine();
+        if (ImGui::Button("Close"))
+        {
+            isSetLastLimit = false;
+            ImGui::CloseCurrentPopup();
+            ImGui::EndPopup();
+            return false;
+        }
+        ImGui::EndPopup();
+    }
+
+    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
+    {
+        isSetLastLimit = false;
+        ImGui::EndPopup();
+        return false;
+    }
+    return true;
+}
+
 //-------------------------------------------------------------
 
 // BOOL --------------------------------------------------------
 
-bool AttributeDescriptionBool::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+bool AttributeDescriptionBool::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
 {
     if (json.find("Attribute name") == json.end())
     {
-        messagesHistory.emplace_back(Message("Incorrect json format!"));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Incorrect json format!"));
         return false;
     }
 
     if (!json["Attribute name"].is_string())
     {
-        messagesHistory.emplace_back(Message("Name must be string type!"));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Name must be string type!"));
         return false;
     }
 
@@ -253,23 +262,26 @@ void AttributeDescriptionBool::addItselfToVectorByCondition(std::vector<Attribut
 
 // CLUSTER --------------------------------------------------------
 
-bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
 {
     if (json.find("Attribute name") == json.end() || json.find("Attribute descriptions") == json.end())
     {
-        messagesHistory.emplace_back(Message("Incorrect json format!"));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Incorrect json format!"));
         return false;
     }
 
     if (!json["Attribute name"].is_string())
     {
-        messagesHistory.emplace_back(Message("Name must be string type!"));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Name must be string type!"));
         return false;
     }
 
     if (!json["Attribute descriptions"].is_array())
     {
-        messagesHistory.emplace_back(Message("Attribute descriptions must be in array!"));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Attribute descriptions must be in array!"));
         return false;
     }
 
@@ -289,10 +301,7 @@ bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::v
     return true;
 }
 
-bool AttributeDescriptionCluster::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
-{
-    return false;
-}
+
 
 void AttributeDescriptionCluster::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
 {
@@ -317,11 +326,25 @@ AttributeDescriptionCluster::~AttributeDescriptionCluster()
     descriptions_ = nullptr;
 }
 
+AttributeDescription* AttributeDescriptionCluster::addDescription(std::string attributeName, AttributeType type) {
+    if (descriptions_->addDescription(attributeName, type,nullptr)) {
+        return descriptions_->getLast();
+    }
+    return nullptr;
+}
+
+AttributeDescription* AttributeDescriptionCluster::addDescription(std::unique_ptr<AttributeDescription> attributeDescription) {
+    if (descriptions_->addDescription(std::move(attributeDescription))) {
+        return descriptions_->getLast();
+    }
+    return nullptr;
+}
+
 //--------------------------------------------------------------
 
 // CHAR text ---------------------------------------------------
 
-bool AttributeDescriptionCharText::setLimit(uint8_t minimum, uint8_t maximum, std::vector<Message> &messagesHistory)
+bool AttributeDescriptionCharText::setLimit(uint8_t minimum, uint8_t maximum, std::vector<Message> *messagesHistory)
 {
     if ((minimum < maximum) || (minimum > 0 && minimum <= maximum))
     {
@@ -329,26 +352,30 @@ bool AttributeDescriptionCharText::setLimit(uint8_t minimum, uint8_t maximum, st
         max_ = maximum;
         return true;
     }
-    messagesHistory.emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
+    if (messagesHistory != nullptr)
+    messagesHistory->emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
     return false;
 }
 
-bool AttributeDescriptionCharText::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+bool AttributeDescriptionCharText::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
     {
-        messagesHistory.emplace_back(Message("Incorrect json format!"));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Incorrect json format!"));
         return false;
     }
     if ((!json["Minimum"].is_number_integer() && json["Minimum"].type() != nlohmann::ordered_json::value_t::number_unsigned) || (!json["Maximum"].is_number_integer() && json["Maximum"].type() != nlohmann::ordered_json::value_t::number_unsigned))
     {
-        messagesHistory.emplace_back(Message(std::format("{} Bounds must be number value!", json["Attribute name"].get<std::string>())));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message(std::format("{} Bounds must be number value!", json["Attribute name"].get<std::string>())));
         return false;
     }
 
     if (!json["Attribute name"].is_string())
     {
-        messagesHistory.emplace_back(Message("Name must be string type!"));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Name must be string type!"));
         return false;
     }
 
@@ -356,64 +383,66 @@ bool AttributeDescriptionCharText::jsonParse(nlohmann::ordered_json &json, std::
     return setLimit(json["Minimum"].get<uint8_t>(), json["Maximum"].get<uint8_t>(), messagesHistory);
 }
 
-
-bool AttributeDescriptionCharText::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
-{
-   static bool isSetLastLimit = false;
-    static uint8_t tmpMin = 0;
-    static uint8_t tmpMax = 0;
-
-    if (!isSetLastLimit) {
-        tmpMin = min_;
-        tmpMax = max_;
-        isSetLastLimit = true;
-    }
-    if (!ImGui::IsPopupOpen("Edit limit for description"))
+bool AttributeDescriptionCharText::drawInputForChangingLimits(std::vector<Message> *messagesHistory)
     {
-        ImGui::OpenPopup("Edit limit for description");
-    }
+        static bool isSetLastLimit = false;
+        static uint8_t tmpMin = 0;
+        static uint8_t tmpMax = 0;
 
-    ImGui::SetNextWindowSize(ImVec2(0, 112));
-    if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
-    {
-
-        ImGui::InputScalar("Minimum", dataType_, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
-        ImGui::InputScalar("Maximum", dataType_, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
-
-        if (ImGui::Button("Save",ImVec2(60,30)))
+        if (!isSetLastLimit)
         {
-            if (setLimit(tmpMin, tmpMax, messagesHistory))
+            tmpMin = min_;
+            tmpMax = max_;
+            isSetLastLimit = true;
+        }
+        if (!ImGui::IsPopupOpen("Edit limit for description"))
+        {
+            ImGui::OpenPopup("Edit limit for description");
+        }
+
+        ImGui::SetNextWindowSize(ImVec2(0, 112));
+        if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
+        {
+
+            ImGui::InputScalar("Minimum", ImGuiDataType_U8, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
+            ImGui::InputScalar("Maximum", ImGuiDataType_U8, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
+
+            if (ImGui::Button("Save", ImVec2(60, 30)))
+            {
+                if (setLimit(tmpMin, tmpMax, messagesHistory))
+                {
+                    isSetLastLimit = false;
+                    ImGui::CloseCurrentPopup();
+                    ImGui::EndPopup();
+                    return false;
+                }
+                isSetLastLimit = false;
+                ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+                return true;
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Close", ImVec2(60, 30)))
             {
                 isSetLastLimit = false;
                 ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
                 return false;
             }
-            isSetLastLimit = false;
-            ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
-            return true;
         }
-
-        ImGui::SameLine();
-        if (ImGui::Button("Close",ImVec2(60,30)))
+        if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
         {
             isSetLastLimit = false;
-            ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
             return false;
         }
-        ImGui::EndPopup();
+        return true;
     }
 
-    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
-    {
-        isSetLastLimit = false;
-        ImGui::EndPopup();
-        return false;
-    }
-    return true;
-}
+
+  
 
 
 void AttributeDescriptionCharText::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
@@ -428,7 +457,7 @@ void AttributeDescriptionCharText::addItselfToVectorByCondition(std::vector<Attr
 
 // STRING ---------------------------------------------------
 
-bool AttributeDescriptionString::setLimit(uint32_t minimum, uint32_t maximum, std::vector<Message> &messagesHistory)
+bool AttributeDescriptionString::setLimit(uint32_t minimum, uint32_t maximum, std::vector<Message> *messagesHistory)
 {
     if (minimum < maximum)
     {
@@ -436,26 +465,30 @@ bool AttributeDescriptionString::setLimit(uint32_t minimum, uint32_t maximum, st
         max_ = maximum;
         return true;
     }
-    messagesHistory.emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
+    if (messagesHistory != nullptr)
+    messagesHistory->emplace_back(Message(std::format("Error with attribute description: {}, minimum must be lower value than maximum!",name_)));
     return false;
 }
 
-bool AttributeDescriptionString::jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+bool AttributeDescriptionString::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
     {
-        messagesHistory.emplace_back(Message("Incorrect json format!"));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Incorrect json format!"));
         return false;
     }
     if ((!json["Minimum"].is_number_integer() && json["Minimum"].type() != nlohmann::ordered_json::value_t::number_unsigned) || (!json["Maximum"].is_number_integer() && json["Maximum"].type() != nlohmann::ordered_json::value_t::number_unsigned))
     {
-        messagesHistory.emplace_back(Message(std::format("{} Bounds must be number value!", json["Attribute name"].get<std::string>())));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message(std::format("{} Bounds must be number value!", json["Attribute name"].get<std::string>())));
         return false;
     }
 
     if (!json["Attribute name"].is_string())
     {
-        messagesHistory.emplace_back(Message("Name must be string type!"));
+        if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Name must be string type!"));
         return false;
     }
 
@@ -463,64 +496,64 @@ bool AttributeDescriptionString::jsonParse(nlohmann::ordered_json &json, std::ve
     return setLimit(json["Minimum"].get<uint32_t>(), json["Maximum"].get<uint32_t>(), messagesHistory);
 }
 
-
-bool AttributeDescriptionString::drawInputForChangingLimits(std::vector<Message> &messagesHistory)
-{
-    static bool isSetLastLimit = false;
-    static uint32_t tmpMin = 0;
-    static uint32_t tmpMax = 0;
-
-    if (!isSetLastLimit) {
-        tmpMin = min_;
-        tmpMax = max_;
-        isSetLastLimit = true;
-    }
-    if (!ImGui::IsPopupOpen("Edit limit for description"))
+bool AttributeDescriptionString::drawInputForChangingLimits(std::vector<Message> *messagesHistory)
     {
-        ImGui::OpenPopup("Edit limit for description");
-    }
+        static bool isSetLastLimit = false;
+        static uint32_t tmpMin = 0;
+        static uint32_t tmpMax = 0;
 
-    ImGui::SetNextWindowSize(ImVec2(0, 112));
-    if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
-    {
-
-        ImGui::InputScalar("Minimum", dataType_, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
-        ImGui::InputScalar("Maximum", dataType_, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
-
-        if (ImGui::Button("Save",ImVec2(60,30)))
+        if (!isSetLastLimit)
         {
-            if (setLimit(tmpMin, tmpMax, messagesHistory))
+            tmpMin = min_;
+            tmpMax = max_;
+            isSetLastLimit = true;
+        }
+        if (!ImGui::IsPopupOpen("Edit limit for description"))
+        {
+            ImGui::OpenPopup("Edit limit for description");
+        }
+
+        ImGui::SetNextWindowSize(ImVec2(0, 112));
+        if (ImGui::BeginPopupModal("Edit limit for description"), nullptr, ImGuiWindowFlags_AlwaysAutoResize)
+        {
+
+            ImGui::InputScalar("Minimum", dataType_, &tmpMin, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
+            ImGui::InputScalar("Maximum", dataType_, &tmpMax, nullptr, nullptr, nullptr, ImGuiInputTextFlags_CharsDecimal);
+
+            if (ImGui::Button("Save", ImVec2(60, 30)))
+            {
+                if (setLimit(tmpMin, tmpMax, messagesHistory))
+                {
+                    isSetLastLimit = false;
+                    ImGui::CloseCurrentPopup();
+                    ImGui::EndPopup();
+                    return false;
+                }
+                isSetLastLimit = false;
+                ImGui::CloseCurrentPopup();
+                ImGui::EndPopup();
+                return true;
+            }
+
+            ImGui::SameLine();
+            if (ImGui::Button("Close", ImVec2(60, 30)))
             {
                 isSetLastLimit = false;
                 ImGui::CloseCurrentPopup();
                 ImGui::EndPopup();
                 return false;
             }
-            isSetLastLimit = false;
-            ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
-            return true;
         }
 
-        ImGui::SameLine();
-        if (ImGui::Button("Close",ImVec2(60,30)))
+        if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
         {
             isSetLastLimit = false;
-            ImGui::CloseCurrentPopup();
             ImGui::EndPopup();
             return false;
         }
-        ImGui::EndPopup();
+        return true;
     }
-
-    if (ImGui::IsMouseClicked(ImGuiMouseButton_Left) && !ImGui::IsPopupOpen("Edit limit for description"))
-    {
-        isSetLastLimit = false;
-        ImGui::EndPopup();
-        return false;
-    }
-    return true;
-}
 
 
 void AttributeDescriptionString::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)

@@ -18,7 +18,7 @@ class Formular
     
 
 private:
-    ControlComponentsFactoriesContainer *controlComponentsFactories_;
+    
 
 private:
     bool openedWindow_;
@@ -49,13 +49,12 @@ public:
     bool loadDescriptions(nlohmann::ordered_json json);
     int loadControlTypes(nlohmann::json json);
     nlohmann::ordered_json saveOutput();
-    void addLogMessage(std::string_view time, std::string_view message);
-    bool addControlType(std::string atributeName, std::string edtitType);
-    bool addControlType(Attribute *attribute);
-    bool addOrReplaceControlTypeByVector(std::vector<std::string> controlTypesVector);
+    bool addControlTypeByNames(std::string atributeName, std::string edtitType);
+    bool addDefaultControlType(Attribute *attribute);
+    bool ReplaceControlType(Attribute *attribute);
     bool replaceControlType(Attribute *attribute, std::string controlType);
     AttributeDescription* addDescription(std::string attributeName, AttributeType type);
-    bool addDescription(std::string attributeName, AttributeType type, std::string * clusterAttributeName);
+    AttributeDescription* addDescription(std::unique_ptr<AttributeDescription> attributeDescription);
     bool createAttributes();
 private:
     void showSettings();
@@ -72,5 +71,7 @@ private:
     void saveToFile();
     bool showWarning(std::string message);
     void showWindowManageTemplates();
+    bool addLogMessage(std::string message);
+    bool clearLogger();
     
 };

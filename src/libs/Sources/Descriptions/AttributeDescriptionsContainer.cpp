@@ -7,18 +7,19 @@ AttributesDescriptionsContainer::AttributesDescriptionsContainer()
     lastId_ = GlobalLastIdOfObject::getInstance();
 }
 
-bool AttributesDescriptionsContainer::addDescription(AttributeType type, nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
+bool AttributesDescriptionsContainer::addDescription(AttributeType type, nlohmann::ordered_json &json, std::vector<Message> *messagesHistory = nullptr)
 {
     if (type == AttributeType::NOTATYPE)
     {
-        messagesHistory.emplace_back(Message("Incorrect attribute type name!"));
+        messagesHistory->emplace_back(Message("Incorrect attribute type name!"));
         return false;
     }
     for (auto descIt = json.begin(); descIt != json.end(); ++descIt)
     {
         if (descIt.value().find("Attribute name") == descIt.value().end())
         {
-            messagesHistory.emplace_back(Message("Incorrect json format!"));
+            if (messagesHistory != nullptr)
+                messagesHistory->emplace_back(Message("Incorrect json format!"));
             return false;
         }
         AttributeDescription *desc = getDescription(descIt.value()["Attribute name"].get<std::string>());
@@ -29,7 +30,8 @@ bool AttributesDescriptionsContainer::addDescription(AttributeType type, nlohman
         std::unique_ptr<AttributeDescription> tmpDescription = descFactory_->createDesc(type);
         if (tmpDescription == nullptr)
         {
-            messagesHistory.emplace_back(Message(std::format("The {} attribute description does not exist, check if it is registered or correctness of name!", AttributeTypeConverter::EnumToString(type))));
+            if (messagesHistory != nullptr)
+                messagesHistory->emplace_back(Message(std::format("The {} attribute description does not exist, check if it is registered or correctness of name!", AttributeTypeConverter::EnumToString(type))));
             return false;
         }
         attributeDescs_.push_back(std::move(tmpDescription));
@@ -44,17 +46,19 @@ bool AttributesDescriptionsContainer::addDescription(AttributeType type, nlohman
     return true;
 }
 
-bool AttributesDescriptionsContainer::addDescription(std::string attributeName, AttributeType type, std::vector<Message> &messagesHistory)
+bool AttributesDescriptionsContainer::addDescription(std::string attributeName, AttributeType type, std::vector<Message> *messagesHistory = nullptr)
 {
     if (getDescription(attributeName) != nullptr)
     {
-        messagesHistory.emplace_back(Message("Attribute with this name already exists!"));
+        if (messagesHistory != nullptr)
+            messagesHistory->emplace_back(Message("Attribute with this name already exists!"));
         return false;
     }
 
     if (attributeName.empty())
     {
-        messagesHistory.emplace_back("Attribute name cannot be empty!");
+        if (messagesHistory != nullptr)
+            messagesHistory->emplace_back("Attribute name cannot be empty!");
         return false;
     }
     attributeDescs_.push_back(descFactory_->createDesc(type));
@@ -73,7 +77,7 @@ bool AttributesDescriptionsContainer::addDescription(std::unique_ptr<AttributeDe
     return false;
 }
 
-bool AttributesDescriptionsContainer::addDescriptions(AttributesDescriptionsContainer *container, std::vector<Message> &messageHistory)
+bool AttributesDescriptionsContainer::addDescriptions(AttributesDescriptionsContainer *container, std::vector<Message> *messagesHistory)
 {
     for (int i = 0; i < container->getSize(); ++i)
     {
@@ -120,22 +124,25 @@ bool AttributesDescriptionsContainer::deleteDescription(AttributeDescription *de
     return false;
 }
 
-bool AttributesDescriptionsContainer::deleteLastDescription(std::vector<Message> &messagesHistory)
+bool AttributesDescriptionsContainer::deleteLastDescription(std::vector<Message> *messagesHistory = nullptr)
 {
     if (attributeDescs_.empty())
     {
-        messagesHistory.emplace_back(Message("There are no attribute descriptions to remove!"));
+        if (messagesHistory != nullptr)
+            messagesHistory->emplace_back(Message("There are no attribute descriptions to remove!"));
         return false;
     }
 
     if (attributeDescs_.rbegin()->get()->isAssigned())
     {
-        messagesHistory.emplace_back(Message("Can't remove assigned attribute description!"));
+        if (messagesHistory != nullptr)
+            messagesHistory->emplace_back(Message("Can't remove assigned attribute description!"));
         return false;
     }
 
     attributeDescs_.erase(attributeDescs_.end() - 1);
-    messagesHistory.emplace_back(Message("Attribute description successfuly removed!"));
+    if (messagesHistory != nullptr)
+        messagesHistory->emplace_back(Message("Attribute description successfuly removed!"));
     if (attributeDescs_.empty())
     {
         lastId_->resetIdCounter();
@@ -176,14 +183,15 @@ AttributesDescriptionsContainer *AttributesDescriptionsContainer::findDescriptio
     return this;
 }
 
-void AttributesDescriptionsContainer::deleteAllDescriptions(std::vector<Message> &messageHistory)
+void AttributesDescriptionsContainer::deleteAllDescriptions(std::vector<Message> *messagesHistory)
 {
     if (attributeDescs_.size() == 0)
     {
         return;
     }
     attributeDescs_.clear();
-    messageHistory.emplace_back("All attribute descriptions were successfuly removed!");
+    if (messagesHistory != nullptr)
+        messagesHistory->emplace_back("All attribute descriptions were successfuly removed!");
 }
 
 AttributesDescriptionsContainer::~AttributesDescriptionsContainer()

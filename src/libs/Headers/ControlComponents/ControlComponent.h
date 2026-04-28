@@ -234,6 +234,8 @@ protected:
     AttributeCharText *attribute_;
     float minimumWidth_;
     float maximumWidth_;
+    ImGuiDataType dataType_;
+
 
 public:
     static constexpr EditTypeCharText type_ = TYPE;
@@ -242,11 +244,12 @@ public:
 
         if (dynamic_cast<AttributeCharText *>(attribute))
         {
-            std::memset(value_,0,2);
+            std::memset(value_, 0, 2);
             attribute_ = dynamic_cast<AttributeCharText *>(attribute);
             value_[0] = attribute_->getValue();
             minimum_ = attribute_->getMinimum();
             maximum_ = attribute_->getMaximum();
+            dataType_ = ImGuiDataType_U8;
         }
     }
     std::string getName() override { return attribute_->getName(); };
@@ -259,9 +262,12 @@ public:
         maximum_ = attribute_->getMaximum();
     }
 
+    
+
 private:
     ControlComponentsContainer *getContainer() { return nullptr; }
 };
+
 template <EditTypeLogic TYPE>
 class ControlComponentBool : public ControlComponent
 {
@@ -285,6 +291,7 @@ public:
     std::string getType(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? EditTypeLogicConverter::EnumToString(type_).data() : ""; }
     bool sameName(std::string name) { return (attribute_ != nullptr && (attribute_->getName().compare(name) == 0)) ? true : false; }
     void updateLimitValues() {}
+    
 
 private:
     ControlComponentsContainer *getContainer() { return nullptr; }
@@ -319,6 +326,7 @@ public:
     ControlComponentsContainer *getContainer() { return components_; }
     void updateLimitValues();
     bool sameName(std::string name);
+    
 };
 
 template <EditTypeString TYPE>
@@ -331,6 +339,7 @@ protected:
     AttributeString *attribute_;
     float minimumWidth_;
     float maximumWidth_;
+    ImGuiDataType dataType_;
 
 public:
     static constexpr EditTypeString type_ = TYPE;
@@ -343,8 +352,9 @@ public:
             attribute_ = dynamic_cast<AttributeString *>(attribute);
             minimum_ = attribute_->getMinimum();
             maximum_ = attribute_->getMaximum();
-            buffer = new char[maximum_+1];
-            std::memset(buffer,0,sizeof(buffer));
+            buffer = new char[maximum_ + 1];
+            std::memset(buffer, 0, sizeof(buffer));
+            dataType_ = ImGuiDataType_U32;
         }
     }
     Attribute *getAttribute(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? attribute_ : nullptr; };
@@ -353,23 +363,33 @@ public:
     {
         minimum_ = attribute_->getMinimum();
         maximum_ = attribute_->getMaximum();
-        char *tmpBuffer = new char[maximum_+1];
-        if (sizeof(tmpBuffer) < sizeof(buffer)) {
-            std::copy_n(buffer,maximum_, tmpBuffer);
-            delete(buffer);
+        char *tmpBuffer = new char[maximum_ + 1];
+        if (sizeof(tmpBuffer) < sizeof(buffer))
+        {
+            std::copy_n(buffer, maximum_, tmpBuffer);
+            delete (buffer);
             buffer = std::move(tmpBuffer);
-        } else {
-            std::memset(tmpBuffer,0,sizeof(tmpBuffer));
-            std::copy_n(buffer,maximum_,tmpBuffer);
-            delete(buffer);
+        }
+        else
+        {
+            std::memset(tmpBuffer, 0, sizeof(tmpBuffer));
+            std::copy_n(buffer, maximum_, tmpBuffer);
+            delete (buffer);
             buffer = std::move(tmpBuffer);
         }
     }
     bool sameName(std::string name) { return (attribute_ != nullptr && (attribute_->getName().compare(name) == 0)) ? true : false; }
-    ~ControlComponentString() {
-        delete(buffer);
+    ~ControlComponentString()
+    {
+        delete (buffer);
     }
 
+    
+
 private:
-    ControlComponentsContainer *getContainer() { return nullptr; }
+    ControlComponentsContainer *
+    getContainer()
+    {
+        return nullptr;
+    }
 };

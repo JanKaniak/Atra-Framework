@@ -1,4 +1,5 @@
 #include "AttributesContainer.h"
+#include "ControlComponentsContainer.h"
 
 AttributesContainer::AttributesContainer() {
     attributeFactory_ = AttributeFactory::getInstance();
@@ -68,7 +69,14 @@ Attribute *AttributesContainer::giveAttributeByName(std::string name)
 
 bool AttributesContainer::contains(std::string attributeName)
 {
-    attributeDescs_->existsDescription(attributeName);
+    for (int i = 0; i < attributes_.size(); ++i)
+    {
+        if (attributes_.at(i)->getName().compare(attributeName) == 0) {
+            return true;
+        }
+    }
+    return false;
+    
 }
 
 int AttributesContainer::getPosition(std::string attributeName) {
@@ -80,10 +88,10 @@ int AttributesContainer::getPosition(std::string attributeName) {
     return -1;
 }
 
-void AttributesContainer::setControlTypes(ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message>& messagehistory) {
+void AttributesContainer::setControlTypes(ControlComponentsContainer *components, std::vector<Message>& messagehistory) {
     for (int i = 0; i < attributes_.size();++i) {
         ImGui::TableNextRow();
-        attributes_.at(i)->controlOptions(i,components,controlComponentsFactories,messagehistory);
+        attributes_.at(i)->controlOptions(i,components,components->getMasterFactory(),messagehistory);
     }
 }
 

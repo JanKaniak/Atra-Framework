@@ -1,22 +1,14 @@
 @startuml MainUML
 allowmixing
 
-object Formular
+class Formular
 package AttributeDescriptions
 package Attributes
 package ControlComponents
-object ControlComponentsFactoriesContainer
-object Message
-object TemplateAttributesDescriptionContainer
 
 Formular --> ControlComponents
 Formular --> Attributes
 Formular --> AttributeDescriptions
-Formular --> ControlComponentsFactoriesContainer
-Formular -right-> Message
-Formular --left-> TemplateAttributesDescriptionContainer
-
-TemplateAttributesDescriptionContainer -> AttributeDescriptions
 
 @endumlW
 
@@ -27,23 +19,14 @@ package AttributeDescriptions {
     class TemplateAttributesDescription
     class TemplateAttributesDescriptionContainer
     class AttributesDescriptionsContainer
-    class AttributeDescription {
-        + {abstract}  clone() : std::unique_ptr<AttributeDescription>
-        + {abstract}  jsonParse(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) : bool
-        + {abstract}  drawInputForChangingLimits(std::vector<Message> &messagesHistory) : bool
-        + {abstract}  addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) : void
-        + {abstract} getContainer(std::string_view descriptionName, uint64_t descriptionId) : AttributesDescriptionsContainer*
-    }
+    class AttributeDescription
     class DescriptionFactory
     class GlobalLastIdOfObject
     enum AttributeType
     enum Category
     package ImplementedAttributeDescriptions
-    class IntegerNumberBaseClass {
-        + setLimit(TypeT minimum, TypeT maximum, std::vector<Message> &messagesHistory) : bool
-    }
-    class DecimalNumberBaseClass
-
+    class "{TYP}NumberBaseClass" as GenericNumberBaseClass
+    note  "Tento genericky model zastupuje nasledujuce typy {TYP} : Integer, Decimal" as N1
 
 }
 
@@ -54,11 +37,10 @@ AttributesDescriptionsContainer -left-> DescriptionFactory
 AttributesDescriptionsContainer -right-> GlobalLastIdOfObject
 AttributeDescription -down-> AttributeType
 AttributeDescription --> Category
-IntegerNumberBaseClass -up-|> AttributeDescription
-DecimalNumberBaseClass -up-|> AttributeDescription
-ImplementedAttributeDescriptions --|> IntegerNumberBaseClass
-ImplementedAttributeDescriptions --|> DecimalNumberBaseClass
+GenericNumberBaseClass -up-|> AttributeDescription
+ImplementedAttributeDescriptions --|> GenericNumberBaseClass
 DescriptionFactory --> ImplementedAttributeDescriptions
+N1 -up- GenericNumberBaseClass
 
 
 
@@ -67,24 +49,24 @@ DescriptionFactory --> ImplementedAttributeDescriptions
 
 @startuml ImplementedAttributeDescriptions
 package ImplementedAttributeDescriptions {
-    object AttributeDescription
-    object IntegerNumberBaseClass
-    object DecimalNumberBaseClass
+    class AttributeDescription
+    class IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>
+    class DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>
 
-    object AttributeDescriptionInt
-    object AttributeDescriptionUnsignedInt
-    object AttributeDescriptionLong
-    object AttributeDescriptionCharNumber
+    class AttributeDescriptionInt
+    class AttributeDescriptionUnsignedInt
+    class AttributeDescriptionLong
+    class AttributeDescriptionCharNumber
 
-    object AttributeDescriptionDouble
-    object AttributeDescriptionFloat
+    class AttributeDescriptionDouble
+    class AttributeDescriptionFloat
 
-    object AttributeDescriptionString
-    object AttributeDescriptionCharText
+    class AttributeDescriptionString
+    class AttributeDescriptionCharText
 
-    object AttributeDescriptionBool
+    class AttributeDescriptionBool
 
-    object AttributeDescriptionCluster
+    class AttributeDescriptionCluster
 
 }
 
@@ -110,107 +92,390 @@ AttributeDescriptionCluster -left-|> AttributeDescription
 
 @enduml
 
+@startuml ImplementedNumberAttributeDescriptions
+package ImplementedNumberAttributeDescriptions {
+    class AttributeDescription
+    class IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>
+    class DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>
+
+    class AttributeDescriptionInt
+    class AttributeDescriptionUnsignedInt
+    class AttributeDescriptionLong
+    class AttributeDescriptionCharNumber
+
+    class AttributeDescriptionDouble
+    class AttributeDescriptionFloat
+}
+
+IntegerNumberBaseClass -down-|> AttributeDescription
+DecimalNumberBaseClass -up-|> AttributeDescription
+
+AttributeDescriptionInt -right-|> IntegerNumberBaseClass
+AttributeDescriptionUnsignedInt -left-|> IntegerNumberBaseClass
+AttributeDescriptionLong -up-|> IntegerNumberBaseClass
+AttributeDescriptionCharNumber --|> IntegerNumberBaseClass
+
+
+AttributeDescriptionDouble -right-|> DecimalNumberBaseClass
+AttributeDescriptionFloat -left-|> DecimalNumberBaseClass
+@enduml
+
 @startuml Attributes
 allowmixing
 
 package Attributes {
-    object AttributesContainer
-    object AttributeFactory
-    object Attribute
-    object AttributesDescriptionsContainer
+    class AttributesContainer
+    class AttributeFactory
+    class Attribute
+    class AttributesDescriptionsContainer
     package ImplementedAttributeDescriptions
     package ImplementedAttributes
+    class ControlComponentsFactoriesContainer
+    class ControlComponentsContainer
 }
 AttributesContainer -left-> AttributeFactory
 AttributesContainer --> Attribute
-AttributesContainer -right-> AttributesDescriptionsContainer
-Attribute ..> ImplementedAttributeDescriptions
+AttributesContainer -up-> AttributesDescriptionsContainer
+Attribute --> ImplementedAttributeDescriptions
 AttributeFactory --> ImplementedAttributes
-ImplementedAttributes -left-|> Attribute
+ImplementedAttributes -up-|> Attribute
+ImplementedAttributes ..> ControlComponentsFactoriesContainer
+ImplementedAttributes ..> ControlComponentsContainer
 @enduml
 
-
-@startuml ImplementedAttributes {
-    package ImplementedAttributes {
-        object Attribute
-        object IntegerNumberBaseAttributeClass
-        object DecimalNumberBaseAttributeClass
-
-        object AttributeInt
-        object AttributeUnsignedInt
-        object AttributeLong
-        object AttributeCharNumber
-
-        object AttributeDouble
-        object AttributeFloat
-
-        object AttributeString
-        object AttributeCharText
-
-        object AttributeBool
-
-        object AttributeCluster
-    }
-
-    IntegerNumberBaseAttributeClass --|> Attribute
-    DecimalNumberBaseAttributeClass --|> Attribute
-
-    AttributeInt --|> IntegerNumberBaseAttributeClass
-    AttributeUnsignedInt --|> IntegerNumberBaseAttributeClass
-    AttributeLong --|> IntegerNumberBaseAttributeClass
-    AttributeCharNumber --|> IntegerNumberBaseAttributeClass
-
-    AttributeDouble --|> DecimalNumberBaseAttributeClass
-    AttributeFloat --|> DecimalNumberBaseAttributeClass
-
-    AttributeString --|> Attribute
-    AttributeCharText --|> Attribute
-
-    AttributeCluster -right-|> Attribute
-
-    AttributeBool --|> Attribute
+@startuml ImplementedLogicAttributeDescription
+package ImplementedLogicAttributeDescription {
+    class AttributeDescription
+    class AttributeDescriptionBool
 
 }
+AttributeDescriptionBool -right-|> AttributeDescription
+@enduml
+
+@startuml ImplementedTextAttributeDescriptions
+package ImplementedTextAttributeDescriptions {
+    class AttributeDescription
+    class AttributeDescriptionString
+    class AttributeDescriptionCharText
+
+}
+AttributeDescriptionString --|> AttributeDescription
+AttributeDescriptionCharText --|> AttributeDescription
+@enduml
+
+@startuml ImplementedClusterAttributeDescriptions
+package ImplementedClusterAttributeDescriptions {
+    class AttributeDescription
+    class AttributeDescriptionCluster
+}
+AttributeDescriptionCluster -right-|> AttributeDescription
+@enduml
+
+
+@startuml ImplementedAttributes
+package ImplementedAttributes {
+    class Attribute
+    class IntegerNumberBaseAttributeClass
+    class DecimalNumberBaseAttributeClass
+
+    class AttributeInt
+    class AttributeUnsignedInt
+    class AttributeLong
+    class AttributeCharNumber
+
+    class AttributeDouble
+    class AttributeFloat
+
+    class AttributeString
+    class AttributeCharText
+
+    class AttributeBool
+
+    class AttributeCluster
+}
+
+IntegerNumberBaseAttributeClass -up-|> Attribute
+DecimalNumberBaseAttributeClass --|> Attribute
+
+
+AttributeInt -up-|> IntegerNumberBaseAttributeClass
+AttributeUnsignedInt -up-|> IntegerNumberBaseAttributeClass
+AttributeLong -up-|> IntegerNumberBaseAttributeClass
+AttributeCharNumber -right-|> IntegerNumberBaseAttributeClass
+
+AttributeDouble --|> DecimalNumberBaseAttributeClass
+AttributeFloat --|> DecimalNumberBaseAttributeClass
+
+AttributeString --|> Attribute
+AttributeCharText --|> Attribute
+
+AttributeCluster -right-|> Attribute
+
+AttributeBool --|> Attribute
 
 @enduml
+
+@startuml ImplementedNumberAttributes
+allowmixing
+package ImplementedNumberAttributes {
+    class Attribute
+    class IntegerNumberBaseAttributeClass
+    class DecimalNumberBaseAttributeClass
+
+    class AttributeInt
+    class AttributeUnsignedInt
+    class AttributeLong
+    class AttributeCharNumber
+
+    class AttributeDouble
+    class AttributeFloat
+
+    package ImplementedNumberAttributeDescriptions
+}
+
+IntegerNumberBaseAttributeClass -up-|> Attribute
+DecimalNumberBaseAttributeClass --|> Attribute
+IntegerNumberBaseAttributeClass -up-> ImplementedNumberAttributeDescriptions
+DecimalNumberBaseAttributeClass --> ImplementedNumberAttributeDescriptions
+
+
+AttributeInt -up-|> IntegerNumberBaseAttributeClass
+AttributeUnsignedInt -up-|> IntegerNumberBaseAttributeClass
+AttributeLong -up-|> IntegerNumberBaseAttributeClass
+AttributeCharNumber -right-|> IntegerNumberBaseAttributeClass
+
+AttributeDouble --|> DecimalNumberBaseAttributeClass
+AttributeFloat --|> DecimalNumberBaseAttributeClass
+@enduml
+
+@startuml ImplementedLogicAttributes
+package ImplementedLogicAttributes {
+    class Attribute
+    class AttributeBool
+    class AttributeDescriptionBool
+}
+AttributeBool -right-|> Attribute
+AttributeBool --> AttributeDescriptionBool
+@enduml
+
+@startuml ImplementedTextAttributes
+package ImplementedTextAttributes {
+    class Attribute
+    class AttributeString
+    class AttributeCharText
+    class AttributeDescriptionString
+    class AttributeDescriptionCharText
+}
+AttributeString --|> Attribute
+AttributeCharText --|> Attribute
+AttributeString --> AttributeDescriptionString
+AttributeCharText --> AttributeDescriptionCharText
+
+@enduml
+
+@startuml ImplementedClusterAttribute
+package ImplementedClusterAttribute {
+    class Attribute
+    class AttributeCluster
+    class AttributeDescriptionCluster
+}
+
+AttributeCluster -right-|> Attribute
+AttributeCluster --> AttributeDescriptionCluster
+@enduml
+
 
 @startuml ControlComponents
 allowmixing
 
 package ControlComponents {
-    object Formular
-    object ControlComponentsContainer
-    object ControlComponent
-    object NumberBaseControlComponent
-    object ControlComponentInt
-    object ControlComponentDouble
-    object ControlComponentsFactoriesContainer
-    object IntEditFactory
-    object DoubleEditFactory
-    object Factory
-    object IntSlider
-    object IntVSlider
-    object IntDrag
-    object DoubleSlider
-    object DoubleVSlider
-    object DoubleDrag
+    class Formular
+    class ControlComponentsContainer
+    class ControlComponent
+    class ControlComponentsFactoriesContainer
+    
+    
+    
+    
+    
+    package NumberControlComponents
+    package TextImplementedControlComponents
+    package LogicImplementedControlComponents
+    package TreeImplementedControlComponents
+
 }
 
-ControlComponentsContainer --> ControlComponent
-NumberBaseControlComponent --|> ControlComponent
-ControlComponentInt --|> NumberBaseControlComponent
-ControlComponentDouble --|> NumberBaseControlComponent
-IntSlider --|> ControlComponentInt
-IntVSlider --|> ControlComponentInt
-IntDrag --|> ControlComponentInt
-DoubleSlider --|> ControlComponentDouble
-DoubleVSlider --|> ControlComponentDouble
-DoubleDrag --|> ControlComponentDouble
+ControlComponentsContainer -left-> ControlComponent
+Formular -left-> ControlComponentsFactoriesContainer
+Formular ---> ControlComponentsContainer
+TextImplementedControlComponents --|> ControlComponent
+NumberControlComponents -up-|> ControlComponent
+LogicImplementedControlComponents --|> ControlComponent
+TreeImplementedControlComponents -up-|> ControlComponent
 
-IntEditFactory --|> Factory
-DoubleEditFactory --|> Factory
+@enduml
+
+@startuml UmlForNumberBaseControlComponent
+allowmixing
+package BaseClassesForNumberControlTypes {
+    class ControlComponent
+
+    class NumberBaseControlComponent<EditTypeNumber TYPE, TypeT, AttributeT> {
+        {static} + <<constexpr>> type_ : EditTypeNumber = TYPE
+    }
+    enum EditTypeNumber
+    class ControlComponentInt<TYPE>
+    class ControlComponentDouble<TYPE>
+    class ControlComponentFloat<TYPE>
+    class ControlComponentCharNumber<TYPE>
+    class ControlComponentUInt<TYPE>
+    class ControlComponentLong<TYPE>
+}
+
+NumberBaseControlComponent -right-|> ControlComponent
+NumberBaseControlComponent -left-> EditTypeNumber
+ControlComponentInt -up-|> NumberBaseControlComponent
+ControlComponentDouble --|> NumberBaseControlComponent
+ControlComponentFloat --|> NumberBaseControlComponent
+ControlComponentCharNumber -up-|> NumberBaseControlComponent
+ControlComponentUInt -up-|> NumberBaseControlComponent
+ControlComponentLong --|> NumberBaseControlComponent
+
+@enduml
+
+@startuml ImplementedNumberControlComponents
+allowmixing
+package ImplementedNumberControlComponents {
+    class "{TYP}Slider" as GenericSlider
+    class "{TYP}VSlider" as GenericVSlider
+    class "{TYP}Drag" as GenericDrag
+    class "ControlComponent{TYP}" as GenericControlComponent
+    class "{TYP}EditFactory" as GenericEditFactory
+
+    note "Tento genericky model zastupuje \nnasledujuce typy {TYP}: \n*Int \n*Long \n*UInt \n*Double \n*Float" as N1
+
+    class Factory
+    class ControlComponentsFactoriesContainer
+
+}
+
+
+GenericSlider --|> GenericControlComponent
+GenericVSlider --|> GenericControlComponent
+GenericDrag --|> GenericControlComponent
+GenericEditFactory --> GenericSlider
+GenericEditFactory --> GenericVSlider
+GenericEditFactory --> GenericDrag
+GenericEditFactory -up-|> Factory
+ControlComponentsFactoriesContainer -down-> Factory
+
+
+@enduml
+
+@startuml TextImplementedControlComponents
+allowmixing
+package TextImplementedControlComponents {
+    class ControlComponentString<EditTypeString TYPE> {
+        + {static} <<constexpr>>  type_ : EditTypeString = TYPE; 
+    }
+    class StringTextField
+    class StringEditFactory {
+        - registerPrototype<EditTypeStringT>() : void
+    }
+    enum EditTypeString
+
+    class ControlComponentCharText {
+        + {static} <<constexpr>>  type_ : EditTypeString = TYPE;
+    }
+    class CharTextField
+    class CharTextEditFactory {
+        - registerPrototype<EditTypeCharT>() : void
+    }
+
+    class Factory {
+        + {abstract} createEdit(std::string type) : std::unique_ptr<ControlComponent>
+        + {abstract} createDefaultEdit() : std::unique_ptr<ControlComponent>
+    }
+    class ControlComponentsFactoriesContainer {
+        registerFactory(Factory *factory) : void
+    }
+    enum EditTypeCharText
+}
+
+StringTextField --|> ControlComponentString
+CharTextField --|> ControlComponentCharText
+StringEditFactory --> StringTextField
+CharTextEditFactory --> CharTextField
+ControlComponentString --> EditTypeString
+ControlComponentCharText --> EditTypeCharText
+
+StringEditFactory -up-|> Factory
+CharTextEditFactory -up-|> Factory
+
 ControlComponentsFactoriesContainer --> Factory
-Formular --> ControlComponentsFactoriesContainer
-Formular --> ControlComponentsContainer
+@enduml
+
+@startuml LogicImplementedControlComponents
+allowmixing
+package LogicImplementedControlComponents {
+    class CheckBox {
+        + draw(std::vector<Message> &messageHistory) : void
+    }
+    class LogicButton {
+        + draw(std::vector<Message> &messageHistory) : void
+    }
+
+    class LogicEditFactory {
+        - registerPrototype<EditTypeLogicT>() : void
+    }
+    class Factory {
+        + {abstract} createEdit(std::string type) : std::unique_ptr<ControlComponent>
+        + {abstract} createDefaultEdit() : std::unique_ptr<ControlComponent>
+    }
+    class ControlComponentsFactoriesContainer {
+        registerFactory(Factory *factory) : void
+    }
+    class ControlComponentBool<EditTypeLogic TYPE> {
+        + {static} <<constexpr>>  type_ : EditTypeLogic = TYPE; 
+    }
+    enum EditTypeLogic
+}
+
+ControlComponentsFactoriesContainer --> Factory
+LogicEditFactory -up-|> Factory
+LogicEditFactory --> CheckBox
+LogicEditFactory --> LogicButton
+CheckBox --|> ControlComponentBool
+LogicButton --|> ControlComponentBool
+ControlComponentBool --> EditTypeLogic
+@enduml
+
+@startuml TreeImplementedControlComponents
+allowmixing
+package TreeImplementedControlComponents {
+    class Tree {
+        + draw(std::vector<Message> &messageHistory) : void
+    }
+    class ClusterEditFactory {
+        - registerPrototype<EditTypeClusterT>() : void
+    }
+    class Factory {
+        + {abstract} createEdit(std::string type) : std::unique_ptr<ControlComponent>
+        + {abstract} createDefaultEdit() : std::unique_ptr<ControlComponent>
+    }
+    class ControlComponentsFactoriesContainer {
+        registerFactory(Factory *factory) : void
+    }
+    class ControlComponentCluster<EditTypeCluster TYPE> {
+        + {static} <<constexpr>>  type_ : EditTypeCluster = TYPE; 
+    }
+    enum EditTypeCluster
+}
+
+ControlComponentsFactoriesContainer --> Factory
+ClusterEditFactory -up-|> Factory
+ClusterEditFactory --> Tree
+Tree --|> ControlComponentCluster
+ControlComponentCluster --> EditTypeCluster
 
 @enduml

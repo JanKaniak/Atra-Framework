@@ -267,7 +267,7 @@ void AttributeCluster::controlOptions(int position, ControlComponentsContainer *
         if (components->getComponent(i)->getAttribute(desc_->getName()) == this)
         {
 
-            value_->setControlTypes(components->getComponent(i)->getContainer(), controlComponentsFactories, messagesHistory);
+            value_->setControlTypes(components->getComponent(i)->getContainer(), messagesHistory);
             break;
         }
     }

@@ -107,16 +107,16 @@ bool ControlComponentsContainer::swapControlComponent(int position, std::unique_
 }
 
 ControlComponent *ControlComponentsContainer::getControlComponentByAttribute(Attribute *attribute)
+{
+    for (int i = 0; i < components_.size(); ++i)
     {
-        for (int i = 0; i < components_.size(); ++i)
+        if (components_.at(i)->getAttribute(attribute->getName()) != nullptr)
         {
-            if (components_.at(i)->getAttribute(attribute->getName()) != nullptr)
-            {
-                return components_.at(i).get();
-            }
+            return components_.at(i).get();
         }
-        return nullptr;
     }
+    return nullptr;
+}
 
 void ControlComponentsContainer::deleteAttribute(Attribute *attribute, AttributesContainer *attributesContainer, std::vector<Message> &messageHistory)
 {
@@ -137,19 +137,19 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
 {
 
     static bool drawed = false;
-    static Attribute *chosenAttribute;
+    static ControlComponent *chosenComponent;
     static ImVec2 firstColumn = ImGui::CalcTextSize("Attribute name");
     static ImVec2 secondColumn = ImVec2((ImGui::CalcTextSize("Input").x * 1.5f), 0);
     static ImVec2 thirdColumn = ImGui::CalcTextSize("Attribute type");
     static ImVec2 fourthColumn = ImGui::CalcTextSize("Edit button");
     static ImVec2 fifthColumn = ImVec2(ImGui::CalcTextSize("Delete button").x * 1.5f, 0);
 
-    ImGui::Text("%f", secondColumn.x);
     if (dimensions_.x < 0 && dimensions_.y < 0)
     {
         dimensions_.x = firstColumn.x + secondColumn.x + thirdColumn.x + fourthColumn.x + fifthColumn.x;
         dimensions_.y = firstColumn.y + secondColumn.y + thirdColumn.y + fourthColumn.y + fifthColumn.y;
     }
+    ImGui::PushID(this);
     if (ImGui::BeginTable("Attributes", 5, ImGuiTableFlags_BordersOuter | ImGuiTableFlags_BordersH | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_NoKeepColumnsVisible | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY, dimensions_))
     {
         float inputColumnsWidth[components_.size()];
@@ -194,7 +194,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
             if (ImGui::Button(std::format("Edit##{}", components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(65, 30)))
             {
                 drawed = true;
-                chosenAttribute = components_.at(i)->getAttribute(components_.at(i)->getName());
+                chosenComponent = components_.at(i).get();
             }
 
             if (columnHeight[i] < ImGui::GetItemRectSize().y)
@@ -204,7 +204,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
             ImGui::TableNextColumn();
             if (ImGui::Button(std::format("Delete##{}", components_.at(i)->getAttribute(components_.at(i)->getName())->getDescription()->getID()).c_str(), ImVec2(65, 30)))
             {
-                deleteAttribute(components_.at(i)->getAttribute(components_.at(i)->getName()), attributesContainer_, messageHistory);
+                deleteAttribute(components_.at(i)->getAttribute(components_.at(i)->getName()), attributes_, messageHistory);
             }
         }
         auto dimensionsX = *std::max_element(inputColumnsWidth, inputColumnsWidth + sizeof(inputColumnsWidth) / sizeof(inputColumnsWidth[0]));
@@ -219,6 +219,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
         dimensions_.y = dimensions_.y * 1.2f;
         ImGui::EndTable();
     }
+    ImGui::PopID();
 
     if (drawed)
     {
@@ -232,36 +233,32 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
     {
         static bool exist;
         static bool changingLimits = false;
-        if (component == nullptr)
-        {
-            component = getControlComponentByAttribute(chosenAttribute);
-        }
         if (editBuffer[0] == '\0')
         {
-            strcpy(editBuffer, chosenAttribute->getName().c_str());
+            strcpy(editBuffer, chosenComponent->getName().c_str());
         }
         ImGui::InputText("Attribute name", editBuffer, sizeof(editBuffer));
         if (exist)
         {
             ImGui::Text("%s", "Attribute with this name already exists!");
         }
-        ImGui::Text("Attribute type: %s", AttributeTypeConverter::EnumToString(chosenAttribute->getType()).data());
+        ImGui::Text("Attribute type: %s", AttributeTypeConverter::EnumToString(chosenComponent->getAttribute(chosenComponent->getName())->getType()).data());
 
         if (ImGui::Button("Save", ImVec2(150, 30)))
         {
-            if (attributesContainer_->giveAttributeByName(chosenAttribute->getName()) == chosenAttribute)
+            if (attributes_->giveAttributeByName(chosenComponent->getName()) == chosenComponent->getAttribute(chosenComponent->getName()))
             {
                 exist = false;
             }
             else
             {
-                exist = (attributesContainer_->giveAttributeByName(editBuffer) == nullptr) ? false : true;
+                exist = (attributes_->giveAttributeByName(editBuffer) == nullptr) ? false : true;
             }
 
             if (!exist)
             {
                 exist = false;
-                attributesContainer_->giveAttributeByName(chosenAttribute->getName())->getDescription()->setName(editBuffer);
+                attributes_->giveAttributeByName(chosenComponent->getName())->getDescription()->setName(editBuffer);
                 component = nullptr;
                 ImGui::CloseCurrentPopup();
             }
@@ -278,9 +275,10 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
         ImGui::SameLine();
         if (changingLimits)
         {
-            changingLimits = chosenAttribute->getDescription()->drawInputForChangingLimits(messageHistory);
-            if (!changingLimits) {
-                chosenAttribute->updateValue();
+            changingLimits = chosenComponent->getAttribute(chosenComponent->getName())->getDescription()->drawInputForChangingLimits(&messageHistory);
+            if (!changingLimits)
+            {
+                chosenComponent->getAttribute(chosenComponent->getName())->updateValue();
             }
         }
         if (ImGui::Button("Close", ImVec2(150, 30)))
@@ -314,4 +312,122 @@ void ControlComponentsContainer::deleteAllControlComponents(std::vector<Message>
     }
     components_.clear();
     messageHistory.emplace_back("All control components were successfuly removed!");
+}
+
+bool ControlComponentsContainer::addControlTypeByNames(std::string attributeName, std::string editType, std::vector<Message> &messageHistory)
+{
+
+    if (!existControlType(attributeName))
+    {
+        Factory *factory = controlComponentsFactories_->getFactory(attributes_->giveAttributeByName(attributeName)->getType());
+        if (factory == nullptr)
+        {
+            messageHistory.emplace_back(Message(std::format("Controls for {}  attribute type does not exist!", AttributeTypeConverter::EnumToString(attributes_->giveAttributeByName(attributeName)->getType()))));
+            return false;
+        }
+        if (isEmpty())
+        {
+            addControl(factory->createEdit(editType), attributes_->giveAttributeByName(attributeName));
+
+            return true;
+        }
+        int position = attributes_->getPosition(attributeName);
+        if (position < 0)
+        {
+            messageHistory.emplace_back(Message("Attribute with this name does not exists!"));
+            return false;
+        }
+
+        if (position >= getSize())
+        {
+            addControl(factory->createEdit(editType), attributes_->giveAttributeByName(attributeName));
+
+            return true;
+        }
+
+        addControl(position, factory->createEdit(editType), attributes_->giveAttributeByName(attributeName));
+    }
+    else
+    {
+        messageHistory.emplace_back(Message("Control for this attribute already exists!"));
+        return false;
+    }
+    return true;
+}
+
+bool ControlComponentsContainer::addDefaultControlType(Attribute *attribute, std::vector<Message> &messageHistory)
+{
+    if (attribute == nullptr)
+    {
+        messageHistory.emplace_back("Attribute pointer can't be null!");
+        return false;
+    }
+
+    Factory *factory = controlComponentsFactories_->getFactory(attribute->getType());
+    if (factory == nullptr)
+    {
+        messageHistory.emplace_back(Message("Attribute type does not exist!"));
+        return false;
+    }
+    if (isEmpty())
+    {
+        addControl(factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
+        return true;
+    }
+    int position = attributes_->getPosition(attribute->getName());
+    if (position < 0)
+    {
+        messageHistory.emplace_back(Message("Attribute with this name does not exists!"));
+        return false;
+    }
+
+    if (position >= getSize())
+    {
+        addControl(factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
+        return true;
+    }
+
+    addControl(position, factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
+    return true;
+}
+
+bool ControlComponentsContainer::swapControlComponentByAttribute(Attribute *attribute, std::vector<Message> &messageHistory)
+{
+    if (attribute == nullptr)
+    {
+        messageHistory.emplace_back("Attribute pointer can't be null!");
+        return false;
+    }
+    return true;
+}
+
+bool ControlComponentsContainer::addControl(Attribute *attribute, std::vector<Message> &messageHistory)
+{
+    Factory *factory = controlComponentsFactories_->getFactory(attribute->getType());
+    if (factory == nullptr)
+    {
+        messageHistory.emplace_back(Message("Attribute type does not exist!"));
+        return false;
+    }
+    if (isEmpty())
+    {
+        addControl(factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
+        return true;
+    }
+    int position = attributes_->getPosition(attribute->getName());
+    if (position < 0)
+    {
+        messageHistory.emplace_back(Message("Attribute with this name does not exists!"));
+        return false;
+    }
+
+    if (position >= getSize())
+    {
+        addControl(factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
+        return true;
+    }
+
+    addControl(position, factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
+
+    return true;
 }
