@@ -2,9 +2,9 @@
 #include "ControlComponentsContainer.h"
 
 template <EditTypeCluster TYPE>
-bool ControlComponentCluster<TYPE>::sameName(std::string name)
+bool ControlComponentCluster<TYPE>::sameName(std::string_view name)
 {
-    if (attribute_->getName().compare(name) == 0)
+    if (!name.empty() && attribute_->getName().compare(name) == 0)
     {
         return true;
     }

@@ -152,7 +152,7 @@ public:
     virtual void setAttribute(Attribute *attribute) = 0;
     virtual std::unique_ptr<ControlComponent> clone() = 0;
     virtual Attribute *getAttribute(std::string_view name) = 0;
-    virtual bool sameName(std::string name) = 0;
+    virtual bool sameName(std::string_view name) = 0;
     virtual std::string getType(std::string_view name) = 0;
     virtual void updateLimitValues() = 0;
     virtual ControlComponentsContainer *getContainer() = 0;
@@ -184,8 +184,8 @@ public:
     std::string getName() override { return attribute_->getName(); };
     Attribute *getAttribute(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? attribute_ : nullptr; };
     std::string getType(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? EditTypeNumberConverter::EnumToString(type_).data() : ""; }
-    bool sameName(std::string name) { return (attribute_ != nullptr && (attribute_->getName().compare(name) == 0)) ? true : false; }
-    void updateLimitValues()
+    bool sameName(std::string_view name) override { return (!name.empty() && attribute_ != nullptr && (attribute_->getName().compare(name.data()) == 0)) ? true : false; }
+    void updateLimitValues() override
     {
         minimum_ = attribute_->getMinimum();
         maximum_ = attribute_->getMaximum();
@@ -236,7 +236,6 @@ protected:
     float maximumWidth_;
     ImGuiDataType dataType_;
 
-
 public:
     static constexpr EditTypeCharText type_ = TYPE;
     void setAttribute(Attribute *attribute) override
@@ -255,14 +254,12 @@ public:
     std::string getName() override { return attribute_->getName(); };
     Attribute *getAttribute(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? attribute_ : nullptr; };
     std::string getType(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? EditTypeCharConverter::EnumToString(type_).data() : ""; }
-    bool sameName(std::string name) { return (attribute_ != nullptr && (attribute_->getName().compare(name) == 0)) ? true : false; }
-    void updateLimitValues()
+    bool sameName(std::string_view name) override { return (!name.empty() && attribute_ != nullptr && (attribute_->getName().compare(name.data()) == 0)) ? true : false; }
+    void updateLimitValues() override
     {
         minimum_ = attribute_->getMinimum();
         maximum_ = attribute_->getMaximum();
     }
-
-    
 
 private:
     ControlComponentsContainer *getContainer() { return nullptr; }
@@ -289,9 +286,8 @@ public:
     std::string getName() override { return attribute_->getName(); };
     Attribute *getAttribute(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? attribute_ : nullptr; };
     std::string getType(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? EditTypeLogicConverter::EnumToString(type_).data() : ""; }
-    bool sameName(std::string name) { return (attribute_ != nullptr && (attribute_->getName().compare(name) == 0)) ? true : false; }
-    void updateLimitValues() {}
-    
+    bool sameName(std::string_view name) override { return (!name.empty() && attribute_ != nullptr && (attribute_->getName().compare(name.data()) == 0)) ? true : false; }
+    void updateLimitValues() override {}
 
 private:
     ControlComponentsContainer *getContainer() { return nullptr; }
@@ -324,9 +320,8 @@ public:
     };
     std::string getType(std::string_view name) override;
     ControlComponentsContainer *getContainer() { return components_; }
-    void updateLimitValues();
-    bool sameName(std::string name);
-    
+    void updateLimitValues() override;
+    bool sameName(std::string_view name) override;
 };
 
 template <EditTypeString TYPE>
@@ -359,7 +354,7 @@ public:
     }
     Attribute *getAttribute(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? attribute_ : nullptr; };
     std::string getType(std::string_view name) override { return (!name.empty() && sameName(name.data())) ? EditTypeStringConverter::EnumToString(type_).data() : ""; }
-    void updateLimitValues()
+    void updateLimitValues() override
     {
         minimum_ = attribute_->getMinimum();
         maximum_ = attribute_->getMaximum();
@@ -378,18 +373,10 @@ public:
             buffer = std::move(tmpBuffer);
         }
     }
-    bool sameName(std::string name) { return (attribute_ != nullptr && (attribute_->getName().compare(name) == 0)) ? true : false; }
+    bool sameName(std::string_view name) override { return (!name.empty() && attribute_ != nullptr && (attribute_->getName().compare(name.data()) == 0)) ? true : false; }
     ~ControlComponentString()
     {
         delete (buffer);
     }
-
-    
-
-private:
-    ControlComponentsContainer *
-    getContainer()
-    {
-        return nullptr;
-    }
+    ControlComponentsContainer *getContainer() { return nullptr; }
 };

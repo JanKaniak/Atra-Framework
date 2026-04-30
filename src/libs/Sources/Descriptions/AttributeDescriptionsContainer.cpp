@@ -1,4 +1,5 @@
 #include "AttributesDescriptionsContainer.h"
+#include "ImplementedAttributeDescriptions.h"
 #include <format>
 
 AttributesDescriptionsContainer::AttributesDescriptionsContainer()
@@ -48,6 +49,7 @@ bool AttributesDescriptionsContainer::addDescription(AttributeType type, nlohman
 
 bool AttributesDescriptionsContainer::addDescription(std::string attributeName, AttributeType type, std::vector<Message> *messagesHistory = nullptr)
 {
+    
     if (getDescription(attributeName) != nullptr)
     {
         if (messagesHistory != nullptr)
@@ -65,6 +67,37 @@ bool AttributesDescriptionsContainer::addDescription(std::string attributeName, 
     getLast()->setName(attributeName);
     getLast()->setID(lastId_->getNewId());
     return true;
+}
+
+bool AttributesDescriptionsContainer::addDescriptionByPath(std::string path, std::string attributeName,AttributeType type, std::vector<Message> *messagesHistory = nullptr)
+{
+    if (path.empty())
+    {
+        return addDescription(attributeName,type,messagesHistory);
+    }
+    int index = path.find_first_of(".", 0);
+    std::string tmpName;
+    std::string tmpPath;
+    if (index != path.npos)
+    {
+        tmpName = path.substr(0, 0 + index).data();
+        tmpPath = (index+1 < path.length()) ? path.substr(index+1, path.length()).data() : "";
+    } else {
+        return addDescription(attributeName,type,messagesHistory);
+    }
+    AttributeDescription *tmpDescription = getDescription(tmpName);
+    if (tmpDescription->getType() != AttributeType::CLUSTER) {
+        if (messagesHistory != nullptr)
+            messagesHistory->emplace_back("Only cluster attribute descriptions can have descriptons!");
+            return false;
+    }
+    if (tmpDescription->getContainer("",0) == nullptr) {
+        if (messagesHistory != nullptr)
+            messagesHistory->emplace_back("Cluster attribute description does not have attached attribute descriptions container!");
+            return false;
+    }
+    return tmpDescription->getContainer("",0)->addDescriptionByPath(tmpPath,attributeName,type,messagesHistory);
+
 }
 
 bool AttributesDescriptionsContainer::addDescription(std::unique_ptr<AttributeDescription> descriptionPtr)

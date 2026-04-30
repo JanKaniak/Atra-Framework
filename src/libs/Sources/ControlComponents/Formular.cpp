@@ -24,54 +24,67 @@ Formular::Formular()
     numberOfLoadedControls_ = INT_MAX;
 }
 
-bool Formular::addControlTypeByNames(std::string attributeName, std::string editType)
+bool Formular::addControlTypeByNames(std::string_view path, std::string editType)
 {
-    if (!attributes_->contains(attributeName))
+    if (attributes_->getAttributeByPath(path.data()) == nullptr)
     {
-        &messageHistory_.emplace_back(Message(std::format("Attribute with name {} does not exist!", attributeName)));
+        &messageHistory_.emplace_back(Message(std::format("Attribute with name {} does not exist!", path.data())));
         return false;
     }
-
-    return components_->addControlTypeByNames(attributeName,editType,messageHistory_);
+    return components_->addControlTypeByNames(path.data(), editType, messageHistory_);
 }
 
-bool Formular::addDefaultControlType(Attribute *attribute)
+bool Formular::addDefaultControlType(std::string_view path)
 {
-    if (attribute == nullptr) {
+    if (attributes_->getAttributeByPath(path.data()) == nullptr)
+    {
         &messageHistory_.emplace_back("Attribute pointer can't be null!");
         return false;
     }
-    return components_->addDefaultControlType(attribute,messageHistory_);
+    return components_->addDefaultControlType(path.data(), messageHistory_);
 }
 
-bool Formular::ReplaceControlType(Attribute *attribute)
+bool Formular::replaceControlType(Attribute *attribute, std::string editType)
 {
-    if (attribute == nullptr) {
+    if (attribute == nullptr)
+    {
         &messageHistory_.emplace_back("Attribute pointer can't be null!");
         return false;
     }
-    return components_->swapControlComponentByAttribute(attribute,messageHistory_);
+    return components_->swapControlComponentByAttribute(attribute, editType, messageHistory_);
 }
 
-bool Formular::replaceControlType(Attribute *attribute, std::string controlType)
+bool Formular::replaceControlType(std::string_view path, std::string editType)
 {
+    Attribute *tmpAttribute = attributes_->getAttributeByPath(path.data());
+    if (tmpAttribute == nullptr)
+    {
+        &messageHistory_.emplace_back("Attribute pointer can't be null!");
+        return false;
+    }
+    return components_->swapControlComponentByAttribute(tmpAttribute, editType, messageHistory_);
 }
 
-AttributeDescription* Formular::addDescription(std::string attributeName, AttributeType type) {
-    if (attributeDescs_->addDescription(attributeName, type, &messageHistory_)) {
+AttributeDescription *Formular::addDescription(std::string_view path,std::string_view attributeName, AttributeType type)
+{
+    if (attributeDescs_->addDescriptionByPath(path.data(),attributeName.data(), type, &messageHistory_))
+    {
         return attributeDescs_->getLast();
     }
     return nullptr;
 }
 
-AttributeDescription* Formular::addDescription(std::unique_ptr<AttributeDescription> attributeDescription) {
-    if (attributeDescs_->addDescription(std::move(attributeDescription))) {
+AttributeDescription *Formular::addDescription(std::unique_ptr<AttributeDescription> attributeDescription)
+{
+    if (attributeDescs_->addDescription(std::move(attributeDescription)))
+    {
         return attributeDescs_->getLast();
     }
     return nullptr;
 }
 
-bool Formular::createAttributes() {
+bool Formular::createAttributes()
+{
     return attributes_->createAttributes(messageHistory_);
 }
 
@@ -80,7 +93,6 @@ void Formular::showControls()
     static float f = 0.0f;
     static int counter = 0;
     static bool resized = false;
-    
 
     if (!resized)
     {
@@ -680,7 +692,7 @@ int Formular::loadControlTypes(nlohmann::json json)
             continue;
         }
 
-        if (!components_->addControlTypeByNames(attributes_->giveAttribute(i)->getName(), editType.value(),messageHistory_))
+        if (!components_->addControlTypeByNames(attributes_->giveAttribute(i)->getName(), editType.value(), messageHistory_))
         {
             return -1;
         }
@@ -984,8 +996,10 @@ void Formular::showWindowManageTemplates()
     }
 }
 
-bool Formular::addLogMessage(std::string message) {
-    if (message.empty()) {
+bool Formular::addLogMessage(std::string message)
+{
+    if (message.empty())
+    {
         &messageHistory_.emplace_back("Message can't be empty!");
         return false;
     }
@@ -993,7 +1007,81 @@ bool Formular::addLogMessage(std::string message) {
     return true;
 }
 
-bool Formular::clearLogger() {
+bool Formular::clearLogger()
+{
     messageHistory_.clear();
     return true;
+}
+
+Attribute *Formular::getAttribute(std::string_view path)
+{
+    if (path.empty())
+    {
+        return nullptr;
+    }
+
+    if (path.find_first_of(".", 0) == path.npos)
+    {
+        return attributes_->giveAttributeByName(path.data());
+    }
+
+    return attributes_->getAttributeByPath(path.data());
+}
+
+void Formular::deleteAll()
+{
+    components_->deleteAllControlComponents(messageHistory_);
+    attributes_->deleteAllAttributes(messageHistory_);
+    attributeDescs_->deleteAllDescriptions(&messageHistory_);
+}
+
+bool Formular::createTemplateEntity(std::string_view name) {
+    if (name.empty()) {
+        messageHistory_.emplace_back("Name cannot be empty!");
+        return false;
+    }
+    return templateDescriptions_->addTemplateDescription(name,&messageHistory_);
+}
+bool Formular::addDescriptionToEntity(std::string_view entityName,std::string_view path, std::string_view descriptionName, AttributeType type) {
+    if (descriptionName.empty()) {
+        messageHistory_.emplace_back("Name cannot be empty!");
+        return false;
+    }
+    AttributesDescriptionsContainer *tmpContainer = templateDescriptions_->getContainer(entityName);
+    if (tmpContainer == nullptr) {
+        messageHistory_.emplace_back("Template container does not exists!");
+        return false;
+    }
+    return tmpContainer->addDescriptionByPath(path.data(),descriptionName.data(),type,&messageHistory_);
+}
+AttributeDescription *Formular::getAttributeDescriptionFromEntity(std::string_view entityName, std::string_view path, std::string_view name) {
+    if (entityName.empty()) {
+        messageHistory_.emplace_back("Description name cannot be empty!");
+        return nullptr;
+    }
+    AttributesDescriptionsContainer *tmpContainer = templateDescriptions_->getContainer(entityName);
+    if (tmpContainer == nullptr) {
+        messageHistory_.emplace_back("Template container does not exists!");
+        return nullptr;
+    }
+    return tmpContainer->getDescriptionByPath(path.data(),name.data(), messageHistory_);
+}
+bool Formular::deleteDescriptionFromEntity(std::string_view entityName, std::string_view path, std::string_view name) {
+    if (name.empty() || entityName.empty()) {
+        messageHistory_.emplace_back("Description name or entity name cannot be empty!");
+        return false;
+    }
+    AttributesDescriptionsContainer *tmpContainer = templateDescriptions_->getContainer(entityName);
+    if (tmpContainer == nullptr) {
+        messageHistory_.emplace_back("Template container does not exists!");
+        return false;
+    }
+    return tmpContainer->deleteDescriptionByPath(path.data(),name.data());
+}
+bool Formular::deleteTemplateEntity(std::string_view name) {
+    if (name.empty()) {
+        messageHistory_.emplace_back("Name cannot be empty!");
+        return false;
+    }
+    return templateDescriptions_->removeTemplateDescription(name);
 }

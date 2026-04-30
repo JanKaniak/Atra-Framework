@@ -32,6 +32,13 @@ int main(int, char**)
 {
 
     std::unique_ptr<Formular> formular = std::make_unique<Formular>();
+    formular->addDescription("","Vek",AttributeType::INT);
+    formular->addDescription("","Auto",AttributeType::CLUSTER);
+    formular->addDescription("Auto","Kolesa",AttributeType::LONG);
+    formular->createAttributes();
+    formular->deleteAttribute("Vek");
+    formular->deleteAttribute("Auto.Koleso");
+    formular->deleteAll();
 
 
 
@@ -114,6 +121,10 @@ int main(int, char**)
         if (ImGui::Button("New formular")) {
             formular = nullptr;
             formular = std::make_unique<Formular>();
+        }
+
+        if (ImGui::Button("Swap")) {
+            
         }
 
         formular->showControls();

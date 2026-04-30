@@ -7,17 +7,16 @@
 
 //------------------------------------------
 
-
 class AttributesContainer
 {
 private:
-    AttributesDescriptionsContainer* attributeDescs_;
+    AttributesDescriptionsContainer *attributeDescs_;
     std::vector<std::unique_ptr<Attribute>> attributes_;
     AttributeFactory *attributeFactory_;
 
 public:
     AttributesContainer();
-    AttributesContainer(AttributesDescriptionsContainer* attributeDescs);
+    AttributesContainer(AttributesDescriptionsContainer *attributeDescs);
     ~AttributesContainer();
     bool addDescription(AttributeType type, nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) { return attributeDescs_->addDescription(type, json, &messagesHistory); }
     bool addDescription(std::string attributeName, AttributeType type, std::vector<Message> &messagesHistory) { return attributeDescs_->addDescription(attributeName, type, &messagesHistory); }
@@ -29,6 +28,44 @@ public:
     Attribute *giveAttributeByName(std::string name);
     bool contains(std::string attributeName);
     bool deleteAttribute(Attribute *attribute);
+    bool deleteAttribute(std::string_view name)
+    {
+        for (auto it = attributes_.begin(); it != attributes_.end(); ++it)
+        {
+            if (it->get()->getName().compare(name.data()) == 0)
+            {
+                AttributeDescription *desc = it->get()->getDescription();
+                attributes_.erase(it);
+                return attributeDescs_->deleteDescription(desc);
+            }
+        }
+        return false;
+    }
+    bool deleteAttributeByPath(std::string path)
+    {
+        if (path.empty())
+        {
+            return false;
+        }
+        int index = path.find_first_of(".", 0);
+        std::string tmpName;
+        std::string tmpPath;
+        if (index != path.npos)
+        {
+            tmpName = path.substr(0, 0 + index).data();
+            tmpPath = (index + 1 < path.length()) ? path.substr(index + 1, path.length()).data() : "";
+        }
+        else
+        {
+            deleteAttribute(path);
+        }
+        AttributeCluster *tmpAttribute = dynamic_cast<AttributeCluster*>(giveAttributeByName(tmpName));
+        if (tmpAttribute == nullptr || tmpAttribute->getAttributeContainer() == nullptr) {
+            return false;
+
+        }
+        return tmpAttribute->getAttributeContainer()->deleteAttributeByPath(tmpPath);
+    }
     void reverseOrder() { std::reverse(attributes_.begin(), attributes_.end()); }
     inline std::vector<AttributeTypeC> getRegisteredDescriptionsTypes() { return attributeDescs_->getRegisteredDescriptionsTypes(); }
     int getPosition(std::string attributeName);
@@ -42,6 +79,15 @@ public:
         attributeDescs_->findDescriptionsByType(vector, type);
     }
     void deleteAllAttributes(std::vector<Message> &messageHistory);
-    
-    
+    Attribute *getAttributeByPath(std::string path);
+    const std::vector<Attribute *> getAttributes() const
+    {
+        std::vector<Attribute *> tmpVector;
+        tmpVector.resize(attributes_.size());
+        for (auto &attribute : attributes_)
+        {
+            tmpVector.push_back(attribute.get());
+        }
+        return tmpVector;
+    }
 };

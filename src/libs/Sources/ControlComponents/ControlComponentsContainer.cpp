@@ -15,12 +15,18 @@ std::string ControlComponentsContainer::getControlTypeByAttributeName(std::strin
 
 bool ControlComponentsContainer::existControlType(std::string attributeName)
 {
-    for (auto &component : components_)
+    if (attributeName.find_first_of(".", 0) == attributeName.npos)
     {
-        if (component->sameName(attributeName))
+        for (auto &component : components_)
         {
-            return true;
+            if (component->sameName(attributeName))
+            {
+                return true;
+            }
         }
+    }
+    else
+    {
     }
     return false;
 }
@@ -135,7 +141,8 @@ void ControlComponentsContainer::deleteAttribute(Attribute *attribute, Attribute
 
 void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
 {
-    if (components_.empty()) {
+    if (components_.empty())
+    {
         return;
     }
 
@@ -282,6 +289,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
             if (!changingLimits)
             {
                 chosenComponent->getAttribute(chosenComponent->getName())->updateValue();
+                chosenComponent->updateLimitValues();
             }
         }
         if (ImGui::Button("Close", ImVec2(150, 30)))
@@ -317,91 +325,182 @@ void ControlComponentsContainer::deleteAllControlComponents(std::vector<Message>
     messageHistory.emplace_back("All control components were successfuly removed!");
 }
 
-bool ControlComponentsContainer::addControlTypeByNames(std::string attributeName, std::string editType, std::vector<Message> &messageHistory)
+bool ControlComponentsContainer::addControlTypeByNames(std::string path, std::string editType, std::vector<Message> &messageHistory)
 {
-
-    if (!existControlType(attributeName))
+    if (path.empty())
     {
-        Factory *factory = controlComponentsFactories_->getFactory(attributes_->giveAttributeByName(attributeName)->getType());
-        if (factory == nullptr)
-        {
-            messageHistory.emplace_back(Message(std::format("Controls for {}  attribute type does not exist!", AttributeTypeConverter::EnumToString(attributes_->giveAttributeByName(attributeName)->getType()))));
-            return false;
-        }
-        if (isEmpty())
-        {
-            addControl(factory->createEdit(editType), attributes_->giveAttributeByName(attributeName));
-
-            return true;
-        }
-        int position = attributes_->getPosition(attributeName);
-        if (position < 0)
-        {
-            messageHistory.emplace_back(Message("Attribute with this name does not exists!"));
-            return false;
-        }
-
-        if (position >= getSize())
-        {
-            addControl(factory->createEdit(editType), attributes_->giveAttributeByName(attributeName));
-
-            return true;
-        }
-
-        addControl(position, factory->createEdit(editType), attributes_->giveAttributeByName(attributeName));
+        return false;
+    }
+    int index = path.find_first_of(".", 0);
+    std::string tmpName;
+    std::string tmpPath;
+    if (index != path.npos)
+    {
+        tmpName = path.substr(0, 0 + index).data();
+        tmpPath = (index + 1 < path.length()) ? path.substr(index + 1, path.length()).data() : "";
     }
     else
     {
-        messageHistory.emplace_back(Message("Control for this attribute already exists!"));
+        if (!existControlType(path))
+        {
+            Factory *factory = controlComponentsFactories_->getFactory(attributes_->giveAttributeByName(path)->getType());
+            if (factory == nullptr)
+            {
+                messageHistory.emplace_back(Message(std::format("Controls for {}  attribute type does not exist!", AttributeTypeConverter::EnumToString(attributes_->giveAttributeByName(path)->getType()))));
+                return false;
+            }
+            if (isEmpty())
+            {
+                addControl(factory->createEdit(editType), attributes_->giveAttributeByName(path));
+
+                return true;
+            }
+            int position = attributes_->getPosition(path);
+            if (position < 0)
+            {
+                messageHistory.emplace_back(Message("Attribute with this name does not exists!"));
+                return false;
+            }
+
+            if (position >= getSize())
+            {
+                addControl(factory->createEdit(editType), attributes_->giveAttributeByName(path));
+
+                return true;
+            }
+
+            addControl(position, factory->createEdit(editType), attributes_->giveAttributeByName(path));
+        }
+        else
+        {
+            messageHistory.emplace_back(Message("Control for this attribute already exists!"));
+            return false;
+        }
+        return true;
+    }
+    ControlComponent *tmpComponent = getComponentByName(tmpName);
+    if (tmpComponent == nullptr)
+    {
+        messageHistory.emplace_back("Cluster control component with this name does not exists!");
         return false;
     }
-    return true;
+    if (tmpComponent == nullptr)
+    {
+        messageHistory.emplace_back("Cluster control component with this name does not exists!");
+        return false;
+    }
+    if (tmpComponent->getAttribute(tmpComponent->getName())->getType() != AttributeType::CLUSTER)
+    {
+        messageHistory.emplace_back("Only cluster attributes can have more levels!");
+        return false;
+    }
+    if (tmpComponent->getContainer() == nullptr)
+    {
+        messageHistory.emplace_back("Control component has not attached control componets container!");
+        return false;
+    }
+    return tmpComponent->getContainer()->addControlTypeByNames(tmpPath, editType, messageHistory);
 }
 
-bool ControlComponentsContainer::addDefaultControlType(Attribute *attribute, std::vector<Message> &messageHistory)
+bool ControlComponentsContainer::addDefaultControlType(std::string path, std::vector<Message> &messageHistory)
+{
+    if (path.empty())
+    {
+        return false;
+    }
+    int index = path.find_first_of(".", 0);
+    std::string tmpName;
+    std::string tmpPath;
+    if (index != path.npos)
+    {
+        tmpName = path.substr(0, 0 + index).data();
+        tmpPath = (index + 1 < path.length()) ? path.substr(index + 1, path.length()).data() : "";
+    }
+    else
+    {
+        if (!existControlType(path))
+        {
+            Factory *factory = controlComponentsFactories_->getFactory(attributes_->giveAttributeByName(path)->getType());
+            if (factory == nullptr)
+            {
+                messageHistory.emplace_back(Message(std::format("Controls for {}  attribute type does not exist!", AttributeTypeConverter::EnumToString(attributes_->giveAttributeByName(path)->getType()))));
+                return false;
+            }
+            if (isEmpty())
+            {
+                addControl(factory->createDefaultEdit(), attributes_->giveAttributeByName(path));
+
+                return true;
+            }
+            int position = attributes_->getPosition(path);
+            if (position < 0)
+            {
+                messageHistory.emplace_back(Message("Attribute with this name does not exists!"));
+                return false;
+            }
+
+            if (position >= getSize())
+            {
+                addControl(factory->createDefaultEdit(), attributes_->giveAttributeByName(path));
+
+                return true;
+            }
+
+            addControl(position, factory->createDefaultEdit(), attributes_->giveAttributeByName(path));
+        }
+        else
+        {
+            messageHistory.emplace_back(Message("Control for this attribute already exists!"));
+            return false;
+        }
+        return true;
+    }
+    ControlComponent *tmpComponent = getComponentByName(tmpName);
+    if (tmpComponent == nullptr)
+    {
+        messageHistory.emplace_back("Cluster control component with this name does not exists!");
+        return false;
+    }
+    if (tmpComponent->getAttribute(tmpComponent->getName())->getType() != AttributeType::CLUSTER)
+    {
+        messageHistory.emplace_back("Only cluster attributes can have more levels!");
+        return false;
+    }
+    if (tmpComponent->getContainer() == nullptr)
+    {
+        messageHistory.emplace_back("Control component has not attached control componets container!");
+        return false;
+    }
+    return tmpComponent->getContainer()->addDefaultControlType(tmpPath, messageHistory);
+}
+
+bool ControlComponentsContainer::swapControlComponentByAttribute(Attribute *attribute, std::string editType, std::vector<Message> &messageHistory)
 {
     if (attribute == nullptr)
     {
         messageHistory.emplace_back("Attribute pointer can't be null!");
         return false;
     }
-
-    Factory *factory = controlComponentsFactories_->getFactory(attribute->getType());
-    if (factory == nullptr)
+    for (int i = 0; i < components_.size(); ++i)
     {
-        messageHistory.emplace_back(Message("Attribute type does not exist!"));
-        return false;
+        if (components_.at(i)->getAttribute(attribute->getName()) != nullptr)
+        {
+            Factory *factory = controlComponentsFactories_->getFactory(attribute->getType());
+            if (factory == nullptr)
+            {
+                messageHistory.emplace_back(Message("Attribute type does not exist!"));
+                return false;
+            }
+            return swapControlComponent(i,factory->createEdit(editType),attribute);
+        } else {
+            if (components_.at(i)->getContainer() != nullptr) {
+                if (components_.at(i)->getContainer()->swapControlComponentByAttribute(attribute,editType,messageHistory)) {
+                    return true;
+                }
+            }
+        }
     }
-    if (isEmpty())
-    {
-        addControl(factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
-        return true;
-    }
-    int position = attributes_->getPosition(attribute->getName());
-    if (position < 0)
-    {
-        messageHistory.emplace_back(Message("Attribute with this name does not exists!"));
-        return false;
-    }
-
-    if (position >= getSize())
-    {
-        addControl(factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
-        return true;
-    }
-
-    addControl(position, factory->createDefaultEdit(), attributes_->giveAttributeByName(attribute->getName()));
-    return true;
-}
-
-bool ControlComponentsContainer::swapControlComponentByAttribute(Attribute *attribute, std::vector<Message> &messageHistory)
-{
-    if (attribute == nullptr)
-    {
-        messageHistory.emplace_back("Attribute pointer can't be null!");
-        return false;
-    }
-    return true;
+    return false;
 }
 
 bool ControlComponentsContainer::addControl(Attribute *attribute, std::vector<Message> &messageHistory)

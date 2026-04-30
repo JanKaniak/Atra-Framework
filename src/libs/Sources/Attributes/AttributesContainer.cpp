@@ -1,37 +1,41 @@
 #include "AttributesContainer.h"
 #include "ControlComponentsContainer.h"
 
-AttributesContainer::AttributesContainer() {
+AttributesContainer::AttributesContainer()
+{
     attributeFactory_ = AttributeFactory::getInstance();
 }
 
-AttributesContainer::AttributesContainer(AttributesDescriptionsContainer* attributeDesc) {
+AttributesContainer::AttributesContainer(AttributesDescriptionsContainer *attributeDesc)
+{
     attributeDescs_ = attributeDesc;
     attributeFactory_ = AttributeFactory::getInstance();
-    
 }
 
-bool AttributesContainer::createAttributes(std::vector<Message>& messagesHistory)
+bool AttributesContainer::createAttributes(std::vector<Message> &messagesHistory)
 {
     bool noChange = false;
     for (int i = 0; i < attributeDescs_->getSize(); i++)
     {
-        if (attributeDescs_->getDescription(i)->isAssigned()) {
-            if (giveAttributeByName(attributeDescs_->getDescription(i)->getName())->getType() == AttributeType::CLUSTER) {
-                dynamic_cast<AttributeCluster*>(giveAttributeByName(attributeDescs_->getDescription(i)->getName()))->getAttributeContainer()->createAttributes(messagesHistory);
+        if (attributeDescs_->getDescription(i)->isAssigned())
+        {
+            if (giveAttributeByName(attributeDescs_->getDescription(i)->getName())->getType() == AttributeType::CLUSTER)
+            {
+                dynamic_cast<AttributeCluster *>(giveAttributeByName(attributeDescs_->getDescription(i)->getName()))->getAttributeContainer()->createAttributes(messagesHistory);
             }
             continue;
         }
         noChange = true;
         AttributeDescription *desc = attributeDescs_->getDescription(i);
         std::unique_ptr<Attribute> tmpAttributePointer = attributeFactory_->createAttribute(desc->getType());
-        if (tmpAttributePointer == nullptr) {
+        if (tmpAttributePointer == nullptr)
+        {
             messagesHistory.emplace_back(Message("This attribute type does not exist, check if it is registered or correctness of name!"));
             return false;
         }
         attributes_.push_back(std::move(tmpAttributePointer));
-        attributes_.at(attributes_.size() - 1)->setDescription(desc,messagesHistory);
-        desc->setAssigned(true);     
+        attributes_.at(attributes_.size() - 1)->setDescription(desc, messagesHistory);
+        desc->setAssigned(true);
     }
     return noChange;
 }
@@ -44,11 +48,11 @@ bool AttributesContainer::deleteAttribute(Attribute *attribute)
         {
             continue;
         }
-        AttributeDescription* desc = it->get()->getDescription();
+        AttributeDescription *desc = it->get()->getDescription();
         attributes_.erase(it);
         if (attributeDescs_->deleteDescription(desc))
         {
-            
+
             return true;
         }
     }
@@ -71,53 +75,70 @@ bool AttributesContainer::contains(std::string attributeName)
 {
     for (int i = 0; i < attributes_.size(); ++i)
     {
-        if (attributes_.at(i)->getName().compare(attributeName) == 0) {
+        if (attributes_.at(i)->getName().compare(attributeName) == 0)
+        {
             return true;
         }
     }
     return false;
-    
 }
 
-int AttributesContainer::getPosition(std::string attributeName) {
-    for (int i = 0; i < attributes_.size(); ++i) {
-        if (attributes_.at(i)->getName().compare(attributeName) == 0) {
+int AttributesContainer::getPosition(std::string attributeName)
+{
+    for (int i = 0; i < attributes_.size(); ++i)
+    {
+        if (attributes_.at(i)->getName().compare(attributeName) == 0)
+        {
             return i;
         }
     }
     return -1;
 }
 
-void AttributesContainer::setControlTypes(ControlComponentsContainer *components, std::vector<Message>& messagehistory) {
-    for (int i = 0; i < attributes_.size();++i) {
+void AttributesContainer::setControlTypes(ControlComponentsContainer *components, std::vector<Message> &messagehistory)
+{
+    for (int i = 0; i < attributes_.size(); ++i)
+    {
         ImGui::TableNextRow();
-        attributes_.at(i)->controlOptions(i,components,components->getMasterFactory(),messagehistory);
+        attributes_.at(i)->controlOptions(i, components, components->getMasterFactory(), messagehistory);
     }
 }
 
-AttributesContainer::~AttributesContainer() {
+AttributesContainer::~AttributesContainer()
+{
     attributeDescs_ = nullptr;
-
 }
 
-void AttributesContainer::deleteAllAttributes(std::vector<Message> &messageHistory) {
-    if (attributes_.size() == 0) {
+void AttributesContainer::deleteAllAttributes(std::vector<Message> &messageHistory)
+{
+    if (attributes_.size() == 0)
+    {
         return;
     }
     attributes_.clear();
     messageHistory.emplace_back("All attributes were successfuly removed!");
-    
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
+Attribute *AttributesContainer::getAttributeByPath(std::string path)
+{
+    if (path.empty())
+    {
+        return nullptr;
+    }
+    int index = path.find_first_of(".", 0);
+    std::string tmpName;
+    std::string tmpPath;
+    if (index != path.npos)
+    {
+        tmpName = path.substr(0, 0 + index).data();
+        tmpPath = (index+1 < path.length()) ? path.substr(index+1, path.length()).data() : "";
+    } else {
+        return giveAttributeByName(path.data());
+    }
+    Attribute *tmpAttribute = giveAttributeByName(tmpName);
+    if (!tmpPath.empty() && dynamic_cast<AttributeCluster *>(tmpAttribute))
+    {
+        return dynamic_cast<AttributeCluster *>(tmpAttribute)->getAttributeContainer()->getAttributeByPath(tmpPath);
+    }
+    return tmpAttribute;
+}

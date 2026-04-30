@@ -83,7 +83,11 @@ public:
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~DecimalNumberBaseAttributeClass() override = default;
     void updateValue() override {
-        value_ = getMinimum();
+        if (value_ > getMaximum()) {
+            value_ = getMaximum();
+        } else if (value_ < getMinimum()) {
+            value_ = getMinimum();
+        }
     }
 };
 
@@ -339,7 +343,11 @@ public:
     std::string getValue() { return value_; }
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~AttributeString() override = default;
-    void updateValue() override {}
+    void updateValue() override {
+        if (value_.length() > getMaximum()) {
+            value_.resize(getMaximum());
+        }
+    }
 };
 
 struct AutoRegisterStringAttribute : public AutoRegisterAttribute<AttributeString, AttributeType::STRING>

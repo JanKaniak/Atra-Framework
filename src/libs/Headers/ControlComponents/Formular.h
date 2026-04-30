@@ -49,13 +49,34 @@ public:
     bool loadDescriptions(nlohmann::ordered_json json);
     int loadControlTypes(nlohmann::json json);
     nlohmann::ordered_json saveOutput();
-    bool addControlTypeByNames(std::string atributeName, std::string edtitType);
-    bool addDefaultControlType(Attribute *attribute);
-    bool ReplaceControlType(Attribute *attribute);
-    bool replaceControlType(Attribute *attribute, std::string controlType);
-    AttributeDescription* addDescription(std::string attributeName, AttributeType type);
+    bool addControlTypeByNames(std::string_view path, std::string editType);
+    bool addDefaultControlType(std::string_view path);
+    bool replaceControlType(Attribute *attribute, std::string editType);
+    bool replaceControlType(std::string_view path, std::string editType);
+    AttributeDescription* addDescription(std::string_view path,std::string_view attributeName, AttributeType type);
     AttributeDescription* addDescription(std::unique_ptr<AttributeDescription> attributeDescription);
     bool createAttributes();
+    inline int getNumberOfAttributes() { return attributes_->getSize(); }
+    Attribute* getAttribute(std::string_view path);
+    const std::vector<Attribute*> getAttributes() const { return attributes_->getAttributes();}
+    void deleteAll();
+    bool createTemplateEntity(std::string_view name);
+    bool addDescriptionToEntity(std::string_view entityName,std::string_view path, std::string_view descriptionName, AttributeType type);
+    AttributeDescription *getAttributeDescriptionFromEntity(std::string_view entityName, std::string_view path, std::string_view name);
+    bool deleteDescriptionFromEntity(std::string_view templateEntityName, std::string_view path, std::string_view name);
+    bool deleteTemplateEntity(std::string_view name);
+    bool generateAttributesFromEntity(std::string_view name) {
+        chosenAttributesDescription_ = templateDescriptions_->getContainer(name);
+        attributeDescs_->addDescriptions(chosenAttributesDescription_, &messageHistory_);
+        return attributes_->createAttributes(messageHistory_);
+    }
+    bool deleteAttribute(std::string_view path) { 
+        if (path.empty()) {
+            messageHistory_.emplace_back("Path cannot be empty!");
+            return false;
+        }
+        return attributes_->deleteAttributeByPath(path.data());
+    }
 private:
     void showSettings();
     void showLogger();
@@ -65,7 +86,6 @@ private:
     void showModifyControlTypesWindow();
     void showCreateTemplateAttribute();
     void showCreateAttributesFromTemplates();
-    inline int getNumberOfAttributes() { return attributes_->getSize(); }
     int readFileDescriptions();
     int readFileControlTypes();
     void saveToFile();

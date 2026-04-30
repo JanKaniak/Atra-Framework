@@ -28,6 +28,16 @@ public:
     std::string getControlTypeByAttributeName(std::string attributeName);
     int positionOfComponentByAttributeName(std::string attributeName);
     ControlComponent *getComponent(int position) { return components_.at(position).get(); }
+    ControlComponent *getComponentByName(std::string name) { 
+        for (auto &component: components_)
+        {
+            if (component->getName().compare(name) == 0) {
+                return component.get();
+            }
+        }
+        return nullptr;
+        
+     }
     int getSize() { return components_.size(); }
     void addControl(std::unique_ptr<ControlComponent> control, Attribute *attribute);
     void addControl(int position, std::unique_ptr<ControlComponent> control, Attribute *attribute);
@@ -44,8 +54,8 @@ public:
     void setTableUpdated(bool update) { updatedTable_ = update;}
     void deleteAllControlComponents(std::vector<Message> &messageHistory);
     void setDefaultControls(ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messageHistory);
-    bool addControlTypeByNames(std::string attributeName, std::string editType, std::vector<Message> &messageHistory);
-    bool addDefaultControlType(Attribute *attribute, std::vector<Message> &messageHistory);
-    bool swapControlComponentByAttribute(Attribute *attribute, std::vector<Message> &messageHistory);
+    bool addControlTypeByNames(std::string path, std::string editType, std::vector<Message> &messageHistory);
+    bool addDefaultControlType(std::string path, std::vector<Message> &messageHistory);
+    bool swapControlComponentByAttribute(Attribute *attribute, std::string editType, std::vector<Message> &messageHistory);
     ControlComponentsFactoriesContainer *getMasterFactory() { return controlComponentsFactories_;}
 };
