@@ -5,6 +5,8 @@
 #include <time.h>
 
 // Class Formular
+
+/// Initialize the formular manager, its attribute descriptions, runtime attributes, and UI components.
 Formular::Formular()
 {
     attributeDescs_ = std::make_unique<AttributesDescriptionsContainer>();
@@ -24,6 +26,7 @@ Formular::Formular()
     numberOfLoadedControls_ = INT_MAX;
 }
 
+/// Add a control type to the formular by matching an attribute path and edit control type name.
 bool Formular::addControlTypeByNames(std::string_view path, std::string editType)
 {
     if (attributes_->getAttributeByPath(path.data()) == nullptr)
@@ -34,6 +37,7 @@ bool Formular::addControlTypeByNames(std::string_view path, std::string editType
     return components_->addControlTypeByNames(path.data(), editType, messageHistory_);
 }
 
+/// Assign a default control type to an attribute identified by its path.
 bool Formular::addDefaultControlType(std::string_view path)
 {
     if (attributes_->getAttributeByPath(path.data()) == nullptr)
@@ -44,6 +48,7 @@ bool Formular::addDefaultControlType(std::string_view path)
     return components_->addDefaultControlType(path.data(), messageHistory_);
 }
 
+/// Replace the control type for an existing attribute using a raw attribute pointer.
 bool Formular::replaceControlType(Attribute *attribute, std::string editType)
 {
     if (attribute == nullptr)
@@ -54,6 +59,7 @@ bool Formular::replaceControlType(Attribute *attribute, std::string editType)
     return components_->swapControlComponentByAttribute(attribute, editType, messageHistory_);
 }
 
+/// Replace the control type for an attribute identified by its path string.
 bool Formular::replaceControlType(std::string_view path, std::string editType)
 {
     Attribute *tmpAttribute = attributes_->getAttributeByPath(path.data());
@@ -65,6 +71,7 @@ bool Formular::replaceControlType(std::string_view path, std::string editType)
     return components_->swapControlComponentByAttribute(tmpAttribute, editType, messageHistory_);
 }
 
+/// Add a new attribute description under the given path and return the created description.
 AttributeDescription *Formular::addDescription(std::string_view path,std::string_view attributeName, AttributeType type)
 {
     if (attributeDescs_->addDescriptionByPath(path.data(),attributeName.data(), type, &messageHistory_))
@@ -74,6 +81,7 @@ AttributeDescription *Formular::addDescription(std::string_view path,std::string
     return nullptr;
 }
 
+/// Add an attribute description object to the formular and return it if successful.
 AttributeDescription *Formular::addDescription(std::unique_ptr<AttributeDescription> attributeDescription)
 {
     if (attributeDescs_->addDescription(std::move(attributeDescription)))
@@ -83,11 +91,13 @@ AttributeDescription *Formular::addDescription(std::unique_ptr<AttributeDescript
     return nullptr;
 }
 
+/// Create runtime attribute instances from the registered attribute descriptions.
 bool Formular::createAttributes()
 {
     return attributes_->createAttributes(messageHistory_);
 }
 
+/// Render the main formular UI window with control loading, generation, and template actions.
 void Formular::showControls()
 {
     static float f = 0.0f;
@@ -190,6 +200,7 @@ void Formular::showControls()
     }
 }
 
+/// Render the logger panel showing recent user messages and errors.
 void Formular::showLogger()
 {
     float width = ImGui::GetContentRegionAvail().x;
@@ -221,6 +232,7 @@ void Formular::showLogger()
     ImGui::EndDisabled();
 }
 
+/// Display the popup window used to add or edit attribute descriptions.
 void Formular::showAddDescriptionWindow(AttributesDescriptionsContainer *attributeDesc, bool isCreatingAttributesOutsideClusterAllowed)
 {
 
@@ -406,6 +418,7 @@ void Formular::showAddDescriptionWindow(AttributesDescriptionsContainer *attribu
     }
 }
 
+/// Display the popup for modifying control types assigned to existing attributes.
 void Formular::showModifyControlTypesWindow()
 {
     static ImVec2 size = ImVec2(400, 300);
@@ -438,6 +451,7 @@ void Formular::showModifyControlTypesWindow()
     }
 }
 
+/// Display the UI for creating a new attribute template description.
 void Formular::showCreateTemplateAttribute()
 {
     static char buffer[40];
@@ -465,6 +479,7 @@ void Formular::showCreateTemplateAttribute()
     }
 }
 
+/// Display the popup for selecting a template and generating attributes from it.
 void Formular::showCreateAttributesFromTemplates()
 {
 
@@ -515,6 +530,7 @@ void Formular::showCreateAttributesFromTemplates()
     }
 }
 
+/// Render the attribute control window once controls have been created.
 void Formular::showAttributes()
 {
     static bool isWindowSizeSet = false;
@@ -535,6 +551,7 @@ void Formular::showAttributes()
     }
 }
 
+/// Load attribute descriptions from JSON data into the formular.
 bool Formular::loadDescriptions(nlohmann::ordered_json json)
 {
     for (auto &descriptions : json) // attributeDescriptions = list of attributes, attributeTypeKey = attribute type
@@ -552,6 +569,7 @@ bool Formular::loadDescriptions(nlohmann::ordered_json json)
     return true;
 }
 
+/// Prompt the user to select a JSON file and read attribute descriptions from it.
 int Formular::readFileDescriptions()
 {
     std::filesystem::path outputPath_;
@@ -596,6 +614,7 @@ int Formular::readFileDescriptions()
     return attributes_->getSize();
 }
 
+/// Prompt the user to select a JSON file and read control type definitions from it.
 int Formular::readFileControlTypes()
 {
     std::filesystem::path outputPath_;
@@ -639,6 +658,7 @@ int Formular::readFileControlTypes()
     file.close();
     return loadControlTypes(jsonFile);
 }
+/// Load control types from JSON data and apply them to existing attributes.
 int Formular::loadControlTypes(nlohmann::json json)
 {
     int tmpNumberOfLoadedControls = 0;
@@ -719,6 +739,7 @@ int Formular::loadControlTypes(nlohmann::json json)
     return tmpNumberOfLoadedControls;
 }
 
+/// Serialize the current attribute set to ordered JSON for saving to disk.
 nlohmann::ordered_json Formular::saveOutput()
 {
     nlohmann::ordered_json tempJson;
@@ -741,6 +762,7 @@ nlohmann::ordered_json Formular::saveOutput()
     return tempJson;
 }
 
+/// Manage the save dialog and write the current attributes to a JSON file.
 void Formular::saveToFile()
 {
     if (!saveWindow_)
@@ -859,6 +881,7 @@ void Formular::saveToFile()
     }
 }
 
+/// Display a warning window with a custom error message.
 bool Formular::showWarning(std::string message)
 {
     ImGui::SetNextWindowSize(ImVec2(500, 400));
@@ -874,6 +897,7 @@ bool Formular::showWarning(std::string message)
     return false;
 }
 
+/// Render the template management popup, allowing template editing and deletion.
 void Formular::showWindowManageTemplates()
 {
     static ImVec2 size = ImVec2(400, 300);
@@ -996,6 +1020,7 @@ void Formular::showWindowManageTemplates()
     }
 }
 
+/// Add a new log message to the formular's internal history.
 bool Formular::addLogMessage(std::string message)
 {
     if (message.empty())
@@ -1007,12 +1032,14 @@ bool Formular::addLogMessage(std::string message)
     return true;
 }
 
+/// Clear all stored logger entries from the formular.
 bool Formular::clearLogger()
 {
     messageHistory_.clear();
     return true;
 }
 
+/// Retrieve an attribute by path, supporting both direct names and nested path notation.
 Attribute *Formular::getAttribute(std::string_view path)
 {
     if (path.empty())
@@ -1028,6 +1055,7 @@ Attribute *Formular::getAttribute(std::string_view path)
     return attributes_->getAttributeByPath(path.data());
 }
 
+/// Delete all control components, runtime attributes, and attribute descriptions.
 void Formular::deleteAll()
 {
     components_->deleteAllControlComponents(messageHistory_);
@@ -1035,6 +1063,7 @@ void Formular::deleteAll()
     attributeDescs_->deleteAllDescriptions(&messageHistory_);
 }
 
+/// Create a named template entity for reusable attribute description groups.
 bool Formular::createTemplateEntity(std::string_view name) {
     if (name.empty()) {
         messageHistory_.emplace_back("Name cannot be empty!");
@@ -1042,6 +1071,7 @@ bool Formular::createTemplateEntity(std::string_view name) {
     }
     return templateDescriptions_->addTemplateDescription(name,&messageHistory_);
 }
+/// Add a description to an existing template entity by path and type.
 bool Formular::addDescriptionToEntity(std::string_view entityName,std::string_view path, std::string_view descriptionName, AttributeType type) {
     if (descriptionName.empty()) {
         messageHistory_.emplace_back("Name cannot be empty!");
@@ -1054,6 +1084,7 @@ bool Formular::addDescriptionToEntity(std::string_view entityName,std::string_vi
     }
     return tmpContainer->addDescriptionByPath(path.data(),descriptionName.data(),type,&messageHistory_);
 }
+/// Retrieve an attribute description from a template entity using path and name.
 AttributeDescription *Formular::getAttributeDescriptionFromEntity(std::string_view entityName, std::string_view path, std::string_view name) {
     if (entityName.empty()) {
         messageHistory_.emplace_back("Description name cannot be empty!");
@@ -1066,6 +1097,7 @@ AttributeDescription *Formular::getAttributeDescriptionFromEntity(std::string_vi
     }
     return tmpContainer->getDescriptionByPath(path.data(),name.data(), messageHistory_);
 }
+/// Delete a description from a named template entity.
 bool Formular::deleteDescriptionFromEntity(std::string_view entityName, std::string_view path, std::string_view name) {
     if (name.empty() || entityName.empty()) {
         messageHistory_.emplace_back("Description name or entity name cannot be empty!");
@@ -1078,6 +1110,7 @@ bool Formular::deleteDescriptionFromEntity(std::string_view entityName, std::str
     }
     return tmpContainer->deleteDescriptionByPath(path.data(),name.data());
 }
+/// Delete a named template entity from the formular.
 bool Formular::deleteTemplateEntity(std::string_view name) {
     if (name.empty()) {
         messageHistory_.emplace_back("Name cannot be empty!");

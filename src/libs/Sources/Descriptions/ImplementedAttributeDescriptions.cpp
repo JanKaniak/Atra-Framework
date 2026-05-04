@@ -5,6 +5,11 @@
 AttributeDescription::~AttributeDescription() = default;
 
 // INTEGER NUMBERS -------------------------------------------
+
+/// Validate and apply new integer range limits.
+///
+/// Returns true when the supplied minimum is strictly lower than maximum,
+/// otherwise records an error message and returns false.
 template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
 bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message> *messagesHistory)
 {
@@ -21,6 +26,9 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 
 
 template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
+/// Parse JSON into this integer attribute description.
+///
+/// Validates required JSON fields and applies the parsed limits.
 bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
@@ -47,6 +55,9 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 }
 
 template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+/// Display the ImGui popup for editing integer limits.
+///
+/// Returns true while the popup remains open and false once it closes.
 bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> *messagesHistory)
 {
     static bool isSetLastLimit = false;
@@ -105,6 +116,7 @@ bool IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 }
 
 template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
+/// Add this integer description to the provided vector when the requested type matches.
 void IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
 {
     if (type == AttributeTypeEnumT)
@@ -116,6 +128,11 @@ void IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 //------------------------------------------------------
 
 // DECIMAL NUMBERS -----------------------------------------------------
+
+/// Validate and apply new decimal range limits.
+///
+/// Returns true when the supplied minimum is strictly lower than maximum,
+/// otherwise records an error message and returns false.
 template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
 bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::setLimit(TypeT minimum, TypeT maximum, std::vector<Message> *messagesHistory)
 {
@@ -132,6 +149,9 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 }
 
 template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
+/// Parse JSON into this decimal attribute description.
+///
+/// Validates required JSON fields and applies the parsed limits.
 bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
@@ -160,6 +180,7 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 }
 
 template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
+/// Add this decimal description to the provided vector when the requested type matches.
 void DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
 {
     if (type == AttributeTypeEnumT)
@@ -169,6 +190,9 @@ void DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 }
 
 template <typename TypeT, AttributeType AttributeTypeEnumT, ImGuiDataType ImGuiDataTypeT, nlohmann::json::value_t TypeEnumT>
+/// Display the ImGui popup for editing decimal limits.
+///
+/// Returns true while the popup remains open and false once it closes.
 bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>::drawInputForChangingLimits(std::vector<Message> *messagesHistory)
 {
     static bool isSetLastLimit = false;
@@ -230,6 +254,9 @@ bool DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT
 
 // BOOL --------------------------------------------------------
 
+/// Parse a boolean attribute description from JSON.
+///
+/// Only the attribute name is required for bool descriptions.
 bool AttributeDescriptionBool::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
 {
     if (json.find("Attribute name") == json.end())
@@ -250,6 +277,7 @@ bool AttributeDescriptionBool::jsonParse(nlohmann::ordered_json &json, std::vect
     return true;
 }
 
+/// Add this bool description to the provided vector when the requested type matches.
 void AttributeDescriptionBool::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
 {
     if (type == type_)
@@ -262,6 +290,9 @@ void AttributeDescriptionBool::addItselfToVectorByCondition(std::vector<Attribut
 
 // CLUSTER --------------------------------------------------------
 
+/// Parse a cluster attribute from JSON.
+///
+/// This reads the cluster name and its nested attribute descriptions array.
 bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
 {
     if (json.find("Attribute name") == json.end() || json.find("Attribute descriptions") == json.end())
@@ -303,6 +334,7 @@ bool AttributeDescriptionCluster::jsonParse(nlohmann::ordered_json &json, std::v
 
 
 
+/// Add this cluster description and any matching nested descriptions to the provided list.
 void AttributeDescriptionCluster::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
 {
     if (type == type_)
@@ -312,6 +344,7 @@ void AttributeDescriptionCluster::addItselfToVectorByCondition(std::vector<Attri
     descriptions_->findDescriptionsByType(vector, type);
 }
 
+/// Return the nested container for the requested cluster description.
 AttributesDescriptionsContainer *AttributeDescriptionCluster::getContainer(std::string_view descriptionName, uint64_t descriptionId)
 {
     if (descriptionName.empty() || (descriptionName.compare(name_) == 0 && descriptionId == id_))
@@ -321,11 +354,13 @@ AttributesDescriptionsContainer *AttributeDescriptionCluster::getContainer(std::
     return descriptions_->findDescriptionContainer(descriptionName, descriptionId);
 }
 
+/// Destroy the cluster and release its nested description container.
 AttributeDescriptionCluster::~AttributeDescriptionCluster()
 {
     descriptions_ = nullptr;
 }
 
+/// Add a new child description of the specified type to this cluster.
 AttributeDescription* AttributeDescriptionCluster::addDescription(std::string attributeName, AttributeType type) {
     if (descriptions_->addDescription(attributeName, type,nullptr)) {
         return descriptions_->getLast();
@@ -344,6 +379,7 @@ AttributeDescription* AttributeDescriptionCluster::addDescription(std::unique_pt
 
 // CHAR text ---------------------------------------------------
 
+/// Validate and apply new character-length limits for text attributes.
 bool AttributeDescriptionCharText::setLimit(uint8_t minimum, uint8_t maximum, std::vector<Message> *messagesHistory)
 {
     if ((minimum < maximum) || (minimum > 0 && minimum <= maximum))
@@ -357,6 +393,9 @@ bool AttributeDescriptionCharText::setLimit(uint8_t minimum, uint8_t maximum, st
     return false;
 }
 
+/// Parse JSON into this char text attribute description.
+///
+/// Validates numeric limits and the attribute name field.
 bool AttributeDescriptionCharText::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
@@ -383,6 +422,9 @@ bool AttributeDescriptionCharText::jsonParse(nlohmann::ordered_json &json, std::
     return setLimit(json["Minimum"].get<uint8_t>(), json["Maximum"].get<uint8_t>(), messagesHistory);
 }
 
+/// Display the ImGui popup for editing character text limits.
+///
+/// Returns true while the popup remains open and false once it closes.
 bool AttributeDescriptionCharText::drawInputForChangingLimits(std::vector<Message> *messagesHistory)
     {
         static bool isSetLastLimit = false;
@@ -445,6 +487,7 @@ bool AttributeDescriptionCharText::drawInputForChangingLimits(std::vector<Messag
   
 
 
+/// Add this char text description to the provided vector when the requested type matches.
 void AttributeDescriptionCharText::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
 {
     if (type == type_)
@@ -457,6 +500,7 @@ void AttributeDescriptionCharText::addItselfToVectorByCondition(std::vector<Attr
 
 // STRING ---------------------------------------------------
 
+/// Validate and apply new string length limits.
 bool AttributeDescriptionString::setLimit(uint32_t minimum, uint32_t maximum, std::vector<Message> *messagesHistory)
 {
     if (minimum < maximum)
@@ -470,6 +514,9 @@ bool AttributeDescriptionString::setLimit(uint32_t minimum, uint32_t maximum, st
     return false;
 }
 
+/// Parse JSON into this string attribute description.
+///
+/// Validates the length bounds and attribute name before applying limits.
 bool AttributeDescriptionString::jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory)
 {
     if (json.find("Minimum") == json.end() || json.find("Maximum") == json.end() || json.find("Attribute name") == json.end())
@@ -496,6 +543,9 @@ bool AttributeDescriptionString::jsonParse(nlohmann::ordered_json &json, std::ve
     return setLimit(json["Minimum"].get<uint32_t>(), json["Maximum"].get<uint32_t>(), messagesHistory);
 }
 
+/// Display the ImGui popup for editing string length limits.
+///
+/// Returns true while the popup remains open and false once it closes.
 bool AttributeDescriptionString::drawInputForChangingLimits(std::vector<Message> *messagesHistory)
     {
         static bool isSetLastLimit = false;
@@ -556,6 +606,7 @@ bool AttributeDescriptionString::drawInputForChangingLimits(std::vector<Message>
     }
 
 
+/// Add this string description to the provided vector when the requested type matches.
 void AttributeDescriptionString::addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type)
 {
     if (type == type_)
@@ -576,6 +627,7 @@ void AttributeDescriptionString::addItselfToVectorByCondition(std::vector<Attrib
 
 
 
+/// Clone helpers for concrete attribute description types.
 std::unique_ptr<AttributeDescription> AttributeDescriptionInt::clone() { return std::make_unique<AttributeDescriptionInt>(*this); }
 
 std::unique_ptr<AttributeDescription> AttributeDescriptionDouble::clone() { return std::make_unique<AttributeDescriptionDouble>(*this); }

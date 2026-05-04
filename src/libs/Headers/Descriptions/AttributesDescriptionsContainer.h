@@ -8,6 +8,9 @@
 #include <map>
 #include <iostream>
 
+/// Container for attribute descriptions and nested cluster handling.
+///
+/// Manages ownership of descriptions, template registration, and search by path.
 class AttributesDescriptionsContainer
 {
 private:
@@ -17,102 +20,66 @@ private:
 
 public:
     AttributesDescriptionsContainer();
+
+    /// Create a new attribute description from type and JSON, then append it.
     bool addDescription(AttributeType type, nlohmann::ordered_json &json, std::vector<Message> *messagesHistory);
+
+    /// Add a description to a nested path using a dot-separated cluster path.
     bool addDescription(std::string path, AttributeType type, std::vector<Message> *messagesHistory);
+
+    /// Create and add a description in a nested container by path and name.
     bool addDescriptionByPath(std::string path, std::string attributeName, AttributeType type, std::vector<Message> *messagesHistory);
+
+    /// Append an existing attribute description instance.
     bool addDescription(std::unique_ptr<AttributeDescription> descriptionPtr);
+
+    /// Merge descriptions from another container.
     bool addDescriptions(AttributesDescriptionsContainer *container, std::vector<Message> *messageHistory);
+
+    /// Find a description by name in this container.
     AttributeDescription *getDescription(std::string name);
+
     inline AttributeDescription *getDescription(int i) { return (i >= 0 && i < attributeDescs_.size()) ? attributeDescs_.at(i).get() : nullptr; }
     inline int getSize() { return attributeDescs_.size(); }
     AttributeDescription *getLast();
+    /// Remove a description by pointer.
     bool deleteDescription(AttributeDescription *description);
-    bool deleteDescription(std::string_view name) {
-        for (auto it = attributeDescs_.begin(); it != attributeDescs_.end(); it++)
-    {
-        if (it->get()->getName().compare(name) == 0)
-        {
-            attributeDescs_.erase(it);
-            if (attributeDescs_.empty())
-            {
-                lastId_->resetIdCounter();
-            }
-            return true;
-        }
-    }
-    return false;
-        
-    }
+
+    /// Remove a description by name and reset ID counter if empty.
+    bool deleteDescription(std::string_view name);
+
+    /// Return all registered description types and categories from the factory.
     inline std::vector<AttributeTypeC> getRegisteredDescriptionsTypes() { return descFactory_->getRegisteredDescriptionsTypes(); }
+
+    /// Remove the most recently added description.
     bool deleteLastDescription(std::vector<Message> *messagesHistory);
+
+    /// Check whether a description with the given name exists.
     bool existsDescription(std::string_view name);
+
+    /// Collect descriptions matching a specific attribute type.
     void findDescriptionsByType(std::vector<AttributeDescription *> &vector, AttributeType type);
+
+    /// Find a nested container for a description by name and ID.
     AttributesDescriptionsContainer *findDescriptionContainer(std::string_view descriptionName, uint64_t descriptionId);
+
     ~AttributesDescriptionsContainer();
+
+    /// Find a nested container by name and ID, including clusters.
     AttributesDescriptionsContainer *getDescriptionContainer(std::string_view descriptionName, uint64_t descriptionId);
+
+    /// Remove all contained attribute descriptions.
     void deleteAllDescriptions(std::vector<Message> *messageHistory);
-    AttributeDescription *getDescriptionByPath(std::string path, std::string descriptionName, std::vector<Message> &messagesHistory)
-    {
-        if (path.empty())
-        {
-            return getDescription(descriptionName);
-        }
-        int index = path.find_first_of(".", 0);
-        std::string tmpName;
-        std::string tmpPath;
-        if (index != path.npos)
-        {
-            tmpName = path.substr(0, 0 + index).data();
-            tmpPath = (index + 1 < path.length()) ? path.substr(index + 1, path.length()).data() : "";
-        }
-        else
-        {
-            return getDescription(path);
-        }
-        AttributeDescription *tmpDescription = getDescription(tmpName);
-        if (tmpDescription->getType() != AttributeType::CLUSTER)
-        {
-            messagesHistory.emplace_back("Only cluster attribute descriptions can have descriptons!");
-            return nullptr;
-        }
-        if (tmpDescription->getContainer("", 0) == nullptr)
-        {
-            messagesHistory.emplace_back("Cluster attribute description does not have attached attribute descriptions container!");
-            return nullptr;
-        }
-        return tmpDescription->getContainer("", 0)->getDescriptionByPath(tmpPath, descriptionName, messagesHistory);
-    };
-    bool deleteDescriptionByPath(std::string path, std::string name)
-    {
-        if (name.empty())
-        {
-            return deleteDescription(name);
-        }
-        int index = path.find_first_of(".", 0);
-        std::string tmpName;
-        std::string tmpPath;
-        if (index != path.npos)
-        {
-            tmpName = path.substr(0, 0 + index).data();
-            tmpPath = (index + 1 < path.length()) ? path.substr(index + 1, path.length()).data() : "";
-        }
-        else
-        {
-            return deleteDescription(name);
-        }
-        AttributeDescription *tmpDescription = getDescription(tmpName);
-        if (tmpDescription->getType() != AttributeType::CLUSTER)
-        {
-            return false;
-        }
-        if (tmpDescription->getContainer("", 0) == nullptr)
-        {
-            return false;
-        }
-        return tmpDescription->getContainer("", 0)->deleteDescriptionByPath(tmpPath,name);
-    }
+    /// Resolve a nested description by a dot-separated cluster path.
+    ///
+    /// If path is empty, returns a top-level description by name.
+    AttributeDescription *getDescriptionByPath(std::string path, std::string descriptionName, std::vector<Message> &messagesHistory);
+
+    /// Delete a nested description by dot-separated cluster path.
+    bool deleteDescriptionByPath(std::string path, std::string name);
 };
 
+/// Wrapper for a named template of attribute descriptions.
 class TemplateAttributesDescription
 {
 private:
@@ -130,6 +97,7 @@ public:
     AttributesDescriptionsContainer *getContainer() { return templateDescriptionContainer_.get(); }
 };
 
+/// Singleton container for named attribute description templates.
 class TemplateAttributesDescriptionContainer
 {
 private:
@@ -139,104 +107,27 @@ private:
 
 public:
     static TemplateAttributesDescriptionContainer *getInstance();
-    bool addTemplateDescription(std::string_view name, std::vector<Message> *messageHistory)
-    {
-        if (name.empty())
-        {
-            messageHistory->emplace_back("Name cannot be empty!");
-            return false;
-        }
 
-        if (templateExists(name))
-        {
-            messageHistory->emplace_back("Names must be unique!");
-            return false;
-        }
+    /// Add a new template description with a unique name.
+    bool addTemplateDescription(std::string_view name, std::vector<Message> *messageHistory);
 
-        templateDescriptions_.emplace_back(std::make_unique<TemplateAttributesDescription>(name.data()));
-        return true;
-    }
-    bool templateExists(std::string_view name)
-    {
-        if (name.empty())
-        {
-            return true;
-        }
-        for (int i = 0; i < templateDescriptions_.size(); ++i)
-        {
-            if (templateDescriptions_.at(i)->getName().compare(name) == 0)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-    AttributesDescriptionsContainer *getContainer(std::string_view name)
-    {
-        if (name.empty())
-        {
-            return nullptr;
-        }
+    /// Check whether a template with the given name already exists.
+    bool templateExists(std::string_view name);
 
-        for (int i = 0; i < templateDescriptions_.size(); ++i)
-        {
-            if (templateDescriptions_.at(i)->getName().compare(name) == 0)
-            {
-                return templateDescriptions_.at(i)->getContainer();
-            }
-        }
-
-        return nullptr;
-    }
+    /// Return the container for a named template.
+    AttributesDescriptionsContainer *getContainer(std::string_view name);
+    /// Return the number of registered templates.
     int getSize() { return templateDescriptions_.size(); }
-    std::string getNameByPosition(int position)
-    {
-        if (position > templateDescriptions_.size() || position < 0)
-        {
-            return "";
-        }
-        return templateDescriptions_.at(position)->getName();
-    }
-    TemplateAttributesDescription *getTemplateByPosition(int position)
-    {
-        if (position > templateDescriptions_.size() || position < 0)
-        {
-            return nullptr;
-        }
-        return templateDescriptions_.at(position).get();
-    }
 
-    bool removeTemplateDescription(TemplateAttributesDescription *templateDescription)
-    {
-        if (templateDescription == nullptr)
-        {
-            return false;
-        }
-        for (auto it = templateDescriptions_.begin(); it != templateDescriptions_.end(); ++it)
-        {
-            if (it->get() == templateDescription)
-            {
-                templateDescriptions_.erase(it);
-                return true;
-            }
-        }
-        return false;
-    }
+    /// Return a template name by position.
+    std::string getNameByPosition(int position);
 
-    bool removeTemplateDescription(std::string_view name)
-    {
-        if (name.empty())
-        {
-            return false;
-        }
-        for (auto it = templateDescriptions_.begin(); it != templateDescriptions_.end(); ++it)
-        {
-            if (it->get()->getName().compare(name) == 0)
-            {
-                templateDescriptions_.erase(it);
-                return true;
-            }
-        }
-        return false;
-    }
+    /// Return a template object by position.
+    TemplateAttributesDescription *getTemplateByPosition(int position);
+
+    /// Remove a template by pointer.
+    bool removeTemplateDescription(TemplateAttributesDescription *templateDescription);
+
+    /// Remove a template by name.
+    bool removeTemplateDescription(std::string_view name);
 };

@@ -3,6 +3,9 @@
 
 #include <format>
 
+/// Base attribute class for integral values with min/max bounds.
+///
+/// Uses an attribute description to determine valid bounds and serialization behavior.
 template <typename TypeT, typename AttributeDescriptionT>
 class IntegerNumberBaseAttributeClass : public Attribute
 {
@@ -17,6 +20,8 @@ public:
     AttributeDescription *getDescription() override { return desc_; }
     inline const TypeT getMinimum() { return desc_->getMinimum(); }
     inline const TypeT getMaximum() { return desc_->getMaximum(); }
+
+    /// Set the current integer value if it is within description bounds.
     bool setValue(TypeT value)
     {
         if (value >= getMinimum() && value <= getMaximum())
@@ -27,6 +32,7 @@ public:
         return false;
     }
 
+    /// Assign a description to this attribute and initialize the value.
     void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override
     {
         if (dynamic_cast<AttributeDescriptionT *>(desc))
@@ -38,13 +44,19 @@ public:
     TypeT getValue() { return value_; }
     bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
 
+    /// Create UI controls for editing this integer attribute.
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~IntegerNumberBaseAttributeClass() override = default;
+
+    /// Reset the value to the minimum defined by the description.
     void updateValue() override {
         value_ = getMinimum();
     }
 };
 
+/// Base attribute class for decimal values with min/max bounds.
+///
+/// Uses a description object for bounds and serialization behavior.
 template <typename TypeT, typename AttributeDescriptionT>
 class DecimalNumberBaseAttributeClass : public Attribute
 {
@@ -59,6 +71,8 @@ public:
     AttributeDescription *getDescription() override { return desc_; }
     inline const TypeT getMinimum() { return desc_->getMinimum(); }
     inline const TypeT getMaximum() { return desc_->getMaximum(); }
+
+    /// Set the current decimal value if it is within bounds.
     bool setValue(TypeT value)
     {
         if (value >= getMinimum() && value <= getMaximum())
@@ -69,6 +83,7 @@ public:
         return false;
     }
 
+    /// Assign a description to this attribute and initialize the value.
     void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override
     {
         if (dynamic_cast<AttributeDescriptionT *>(desc))
@@ -80,8 +95,11 @@ public:
     TypeT getValue() { return value_; }
     bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
 
+    /// Create UI controls for editing this decimal attribute.
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~DecimalNumberBaseAttributeClass() override = default;
+
+    /// Clamp the current value to the valid description bounds.
     void updateValue() override {
         if (value_ > getMaximum()) {
             value_ = getMaximum();
@@ -91,6 +109,9 @@ public:
     }
 };
 
+/// Helper used to automatically register attribute prototypes with the factory.
+///
+/// Each instantiation registers a single concrete attribute type.
 template <typename AttributeTypeClass, AttributeType EnumTypeT>
 struct AutoRegisterAttribute
 {
@@ -101,6 +122,7 @@ struct AutoRegisterAttribute
     }();
 };
 
+/// Concrete integer attribute implementation for INT descriptions.
 class AttributeInt : public IntegerNumberBaseAttributeClass<int, AttributeDescriptionInt>
 {
 public:
@@ -116,6 +138,7 @@ struct AutoRegisterIntAttribute : public AutoRegisterAttribute<AttributeInt, Att
     };
 };
 
+/// Concrete double attribute implementation for DOUBLE descriptions.
 class AttributeDouble : public DecimalNumberBaseAttributeClass<double, AttributeDescriptionDouble>
 {
 public:
@@ -131,6 +154,7 @@ struct AutoRegisterDoubleAttribute : public AutoRegisterAttribute<AttributeDoubl
     };
 };
 
+/// Concrete float attribute implementation for FLOAT descriptions.
 class AttributeFloat : public DecimalNumberBaseAttributeClass<float, AttributeDescriptionFloat>
 {
 public:
@@ -146,6 +170,7 @@ struct AutoRegisterFloatAttribute : public AutoRegisterAttribute<AttributeFloat,
     };
 };
 
+/// Concrete unsigned integer attribute implementation for UINT descriptions.
 class AttributeUint : public IntegerNumberBaseAttributeClass<uint32_t, AttributeDescriptionUint>
 {
 public:
@@ -161,6 +186,7 @@ struct AutoRegisterUintAttribute : public AutoRegisterAttribute<AttributeUint, A
     };
 };
 
+/// Concrete long integer attribute implementation for LONG descriptions.
 class AttributeLong : public IntegerNumberBaseAttributeClass<long, AttributeDescriptionLong>
 {
 public:
@@ -176,6 +202,7 @@ struct AutoRegisterLongAttribute : public AutoRegisterAttribute<AttributeLong, A
     };
 };
 
+/// Concrete character number attribute implementation for CHARN descriptions.
 class AttributeCharNumber : public IntegerNumberBaseAttributeClass<char, AttributeDescriptionCharNumber>
 {
 public:
@@ -191,6 +218,9 @@ struct AutoRegisterCharNumberAttribute : public AutoRegisterAttribute<AttributeC
     };
 };
 
+/// Concrete attribute implementation for character text values.
+///
+/// Uses `AttributeDescriptionCharText` to enforce valid char boundaries and serialization.
 class AttributeCharText : public Attribute
 {
 private:
@@ -205,6 +235,8 @@ public:
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeCharText>(*this); }
     inline const uint8_t getMinimum() { return desc_->getMinimum(); }
     inline const uint8_t getMaximum() { return desc_->getMaximum(); }
+
+    /// Set the character value only if it lies within the allowed range.
     bool setValue(char value)
     {
         if (sizeof(value) >= getMinimum() && sizeof(value) <= getMaximum())
@@ -215,6 +247,7 @@ public:
         return false;
     }
 
+    /// Attach the matching char text description and initialize the value.
     void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override
     {
         if (dynamic_cast<AttributeDescriptionCharText *>(desc))
@@ -239,6 +272,9 @@ struct AutoRegisterCharTextAttribute : public AutoRegisterAttribute<AttributeCha
     };
 };
 
+/// Concrete boolean attribute implementation.
+///
+/// Stores a boolean value and exposes UI/control integration via the description.
 class AttributeBool : public Attribute
 {
 private:
@@ -251,6 +287,8 @@ public:
     AttributeType getType() override { return desc_->getType(); }
     AttributeDescription *getDescription() override { return desc_; }
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeBool>(*this); }
+
+    /// Bind the bool description and initialize the value to false.
     void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override
     {
         if (dynamic_cast<AttributeDescriptionBool *>(desc))
@@ -282,6 +320,9 @@ struct AutoRegisterBoolAttribute : public AutoRegisterAttribute<AttributeBool, A
 
 class AttributesContainer;
 
+/// Attribute wrapper for a nested cluster of attributes.
+///
+/// Contains a child `AttributesContainer` and delegates description/serialization to it.
 class AttributeCluster : public Attribute
 {
 private:
@@ -289,24 +330,42 @@ private:
     AttributeDescriptionCluster *desc_;
 
 public:
+    /// Construct an empty cluster attribute.
     AttributeCluster();
+
+    /// Copy constructor clones the contained attribute container.
     AttributeCluster(const AttributeCluster &attributeCluster);
+
+    /// Access the nested attributes container held by this cluster.
     AttributesContainer *getAttributeContainer();
+
     ~AttributeCluster() override;
 
 public:
     std::string getName() override { return desc_->getName(); }
     AttributeType getType() override { return desc_->getType(); }
     AttributeDescription *getDescription() override { return desc_; }
+
+    /// Clone this cluster attribute, including its nested attribute container.
     std::unique_ptr<Attribute> clone() override;
+
+    /// Attach the cluster description and build the inner attribute container.
     void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override;
+
+    /// Serialize the nested cluster contents into JSON.
     bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
+
+    /// Create UI controls for the nested cluster contents.
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     void updateValue() override {}
 };
 
+/// Declaration placeholder for the cluster auto-registration helper.
 struct AutoRegisterClusterAttribute;
 
+/// Concrete string attribute implementation for text values.
+///
+/// Uses `AttributeDescriptionString` to enforce min/max length and manage serialization.
 class AttributeString : public Attribute
 {
 private:
@@ -321,6 +380,8 @@ public:
     uint32_t getMaximum() { return desc_->getMaximum(); }
     AttributeDescription *getDescription() override { return desc_; }
     std::unique_ptr<Attribute> clone() override { return std::make_unique<AttributeString>(*this); }
+
+    /// Bind the string description and reset to an empty string.
     void setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory) override
     {
         if (dynamic_cast<AttributeDescriptionString *>(desc))
@@ -331,6 +392,7 @@ public:
     }
     bool saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory) override;
 
+    /// Set the string value only if length fits within bounds.
     bool setValue(std::string value)
     {
         if (value.length() >= desc_->getMinimum() && value.length() <= desc_->getMaximum())
@@ -343,6 +405,8 @@ public:
     std::string getValue() { return value_; }
     void controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory) override;
     ~AttributeString() override = default;
+
+    /// Truncate the string if it exceeds the allowed maximum length.
     void updateValue() override {
         if (value_.length() > getMaximum()) {
             value_.resize(getMaximum());

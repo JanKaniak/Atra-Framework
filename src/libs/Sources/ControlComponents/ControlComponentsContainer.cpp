@@ -1,6 +1,7 @@
 #include "ControlComponentsContainer.h"
 #include "AttributesContainer.h"
 
+/// Return the registered control type string for the named attribute.
 std::string ControlComponentsContainer::getControlTypeByAttributeName(std::string attributeName)
 {
     for (auto &component : components_)
@@ -13,6 +14,7 @@ std::string ControlComponentsContainer::getControlTypeByAttributeName(std::strin
     return "";
 }
 
+/// Determine if a control already exists for the given attribute name.
 bool ControlComponentsContainer::existControlType(std::string attributeName)
 {
     if (attributeName.find_first_of(".", 0) == attributeName.npos)
@@ -31,6 +33,7 @@ bool ControlComponentsContainer::existControlType(std::string attributeName)
     return false;
 }
 
+/// Return the index of a component bound to the named attribute, or -1 if none.
 int ControlComponentsContainer::positionOfComponentByAttributeName(std::string attributeName)
 {
     for (int i = 0; i < components_.size(); ++i)
@@ -43,6 +46,7 @@ int ControlComponentsContainer::positionOfComponentByAttributeName(std::string a
     return -1;
 }
 
+/// Add a control component and bind it to the provided attribute.
 void ControlComponentsContainer::addControl(std::unique_ptr<ControlComponent> control, Attribute *attribute)
 {
     if (control != nullptr)
@@ -56,6 +60,7 @@ void ControlComponentsContainer::addControl(std::unique_ptr<ControlComponent> co
         components_.at(components_.size() - 1)->setAttribute(attribute);
     }
 }
+/// Insert a control component at the given position, or append if the index is out of range.
 void ControlComponentsContainer::addControl(int position, std::unique_ptr<ControlComponent> control, Attribute *attribute)
 {
     if (position < 0 || control != nullptr)
@@ -77,6 +82,7 @@ void ControlComponentsContainer::addControl(int position, std::unique_ptr<Contro
     }
 }
 
+/// Remove the control component bound to the specified attribute.
 bool ControlComponentsContainer::deleteControlComponent(Attribute *attribute)
 {
     for (auto it = components_.begin(); it != components_.end(); ++it)
@@ -91,6 +97,7 @@ bool ControlComponentsContainer::deleteControlComponent(Attribute *attribute)
     return false;
 }
 
+/// Replace the component at the given index, or append if the position is invalid.
 bool ControlComponentsContainer::swapControlComponent(int position, std::unique_ptr<ControlComponent> control, Attribute *attribute)
 {
     if (control == nullptr)
@@ -112,6 +119,7 @@ bool ControlComponentsContainer::swapControlComponent(int position, std::unique_
     return true;
 }
 
+/// Return the component associated with the given attribute pointer.
 ControlComponent *ControlComponentsContainer::getControlComponentByAttribute(Attribute *attribute)
 {
     for (int i = 0; i < components_.size(); ++i)
@@ -124,6 +132,7 @@ ControlComponent *ControlComponentsContainer::getControlComponentByAttribute(Att
     return nullptr;
 }
 
+/// Delete an attribute and its associated control component, reporting errors by message.
 void ControlComponentsContainer::deleteAttribute(Attribute *attribute, AttributesContainer *attributesContainer, std::vector<Message> &messageHistory)
 {
     deleteControlComponent(attribute);
@@ -139,6 +148,7 @@ void ControlComponentsContainer::deleteAttribute(Attribute *attribute, Attribute
     }
 }
 
+/// Render all managed control components in a table and handle edit/delete UI.
 void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
 {
     if (components_.empty())
@@ -315,6 +325,7 @@ void ControlComponentsContainer::draw(std::vector<Message> &messageHistory)
     }
 }
 
+/// Remove every managed control component and notify via message history.
 void ControlComponentsContainer::deleteAllControlComponents(std::vector<Message> &messageHistory)
 {
     if (components_.size() == 0)
@@ -325,6 +336,7 @@ void ControlComponentsContainer::deleteAllControlComponents(std::vector<Message>
     messageHistory.emplace_back("All control components were successfuly removed!");
 }
 
+/// Add or assign a control type for an attribute identified by path and edit type.
 bool ControlComponentsContainer::addControlTypeByNames(std::string path, std::string editType, std::vector<Message> &messageHistory)
 {
     if (path.empty())
@@ -402,6 +414,7 @@ bool ControlComponentsContainer::addControlTypeByNames(std::string path, std::st
     return tmpComponent->getContainer()->addControlTypeByNames(tmpPath, editType, messageHistory);
 }
 
+/// Add a default control type for an attribute identified by path.
 bool ControlComponentsContainer::addDefaultControlType(std::string path, std::vector<Message> &messageHistory)
 {
     if (path.empty())
@@ -474,6 +487,7 @@ bool ControlComponentsContainer::addDefaultControlType(std::string path, std::ve
     return tmpComponent->getContainer()->addDefaultControlType(tmpPath, messageHistory);
 }
 
+/// Swap the control implementation for the given attribute using a new edit type.
 bool ControlComponentsContainer::swapControlComponentByAttribute(Attribute *attribute, std::string editType, std::vector<Message> &messageHistory)
 {
     if (attribute == nullptr)
@@ -503,6 +517,7 @@ bool ControlComponentsContainer::swapControlComponentByAttribute(Attribute *attr
     return false;
 }
 
+/// Add a default control for the specified attribute using the factory.
 bool ControlComponentsContainer::addControl(Attribute *attribute, std::vector<Message> &messageHistory)
 {
     Factory *factory = controlComponentsFactories_->getFactory(attribute->getType());

@@ -3,6 +3,7 @@
 
 // INT
 
+/// Construct the integer edit factory and register its supported prototypes.
 IntEditFactory::IntEditFactory() : Factory(AttributeType::INT)
 {
     this->registerPrototype<IntSlider>();
@@ -10,6 +11,7 @@ IntEditFactory::IntEditFactory() : Factory(AttributeType::INT)
     this->registerPrototype<IntDrag>();
 }
 
+/// Return the singleton factory for integer edit controls.
 IntEditFactory *IntEditFactory::getInstance()
 {
     static IntEditFactory *instance;
@@ -21,6 +23,7 @@ IntEditFactory *IntEditFactory::getInstance()
     return instance;
 }
 
+/// Register a concrete integer edit control prototype for this factory.
 template <typename EditTypeIntT>
 inline void IntEditFactory::registerPrototype()
 {
@@ -35,6 +38,7 @@ inline void IntEditFactory::registerPrototype()
 
 // DOUBLE
 
+/// Construct the double edit factory and register its supported prototypes.
 DoubleEditFactory::DoubleEditFactory() : Factory(AttributeType::DOUBLE)
 {
     this->registerPrototype<DoubleSlider>();
@@ -42,6 +46,7 @@ DoubleEditFactory::DoubleEditFactory() : Factory(AttributeType::DOUBLE)
     this->registerPrototype<DoubleDrag>();
 }
 
+/// Return the singleton factory for double edit controls.
 DoubleEditFactory *DoubleEditFactory::getInstance()
 {
     static DoubleEditFactory *instance;
@@ -53,6 +58,7 @@ DoubleEditFactory *DoubleEditFactory::getInstance()
     return instance;
 }
 
+/// Register a concrete double edit control prototype for this factory.
 template <typename EditTypeDoubleT>
 inline void DoubleEditFactory::registerPrototype()
 {
@@ -75,6 +81,7 @@ FloatEditFactory::FloatEditFactory() : Factory(AttributeType::FLOAT)
     this->registerPrototype<FloatDrag>();
 }
 
+/// Return the singleton factory for float edit controls.
 FloatEditFactory *FloatEditFactory::getInstance()
 {
     static FloatEditFactory *instance;
@@ -86,6 +93,7 @@ FloatEditFactory *FloatEditFactory::getInstance()
     return instance;
 }
 
+/// Register a concrete float edit control prototype for this factory.
 template <typename EditTypeFloatT>
 inline void FloatEditFactory::registerPrototype()
 {
@@ -102,11 +110,13 @@ inline void FloatEditFactory::registerPrototype()
 // CHAR Text
 
 
+/// Construct the char-text edit factory and register its supported prototype.
 CharTextEditFactory::CharTextEditFactory() : Factory(AttributeType::CHART)
 {
     this->registerPrototype<CharTextField>();
 }
 
+/// Return the singleton factory for char-text edit controls.
 CharTextEditFactory *CharTextEditFactory::getInstance()
 {
     static CharTextEditFactory *instance;
@@ -118,6 +128,7 @@ CharTextEditFactory *CharTextEditFactory::getInstance()
     return instance;
 }
 
+/// Register a concrete char-text edit control prototype for this factory.
 template <typename EditTypeCharT>
 inline void CharTextEditFactory::registerPrototype()
 {
@@ -132,6 +143,7 @@ inline void CharTextEditFactory::registerPrototype()
 
 // CHAR Text
 
+/// Construct the char-number edit factory and register its supported prototypes.
 CharNumberEditFactory::CharNumberEditFactory() : Factory(AttributeType::CHARN)
 {
     this->registerPrototype<CharSlider>();
@@ -139,6 +151,7 @@ CharNumberEditFactory::CharNumberEditFactory() : Factory(AttributeType::CHARN)
     this->registerPrototype<CharDrag>();
 }
 
+/// Return the singleton factory for char-number edit controls.
 CharNumberEditFactory *CharNumberEditFactory::getInstance()
 {
     static CharNumberEditFactory *instance;
@@ -150,6 +163,7 @@ CharNumberEditFactory *CharNumberEditFactory::getInstance()
     return instance;
 }
 
+/// Register a concrete char-number edit control prototype for this factory.
 template <typename EditTypeCharT>
 inline void CharNumberEditFactory::registerPrototype()
 {
@@ -164,12 +178,14 @@ inline void CharNumberEditFactory::registerPrototype()
 
 // BOOL
 
+/// Construct the logic edit factory and register its supported prototypes.
 LogicEditFactory::LogicEditFactory() : Factory(AttributeType::BOOL)
 {
     this->registerPrototype<CheckBox>();
     this->registerPrototype<LogicButton>();
 }
 
+/// Return the singleton factory for logic edit controls.
 LogicEditFactory *LogicEditFactory::getInstance()
 {
     static LogicEditFactory *instance;
@@ -181,6 +197,7 @@ LogicEditFactory *LogicEditFactory::getInstance()
     return instance;
 }
 
+/// Register a concrete logic edit control prototype for this factory.
 template <typename EditTypeLogicT>
 inline void LogicEditFactory::registerPrototype()
 {
@@ -196,11 +213,13 @@ inline void LogicEditFactory::registerPrototype()
 
 // CLUSTER
 
+/// Construct the cluster edit factory and register its supported prototype.
 ClusterEditFactory::ClusterEditFactory() : Factory(AttributeType::CLUSTER)
 {
     this->registerPrototype<Tree>();
 }
 
+/// Return the singleton factory for cluster edit controls.
 ClusterEditFactory *ClusterEditFactory::getInstance()
 {
     static ClusterEditFactory *instance;
@@ -212,6 +231,7 @@ ClusterEditFactory *ClusterEditFactory::getInstance()
     return instance;
 }
 
+/// Register a concrete cluster edit control prototype for this factory.
 template <typename EditTypeClusterT>
 inline void ClusterEditFactory::registerPrototype()
 {
@@ -228,6 +248,7 @@ inline void ClusterEditFactory::registerPrototype()
 
 // LONG
 
+/// Construct the long integer edit factory and register its supported prototypes.
 LongEditFactory::LongEditFactory() : Factory(AttributeType::LONG)
 {
     this->registerPrototype<LongSlider>();
@@ -235,6 +256,7 @@ LongEditFactory::LongEditFactory() : Factory(AttributeType::LONG)
     this->registerPrototype<LongDrag>();
 }
 
+/// Return the singleton factory for long integer edit controls.
 LongEditFactory *LongEditFactory::getInstance()
 {
     static LongEditFactory *instance;
@@ -246,6 +268,7 @@ LongEditFactory *LongEditFactory::getInstance()
     return instance;
 }
 
+/// Register a concrete long integer edit control prototype for this factory.
 template <typename EditTypeLongT>
 inline void LongEditFactory::registerPrototype()
 {
@@ -262,11 +285,13 @@ inline void LongEditFactory::registerPrototype()
 
 // String
 
+/// Construct the string edit factory and register its supported prototype.
 StringEditFactory::StringEditFactory() : Factory(AttributeType::STRING)
 {
     this->registerPrototype<StringTextField>();
 }
 
+/// Return the singleton factory for string edit controls.
 StringEditFactory *StringEditFactory::getInstance()
 {
     static StringEditFactory *instance;
@@ -278,6 +303,7 @@ StringEditFactory *StringEditFactory::getInstance()
     return instance;
 }
 
+/// Register a concrete string edit control prototype for this factory.
 template <typename EditTypeStringT>
 inline void StringEditFactory::registerPrototype()
 {
@@ -294,6 +320,7 @@ inline void StringEditFactory::registerPrototype()
 
 // UINT
 
+/// Construct the unsigned integer edit factory and register its supported prototypes.
 UintEditFactory::UintEditFactory() : Factory(AttributeType::UINT)
 {
     this->registerPrototype<UintSlider>();
@@ -301,6 +328,7 @@ UintEditFactory::UintEditFactory() : Factory(AttributeType::UINT)
     this->registerPrototype<UintDrag>();
 }
 
+/// Return the singleton factory for unsigned integer edit controls.
 UintEditFactory *UintEditFactory::getInstance()
 {
     static UintEditFactory *instance;
@@ -312,6 +340,7 @@ UintEditFactory *UintEditFactory::getInstance()
     return instance;
 }
 
+/// Register a concrete unsigned integer edit control prototype for this factory.
 template <typename EditTypeUintT>
 inline void UintEditFactory::registerPrototype()
 {
@@ -328,6 +357,7 @@ inline void UintEditFactory::registerPrototype()
 
 // ControlComponentsFactoriesContainer
 
+/// Return the singleton registry for all control component factories.
 ControlComponentsFactoriesContainer *ControlComponentsFactoriesContainer::getInstance()
 {
     static ControlComponentsFactoriesContainer *instance;
@@ -338,6 +368,7 @@ ControlComponentsFactoriesContainer *ControlComponentsFactoriesContainer::getIns
     return instance;
 }
 
+/// Return the factory responsible for the given attribute type, or nullptr if missing.
 Factory *ControlComponentsFactoriesContainer::getFactory(AttributeType type)
 {
     if (factoryChoice_.find(type) == factoryChoice_.end())
@@ -347,6 +378,7 @@ Factory *ControlComponentsFactoriesContainer::getFactory(AttributeType type)
     return factoryChoice_[type];
 }
 
+/// Register a factory instance for the given attribute type.
 void ControlComponentsFactoriesContainer::registerFactory(Factory *factory)
 {
     factoryChoice_[factory->getType()] = factory;

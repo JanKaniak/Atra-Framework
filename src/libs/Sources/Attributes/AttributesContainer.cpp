@@ -1,18 +1,20 @@
 #include "AttributesContainer.h"
 #include "ControlComponentsContainer.h"
 
+/// Default constructor initializing the attribute factory.
 AttributesContainer::AttributesContainer()
 {
     attributeFactory_ = AttributeFactory::getInstance();
 }
 
-AttributesContainer::AttributesContainer(AttributesDescriptionsContainer *attributeDesc)
-{
-    attributeDescs_ = attributeDesc;
+// Constructor initializing the container with a given description store.
+AttributesContainer::AttributesContainer(AttributesDescriptionsContainer *attributeDescs) {
     attributeFactory_ = AttributeFactory::getInstance();
+    attributeDescs_ = attributeDescs;
 }
 
-bool AttributesContainer::createAttributes(std::vector<Message> &messagesHistory)
+/// Create attribute instances for all descriptions that are not yet assigned.
+bool AttributesContainer::AttributesContainer::createAttributes(std::vector<Message> &messagesHistory)
 {
     bool noChange = false;
     for (int i = 0; i < attributeDescs_->getSize(); i++)
@@ -40,6 +42,7 @@ bool AttributesContainer::createAttributes(std::vector<Message> &messagesHistory
     return noChange;
 }
 
+/// Delete the given attribute instance and its associated description.
 bool AttributesContainer::deleteAttribute(Attribute *attribute)
 {
     for (auto it = attributes_.begin(); it != attributes_.end(); ++it)
@@ -50,15 +53,54 @@ bool AttributesContainer::deleteAttribute(Attribute *attribute)
         }
         AttributeDescription *desc = it->get()->getDescription();
         attributes_.erase(it);
-        if (attributeDescs_->deleteDescription(desc))
-        {
+        return attributeDescs_->deleteDescription(desc);
+    }
+    return false;
+}
 
-            return true;
+/// Delete an attribute by its name and its associated description.
+bool AttributesContainer::deleteAttribute(std::string_view name)
+{
+    for (auto it = attributes_.begin(); it != attributes_.end(); ++it)
+    {
+        if (it->get()->getName().compare(name.data()) == 0)
+        {
+            AttributeDescription *desc = it->get()->getDescription();
+            attributes_.erase(it);
+            return attributeDescs_->deleteDescription(desc);
         }
     }
     return false;
 }
 
+/// Delete an attribute by a dotted path through nested clusters.
+bool AttributesContainer::deleteAttributeByPath(std::string path)
+{
+    if (path.empty())
+    {
+        return false;
+    }
+    int index = path.find_first_of(".", 0);
+    std::string tmpName;
+    std::string tmpPath;
+    if (index != path.npos)
+    {
+        tmpName = path.substr(0, 0 + index).data();
+        tmpPath = (index + 1 < path.length()) ? path.substr(index + 1, path.length()).data() : "";
+    }
+    else
+    {
+        deleteAttribute(path);
+    }
+    AttributeCluster *tmpAttribute = dynamic_cast<AttributeCluster *>(giveAttributeByName(tmpName));
+    if (tmpAttribute == nullptr || tmpAttribute->getAttributeContainer() == nullptr)
+    {
+        return false;
+    }
+    return tmpAttribute->getAttributeContainer()->deleteAttributeByPath(tmpPath);
+}
+
+/// Find an attribute by its name.
 Attribute *AttributesContainer::giveAttributeByName(std::string name)
 {
     for (auto &object : attributes_)
@@ -71,6 +113,7 @@ Attribute *AttributesContainer::giveAttributeByName(std::string name)
     return nullptr;
 }
 
+/// Check whether the container has an attribute with the given name.
 bool AttributesContainer::contains(std::string attributeName)
 {
     for (int i = 0; i < attributes_.size(); ++i)
@@ -83,6 +126,7 @@ bool AttributesContainer::contains(std::string attributeName)
     return false;
 }
 
+/// Return the index of an attribute by name, or -1 if not found.
 int AttributesContainer::getPosition(std::string attributeName)
 {
     for (int i = 0; i < attributes_.size(); ++i)
@@ -95,6 +139,9 @@ int AttributesContainer::getPosition(std::string attributeName)
     return -1;
 }
 
+/// Assign control components to every contained attribute.
+///
+/// This iterates through all attributes and invokes their `controlOptions` handlers.
 void AttributesContainer::setControlTypes(ControlComponentsContainer *components, std::vector<Message> &messagehistory)
 {
     for (int i = 0; i < attributes_.size(); ++i)
@@ -104,11 +151,13 @@ void AttributesContainer::setControlTypes(ControlComponentsContainer *components
     }
 }
 
+/// Destructor clearing the description container reference.
 AttributesContainer::~AttributesContainer()
 {
     attributeDescs_ = nullptr;
 }
 
+/// Remove all attributes from this container.
 void AttributesContainer::deleteAllAttributes(std::vector<Message> &messageHistory)
 {
     if (attributes_.size() == 0)
@@ -119,6 +168,7 @@ void AttributesContainer::deleteAllAttributes(std::vector<Message> &messageHisto
     messageHistory.emplace_back("All attributes were successfuly removed!");
 }
 
+/// Lookup an attribute by a dotted path through nested clusters.
 Attribute *AttributesContainer::getAttributeByPath(std::string path)
 {
     if (path.empty())
@@ -131,8 +181,10 @@ Attribute *AttributesContainer::getAttributeByPath(std::string path)
     if (index != path.npos)
     {
         tmpName = path.substr(0, 0 + index).data();
-        tmpPath = (index+1 < path.length()) ? path.substr(index+1, path.length()).data() : "";
-    } else {
+        tmpPath = (index + 1 < path.length()) ? path.substr(index + 1, path.length()).data() : "";
+    }
+    else
+    {
         return giveAttributeByName(path.data());
     }
     Attribute *tmpAttribute = giveAttributeByName(tmpName);
@@ -141,4 +193,15 @@ Attribute *AttributesContainer::getAttributeByPath(std::string path)
         return dynamic_cast<AttributeCluster *>(tmpAttribute)->getAttributeContainer()->getAttributeByPath(tmpPath);
     }
     return tmpAttribute;
+}
+
+const std::vector<Attribute *> AttributesContainer::getAttributes() const
+{
+    std::vector<Attribute *> tmpVector;
+    tmpVector.resize(attributes_.size());
+    for (auto &attribute : attributes_)
+    {
+        tmpVector.push_back(attribute.get());
+    }
+    return tmpVector;
 }

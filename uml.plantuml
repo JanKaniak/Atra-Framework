@@ -26,7 +26,7 @@ package AttributeDescriptions {
     enum Category
     package ImplementedAttributeDescriptions
     class "{TYP}NumberBaseClass" as GenericNumberBaseClass
-    note  "Tento genericky model zastupuje nasledujuce typy {TYP} : Integer, Decimal" as N1
+    note  "{TYP} určuje názov triedy: Integer, Decimal" as N1
 
 }
 
@@ -116,6 +116,38 @@ AttributeDescriptionLong -up-|> IntegerNumberBaseClass
 AttributeDescriptionCharNumber --|> IntegerNumberBaseClass
 
 
+AttributeDescriptionDouble -right-|> DecimalNumberBaseClass
+AttributeDescriptionFloat -left-|> DecimalNumberBaseClass
+@enduml
+
+@startuml ImplementedIntegerNumberAttributeDescriptions
+package ImplementedIntegerNumberAttributeDescriptions {
+    class AttributeDescription
+    class IntegerNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>
+
+    class AttributeDescriptionInt
+    class AttributeDescriptionUnsignedInt
+    class AttributeDescriptionLong
+    class AttributeDescriptionCharNumber
+}
+
+IntegerNumberBaseClass -down-|> AttributeDescription
+
+AttributeDescriptionInt -right-|> IntegerNumberBaseClass
+AttributeDescriptionUnsignedInt -left-|> IntegerNumberBaseClass
+AttributeDescriptionLong -up-|> IntegerNumberBaseClass
+AttributeDescriptionCharNumber --|> IntegerNumberBaseClass
+@enduml
+
+@startuml ImplementedDecimalNumberAttributeDescriptions
+package ImplementedDecimalNumberAttributeDescriptions {
+    class AttributeDescription
+    class DecimalNumberBaseClass<TypeT, AttributeTypeEnumT, ImGuiDataTypeT, TypeEnumT>
+    class AttributeDescriptionDouble
+    class AttributeDescriptionFloat
+}
+
+DecimalNumberBaseClass -up-|> AttributeDescription
 AttributeDescriptionDouble -right-|> DecimalNumberBaseClass
 AttributeDescriptionFloat -left-|> DecimalNumberBaseClass
 @enduml
@@ -215,37 +247,44 @@ AttributeBool --|> Attribute
 
 @enduml
 
-@startuml ImplementedNumberAttributes
+@startuml ImplementedIntegerNumberAttributes
 allowmixing
-package ImplementedNumberAttributes {
+package ImplementedIntegerNumberAttributes {
     class Attribute
-    class IntegerNumberBaseAttributeClass
-    class DecimalNumberBaseAttributeClass
+    class IntegerNumberBaseAttributeClass<typename TypeT,typename AttributeDescriptionT>
 
     class AttributeInt
     class AttributeUnsignedInt
     class AttributeLong
     class AttributeCharNumber
 
+    package ImplementedNumberAttributeDescriptions
+}
+
+IntegerNumberBaseAttributeClass -up-|> Attribute
+IntegerNumberBaseAttributeClass -up-> ImplementedNumberAttributeDescriptions
+
+AttributeInt -left-|> IntegerNumberBaseAttributeClass
+AttributeUnsignedInt -up-|> IntegerNumberBaseAttributeClass
+AttributeLong -up-|> IntegerNumberBaseAttributeClass
+AttributeCharNumber -right-|> IntegerNumberBaseAttributeClass
+@enduml
+
+@startuml ImplementedDecimalNumberAttributes
+allowmixing
+package ImplementedDecimalNumberAttributes {
+    class Attribute
+    class DecimalNumberBaseAttributeClass<typename TypeT,typename AttributeDescriptionT>
     class AttributeDouble
     class AttributeFloat
 
     package ImplementedNumberAttributeDescriptions
 }
 
-IntegerNumberBaseAttributeClass -up-|> Attribute
-DecimalNumberBaseAttributeClass --|> Attribute
-IntegerNumberBaseAttributeClass -up-> ImplementedNumberAttributeDescriptions
-DecimalNumberBaseAttributeClass --> ImplementedNumberAttributeDescriptions
-
-
-AttributeInt -up-|> IntegerNumberBaseAttributeClass
-AttributeUnsignedInt -up-|> IntegerNumberBaseAttributeClass
-AttributeLong -up-|> IntegerNumberBaseAttributeClass
-AttributeCharNumber -right-|> IntegerNumberBaseAttributeClass
-
-AttributeDouble --|> DecimalNumberBaseAttributeClass
-AttributeFloat --|> DecimalNumberBaseAttributeClass
+DecimalNumberBaseAttributeClass -up-|> Attribute
+DecimalNumberBaseAttributeClass -up-> ImplementedNumberAttributeDescriptions
+AttributeDouble -right-|> DecimalNumberBaseAttributeClass
+AttributeFloat -left-|> DecimalNumberBaseAttributeClass
 @enduml
 
 @startuml ImplementedLogicAttributes
@@ -281,7 +320,7 @@ package ImplementedClusterAttribute {
 }
 
 AttributeCluster -right-|> Attribute
-AttributeCluster --> AttributeDescriptionCluster
+AttributeCluster -left-> AttributeDescriptionCluster
 @enduml
 
 
@@ -352,7 +391,7 @@ package ImplementedNumberControlComponents {
     class "ControlComponent{TYP}" as GenericControlComponent
     class "{TYP}EditFactory" as GenericEditFactory
 
-    note "Tento genericky model zastupuje \nnasledujuce typy {TYP}: \n*Int \n*Long \n*UInt \n*Double \n*Float" as N1
+    note "{TYP} určuje názov triedy: \n*Int \n*Long \n*UInt \n*Double \n*Float" as N1
 
     class Factory
     class ControlComponentsFactoriesContainer

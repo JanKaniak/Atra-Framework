@@ -3,8 +3,12 @@
 #include "Factory.h"
 #include "ControlComponentsContainer.h"
 
+/// Virtual base destructor for all attribute types.
 Attribute::~Attribute() {}
 
+/// Serialize integer attribute metadata and current value.
+///
+/// This writes the attribute name, bounds, and active value into JSON.
 template <typename TypeT, typename AttributeDescriptionT>
 bool IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
@@ -15,6 +19,9 @@ bool IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::saveToJson(n
     return true;
 }
 
+/// Serialize decimal attribute metadata and current value.
+///
+/// Writes the attribute name, bounds, and current numeric value into JSON.
 template <typename TypeT, typename AttributeDescriptionT>
 bool DecimalNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
@@ -26,6 +33,9 @@ bool DecimalNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::saveToJson(n
 }
 
 
+/// Serialize a char-text attribute into JSON.
+///
+/// Stores the name, bounds, and the current character value.
 bool AttributeCharText::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
@@ -35,6 +45,9 @@ bool AttributeCharText::saveToJson(nlohmann::ordered_json &json, std::vector<Mes
     return true;
 }
 
+/// Serialize a boolean attribute into JSON.
+///
+/// Only the attribute name and current boolean state are saved.
 bool AttributeBool::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
@@ -42,6 +55,9 @@ bool AttributeBool::saveToJson(nlohmann::ordered_json &json, std::vector<Message
     return true;
 }
 
+/// Serialize a nested cluster attribute into JSON.
+///
+/// This creates a JSON array of contained attributes and delegates serialization to each child.
 bool AttributeCluster::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
@@ -62,6 +78,9 @@ bool AttributeCluster::saveToJson(nlohmann::ordered_json &json, std::vector<Mess
     return true;
 }
 
+/// Serialize a string attribute into JSON.
+///
+/// Writes the attribute name, length bounds, and the current string value.
 bool AttributeString::saveToJson(nlohmann::ordered_json &json, std::vector<Message> &messagesHistory)
 {
     json.push_back(nlohmann::ordered_json::object_t::value_type("Attribute name", getName()));
@@ -71,16 +90,19 @@ bool AttributeString::saveToJson(nlohmann::ordered_json &json, std::vector<Messa
     return true;
 }
 
+/// Create an empty cluster attribute holding a nested container.
 AttributeCluster::AttributeCluster()
 {
     value_ = std::make_unique<AttributesContainer>();
 }
 
+/// Copy constructor allocates a fresh nested container for the cloned cluster.
 AttributeCluster::AttributeCluster(const AttributeCluster &attributeCluster)
 {
     value_ = std::make_unique<AttributesContainer>();
 }
 
+/// Assign the cluster description and initialize contained attributes.
 void AttributeCluster::setDescription(AttributeDescription *desc, std::vector<Message> &messagesHistory)
 {
     if (dynamic_cast<AttributeDescriptionCluster *>(desc))
@@ -91,6 +113,9 @@ void AttributeCluster::setDescription(AttributeDescription *desc, std::vector<Me
     }
 }
 
+/// Build ImGui controls for an integer attribute.
+///
+/// This allows the user to choose a control type and displays the attribute metadata.
 template <typename TypeT, typename AttributeDescriptionT>
 void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
 {
@@ -127,6 +152,9 @@ void IntegerNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptio
     
 }
 
+/// Build ImGui controls for a decimal attribute.
+///
+/// Displays the attribute label and lets the user select a control type for editing.
 template <typename TypeT, typename AttributeDescriptionT>
 void DecimalNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
 {
@@ -163,6 +191,9 @@ void DecimalNumberBaseAttributeClass<TypeT, AttributeDescriptionT>::controlOptio
     
 }
 
+/// Build ImGui controls for a character text attribute.
+///
+/// Uses description metadata to render the control selection UI.
 void AttributeCharText::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
 {
     std::string controlType;
@@ -197,6 +228,9 @@ void AttributeCharText::controlOptions(int position, ControlComponentsContainer 
 }
 
 
+/// Build ImGui controls for a boolean attribute.
+///
+/// Presents the attribute name and lets the user choose an input component.
 void AttributeBool::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
 {
     std::string controlType;
@@ -230,6 +264,9 @@ void AttributeBool::controlOptions(int position, ControlComponentsContainer *com
     }
 }
 
+/// Build ImGui controls for a nested cluster attribute.
+///
+/// Exposes the cluster container and propagates control type selection to child attributes.
 void AttributeCluster::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
 {
     std::string controlType;
@@ -273,6 +310,7 @@ void AttributeCluster::controlOptions(int position, ControlComponentsContainer *
     }
 }
 
+/// Clone this cluster attribute, including its nested container state.
 std::unique_ptr<Attribute> AttributeCluster::clone() { return std::make_unique<AttributeCluster>(*this); }
 
 struct AutoRegisterClusterAttribute : public AutoRegisterAttribute<AttributeCluster, AttributeType::CLUSTER>
@@ -283,17 +321,21 @@ struct AutoRegisterClusterAttribute : public AutoRegisterAttribute<AttributeClus
     };
 };
 
+/// Destroy the cluster attribute and release its nested container.
 AttributeCluster::~AttributeCluster()
 {
     value_ = nullptr;
 }
 
+/// Access the nested attribute container for this cluster.
 AttributesContainer *AttributeCluster::getAttributeContainer()
 {
     return value_.get();
 }
 
-
+/// Build ImGui controls for a string attribute.
+///
+/// Displays the attribute name and lets the user choose the editor component.
 void AttributeString::controlOptions(int position, ControlComponentsContainer *components, ControlComponentsFactoriesContainer *controlComponentsFactories, std::vector<Message> &messagesHistory)
 {
     std::string controlType;

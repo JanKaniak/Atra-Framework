@@ -5,6 +5,10 @@
 #include <tuple>
 #include <variant>
 
+/// Control component for editing single char/text attributes.
+///
+/// This component renders an ImGui text input bound to an `AttributeCharText`
+/// instance and synchronizes changes back to the attribute.
 class CharTextField : public ControlComponentCharText<EditTypeCharText::TEXT>
 {
 public:
@@ -13,6 +17,7 @@ public:
         minimumWidth_ = 100;
     }
 
+    /// Render the char input control and update its bound attribute.
     void draw(std::vector<Message> &messageHistory) override
     {
         ImGui::PushItemWidth(40);
@@ -36,9 +41,15 @@ public:
         dimensions_.x = tmpControlTypeDimensions.x + (tmpDimensions.x * 1.2f);
         dimensions_.y = tmpDimensions.y + (tmpDimensions.y * 1.2f);
     }
+
+    /// Clone a new `CharTextField` instance for reuse.
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<CharTextField>(*this); };
 };
 
+/// Control component for editing string attributes.
+///
+/// This component renders a text input bound to an `AttributeString` and
+/// maintains an internal buffer sized to the attribute's maximum allowed length.
 class StringTextField : public ControlComponentString<EditTypeString::TEXT>
 {
 public:
@@ -48,6 +59,7 @@ public:
         maximumWidth_ = 200;
     }
 
+    /// Render the string input control and keep the attribute buffer synchronized.
     void draw(std::vector<Message> &messageHistory) override
     {
         if ((maximum_ * 10) <= maximumWidth_ && ((maximum_ * 10)) >= minimumWidth_)
@@ -77,5 +89,7 @@ public:
             }
         }
     }
+
+    /// Clone a new `StringTextField` instance.
     std::unique_ptr<ControlComponent> clone() override { return std::make_unique<StringTextField>(*this); };
 };

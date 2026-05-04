@@ -1,6 +1,7 @@
 #include "NumericInput.h"
 
 // Class IntSlider
+/// Render a horizontal integer slider and apply changed value back to the attribute.
 void IntSlider::draw(std::vector<Message> &messageHistory)
 {
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
@@ -18,6 +19,7 @@ void IntSlider::draw(std::vector<Message> &messageHistory)
 }
 
 // Class IntVSlider
+/// Render a vertical integer slider and synchronize its value with the attribute.
 void IntVSlider::draw(std::vector<Message> &messageHistory)
 {
 
@@ -38,6 +40,7 @@ void IntVSlider::draw(std::vector<Message> &messageHistory)
 
 
 // Class IntDrag
+/// Render an integer drag control and persist changes to the bound attribute.
 void IntDrag::draw(std::vector<Message> &messageHistory)
 {
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
@@ -61,6 +64,7 @@ void IntDrag::draw(std::vector<Message> &messageHistory)
 //---------------------------------------------------------------------------------------
 
 // Class DoubleSlider
+/// Render a horizontal double slider and write back to the attribute when changed.
 void DoubleSlider::draw(std::vector<Message> &messageHistory) { 
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
@@ -79,6 +83,7 @@ void DoubleSlider::draw(std::vector<Message> &messageHistory) {
 
 
 // Class DoubleVSlider
+/// Render a vertical double slider and update the attribute on drag.
 void DoubleVSlider::draw(std::vector<Message> &messageHistory) {
     ImVec2 size;
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
@@ -97,6 +102,7 @@ void DoubleVSlider::draw(std::vector<Message> &messageHistory) {
 
 
 // Class DoubleDrag
+/// Render a double-precision drag control and propagate updates to the attribute.
 void DoubleDrag::draw(std::vector<Message> &messageHistory) { 
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
@@ -116,6 +122,7 @@ void DoubleDrag::draw(std::vector<Message> &messageHistory) {
 
 
 // Class FloatSlider
+/// Render a horizontal float slider and store the updated value in the attribute.
 void FloatSlider::draw(std::vector<Message> &messageHistory) {
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
@@ -134,6 +141,7 @@ void FloatSlider::draw(std::vector<Message> &messageHistory) {
 
 
 // Class FloatVSlider
+/// Render a vertical float slider and keep the bound attribute in sync.
 void FloatVSlider::draw(std::vector<Message> &messageHistory) { 
     ImVec2 size;
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
@@ -153,6 +161,7 @@ void FloatVSlider::draw(std::vector<Message> &messageHistory) {
 
 
 // Class FloatDrag
+/// Render a float drag control and write the new float value back to the attribute.
 void FloatDrag::draw(std::vector<Message> &messageHistory) { 
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
@@ -173,6 +182,7 @@ void FloatDrag::draw(std::vector<Message> &messageHistory) {
 
 
 // Class CharSlider
+/// Render a character slider control and synchronize the selected char value.
 void CharSlider::draw(std::vector<Message> &messageHistory) {
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
@@ -191,6 +201,7 @@ void CharSlider::draw(std::vector<Message> &messageHistory) {
 
 
 // Class CharVSlider
+/// Render a vertical character slider and keep its bound attribute current.
 void CharVSlider::draw(std::vector<Message> &messageHistory) { 
     ImVec2 size;
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
@@ -209,6 +220,7 @@ void CharVSlider::draw(std::vector<Message> &messageHistory) {
 
 
 // Class CharDrag
+/// Render a drag control for character values and update the bound attribute.
 void CharDrag::draw(std::vector<Message> &messageHistory) { 
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
@@ -227,6 +239,7 @@ void CharDrag::draw(std::vector<Message> &messageHistory) {
 
 
 // Class LongSlider
+/// Render a horizontal long integer slider and save the value to the attribute.
 void LongSlider::draw(std::vector<Message> &messageHistory) {
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
@@ -245,6 +258,7 @@ void LongSlider::draw(std::vector<Message> &messageHistory) {
 
 
 // Class LongVSlider
+/// Render a vertical long integer slider and update the attribute value.
 void LongVSlider::draw(std::vector<Message> &messageHistory) { 
     ImVec2 size;
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
@@ -263,6 +277,7 @@ void LongVSlider::draw(std::vector<Message> &messageHistory) {
 
 
 // Class LongDrag
+/// Render a long integer drag control and persist the changed value.
 void LongDrag::draw(std::vector<Message> &messageHistory) { 
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
@@ -281,6 +296,7 @@ void LongDrag::draw(std::vector<Message> &messageHistory) {
 
 
 // Class UintSlider
+/// Render a horizontal unsigned integer slider and update the attribute value.
 void UintSlider::draw(std::vector<Message> &messageHistory) {
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);
@@ -299,6 +315,7 @@ void UintSlider::draw(std::vector<Message> &messageHistory) {
 
 
 // Class UintVSlider
+/// Render a vertical unsigned integer slider and keep the bound attribute in sync.
 void UintVSlider::draw(std::vector<Message> &messageHistory) { 
     ImVec2 size;
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
@@ -317,6 +334,7 @@ void UintVSlider::draw(std::vector<Message> &messageHistory) {
 
 
 // Class UintDrag
+/// Render an unsigned integer drag control and write changed values back to the attribute.
 void UintDrag::draw(std::vector<Message> &messageHistory) { 
     if (((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f > minimumWidth_) && ((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f < maximumWidth_)) {
         ImGui::PushItemWidth((float)(attribute_->getMaximum() - attribute_->getMinimum()) * 0.99f);

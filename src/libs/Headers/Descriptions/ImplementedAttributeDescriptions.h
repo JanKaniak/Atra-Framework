@@ -9,6 +9,9 @@
 #include <memory>
 #include <iostream>
 
+/// Base class for integer-based attribute descriptions.
+///
+/// Provides minimum and maximum limits, JSON parsing, and filtering by type.
 template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
 class IntegerNumberBaseClass : public AttributeDescription
 {
@@ -17,21 +20,38 @@ private:
     TypeT max_;
 
 public:
+    /// Construct an integer attribute description with default min/max and category.
     IntegerNumberBaseClass(TypeT min, TypeT max, Category category) : AttributeDescription(AttributeTypeEnumT), min_(min), max_(max)
     {
         dataType_ = ImGuiDataTypeT;
         category_ = category;
     }
 
+    /// Get the current minimum limit.
     TypeT getMinimum() { return min_; }
+
+    /// Get the current maximum limit.
     TypeT getMaximum() { return max_; }
+
+    /// Update the numeric limits and record any validation messages.
     bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message> *messagesHistory);
+
+    /// Parse this attribute from JSON and report parse errors.
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
+
+    /// Add this description to the provided collection when the type matches.
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
+
+    /// Integer-based attributes do not provide a nested container.
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override { return nullptr; }
+
+    /// Draw ImGui inputs for changing limits and return whether anything changed.
     bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override;
 };
 
+/// Base class for decimal-based attribute descriptions.
+///
+/// Provides floating-point limits, JSON parsing, and type-based filtering.
 template <typename TypeT, AttributeType AttributeTypeEnumT,ImGuiDataType ImGuiDataTypeT ,nlohmann::ordered_json::value_t TypeEnumT>
 class DecimalNumberBaseClass : public AttributeDescription
 {
@@ -40,21 +60,38 @@ private:
     TypeT max_;
 
 public:
+    /// Construct a decimal attribute description with default min/max and category.
     DecimalNumberBaseClass(TypeT min, TypeT max, Category category) : AttributeDescription(AttributeTypeEnumT), min_(min), max_(max)
     {
         dataType_ = ImGuiDataTypeT;
         category_ = category;
     }
 
+    /// Get the current minimum limit.
     TypeT getMinimum() { return min_; }
+
+    /// Get the current maximum limit.
     TypeT getMaximum() { return max_; }
+
+    /// Update the numeric limits and record any validation messages.
     bool setLimit(TypeT minimum, TypeT maximum, std::vector<Message> *messagesHistory);
+
+    /// Parse this attribute from JSON and report parse errors.
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
+
+    /// Add this description to the provided collection when the type matches.
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
+
+    /// Decimal-based attributes do not provide a nested container.
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override { return nullptr; }
+
+    /// Draw ImGui inputs for changing limits and return whether anything changed.
     bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override;
 };
 
+/// Helper used to automatically register attribute description prototypes.
+///
+/// When instantiated, this struct registers one prototype with the global DescFactory.
 template <typename AttributeDescriptionType>
 struct AutoRegisterDescription
 {
@@ -65,6 +102,7 @@ struct AutoRegisterDescription
     }();
 };
 
+/// Concrete INT attribute description with numeric limits and cloning support.
 class AttributeDescriptionInt : public IntegerNumberBaseClass<int, AttributeType::INT,ImGuiDataType_S32,nlohmann::ordered_json::value_t::number_integer>
 {
 public:
@@ -144,6 +182,7 @@ struct AutoRegisterCharNumberDescription : public AutoRegisterDescription<Attrib
     { AutoRegisterDescription::autoRegister; };
 };
 
+/// Concrete BOOL attribute description used for logical values.
 class AttributeDescriptionBool : public AttributeDescription
 {
 public:
@@ -151,10 +190,20 @@ public:
     {
         category_ = Category::LOGIC;
     }
+
+    /// Parse a boolean attribute from JSON.
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
+
+    /// Clone this boolean attribute description.
     std::unique_ptr<AttributeDescription> clone() override;
+
+    /// Add this description to the provided collection when the type matches.
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
+
+    /// BOOL attributes do not provide a nested container.
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override { return nullptr; }
+
+    /// No limit-changing UI for boolean attributes.
     bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override { return false; }
     
 };
@@ -170,6 +219,7 @@ struct AutoRegisterBoolDescription : public AutoRegisterDescription<AttributeDes
 
 
 
+/// Concrete CLUSTER attribute description containing nested attribute descriptions.
 class AttributeDescriptionCluster : public AttributeDescription
 {
 private:
@@ -182,6 +232,7 @@ public:
         category_ = Category::OTHER;
     }
 
+    /// Deep copy constructor for nested descriptions.
     AttributeDescriptionCluster(const AttributeDescriptionCluster &descriptionCluster) : AttributeDescription(AttributeType::CLUSTER)
     {
         category_ = Category::OTHER;
@@ -193,6 +244,7 @@ public:
         }
     }
 
+    /// Ensure the nested description container exists and return it.
     AttributesDescriptionsContainer *getDescription()
     {
         if (descriptions_ == nullptr)
@@ -203,13 +255,28 @@ public:
     }
 
 public:
+    /// Clone this cluster attribute description including its nested descriptions.
     std::unique_ptr<AttributeDescription> clone() override;
+
+    /// Parse a cluster from JSON and populate nested descriptions.
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
+
+    /// Add this description to the provided collection when the type matches.
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
+
+    /// Return a nested container by description name and identifier.
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override;
+
+    /// Clean up the cluster container.
     ~AttributeDescriptionCluster() override;
+
+    /// Add a new child description by type and name.
     AttributeDescription* addDescription(std::string attributeName, AttributeType type);
+
+    /// Add an existing child description to this cluster.
     AttributeDescription* addDescription(std::unique_ptr<AttributeDescription> attributeDescription);
+
+    /// No limit-changing UI for cluster descriptions.
     bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override { return false; }
 };
 
@@ -223,6 +290,7 @@ struct AutoRegisterClusterDescription : public AutoRegisterDescription<Attribute
 
 
 
+/// Concrete CHAR TEXT attribute description with character limit support.
 class AttributeDescriptionCharText : public AttributeDescription
 {
 private:
@@ -234,13 +302,29 @@ public:
     {
         category_ = Category::TEXT;
     }
+
+    /// Get the minimum character count.
     char getMinimum() { return min_; }
+
+    /// Get the maximum character count.
     char getMaximum() { return max_; }
+
+    /// Clone this character text description.
     std::unique_ptr<AttributeDescription> clone() override;
+
+    /// Update the min/max limits and record validation messages.
     bool setLimit(uint8_t minimum, uint8_t maximum, std::vector<Message> *messagesHistory);
+
+    /// Parse this char text description from JSON.
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
+
+    /// Add this description to the provided collection when the type matches.
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
+
+    /// CHAR TEXT attributes do not provide a nested container.
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override { return nullptr; }
+
+    /// Draw ImGui inputs for changing the character limits.
     bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override;
 };
 
@@ -255,6 +339,7 @@ struct AutoRegisterCharTextDescription : public AutoRegisterDescription<Attribut
 
 
 
+/// Concrete STRING attribute description with string length limits.
 class AttributeDescriptionString : public AttributeDescription
 {
 private:
@@ -266,13 +351,29 @@ public:
     {
         category_ = Category::TEXT;
     }
+
+    /// Get the minimum string length.
     uint32_t getMinimum() { return min_; }
+
+    /// Get the maximum string length.
     uint32_t getMaximum() { return max_; }
+
+    /// Clone this string attribute description.
     std::unique_ptr<AttributeDescription> clone() override;
+
+    /// Update the string length limits and record validation messages.
     bool setLimit(uint32_t minimum, uint32_t maximum, std::vector<Message> *messagesHistory);
+
+    /// Parse this string description from JSON.
     bool jsonParse(nlohmann::ordered_json &json, std::vector<Message> *messagesHistory) override;
+
+    /// Add this description to the provided collection when the type matches.
     void addItselfToVectorByCondition(std::vector<AttributeDescription *> &vector, AttributeType type) override;
+
+    /// STRING attributes do not provide a nested container.
     AttributesDescriptionsContainer *getContainer(std::string_view descriptionName, uint64_t descriptionId) override { return nullptr; }
+
+    /// Draw ImGui inputs for changing the string length limits.
     bool drawInputForChangingLimits(std::vector<Message> *messagesHistory) override;
 };
 
@@ -281,3 +382,8 @@ struct AutoRegisterStringDescription : public AutoRegisterDescription<AttributeD
     inline static bool registerDescription = []()
     { AutoRegisterDescription::autoRegister; };
 };
+
+
+
+
+
